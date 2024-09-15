@@ -1,5 +1,13 @@
 local M = {}
 
+local pp = require 'plenary.path'
+
+ParamsCnt = 0
+
+if vim.fn.isdirectory(Dp) == 0 then
+  vim.fn.mkdir(Dp)
+end
+
 function M.get_win_buf_nrs()
   local buf_nrs = {}
   for wnr = 1, vim.fn.winnr '$' do
@@ -82,12 +90,96 @@ function M.jump_or_split(file)
   M.edit(file)
 end
 
+function M.rep(content)
+  content = string.gsub(content, '/', '\\')
+  return content
+end
+
+function M.rep_slash(content)
+  content = string.gsub(content, '\\', '/')
+  return content
+end
+
+function M.lower(content)
+  return vim.fn.tolower(content)
+end
+
+function M.new_file(file)
+  return pp:new(file)
+end
+
+function M.is_file_exists(file)
+  file = vim.fn.trim(file)
+  if #file == 0 then
+    return nil
+  end
+  local fp = M.new_file(file)
+  if fp:exists() then
+    return fp
+  end
+  return nil
+end
+
+function M.join_path(dir, ...)
+  if ... then
+    return M.new_file(dir):joinpath(...).filename
+  end
+  return dir
+end
+
+function M.start(cmd)
+  M.cmd([[silent !start cmd /c "%s"]], cmd)
+end
+
+function M.start_silent(cmd)
+  M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
+end
+
+function M.format(str_format, ...)
+  return string.format(str_format, ...)
+end
+
+function M.join(arr, sep)
+  return vim.fn.join(arr, sep)
+end
+
+function M.write_lines_to_file(lines, file)
+  vim.fn.writefile(lines, file)
+end
+
+function M.get_extra_file(dir, name)
+  return M.format('%s\\%s\\%s', Config, dir, name)
+end
+
+function M.get_py(name)
+  return M.get_extra_file('pys', name)
+end
+
+function M.print(...)
+  vim.print(...)
+end
+
+function M.run_py(file, params)
+  ParamsTxt = M.format('%s\\params-%s.txt', Dp, ParamsCnt)
+  local cmd = M.format('python "%s"', file)
+  if #params > 0 then
+    M.write_lines_to_file(params, ParamsTxt)
+    cmd = M.format('%s "%s"', cmd, ParamsTxt)
+    ParamsCnt = ParamsCnt + 1
+  end
+  M.start(cmd)
+end
+
 function M.clone_if_not_exist(dir, root, repo)
   if not root then
     root = Home
   end
   if not repo then
     repo = dir
+  end
+  local dir2 = M.join_path(root, dir)
+  if not M.is_file_exists(dir2) then
+    M.run_py(M.get_py '01-git-clone.py', { dir2, Name, repo, })
   end
 end
 
