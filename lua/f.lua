@@ -82,4 +82,13 @@ function M.jump_or_split(file)
   M.edit(file)
 end
 
+function M.clone_if_not_exist(dir, root, repo)
+  if not root then
+    root = Home
+  end
+  if not repo then
+    repo = dir
+  end
+end
+
 return M
