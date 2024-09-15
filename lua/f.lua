@@ -74,4 +74,12 @@ function M.window_delete(dir)
   end
 end
 
+function M.edit(file)
+  M.cmd('e %s', file)
+end
+
+function M.jump_or_split(file)
+  M.edit(file)
+end
+
 return M
