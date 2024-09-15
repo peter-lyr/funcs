@@ -161,9 +161,9 @@ end
 
 function M.run_py_do(cmd, silent)
   if silent then
-    M.start(cmd)
-  else
     M.start_silent(cmd)
+  else
+    M.start(cmd)
   end
 end
 
