@@ -159,7 +159,15 @@ function M.print(...)
   vim.print(...)
 end
 
-function M.run_py(file, params)
+function M.run_py_do(cmd, silent)
+  if silent then
+    M.start(cmd)
+  else
+    M.start_silent(cmd)
+  end
+end
+
+function M.run_py_get_cmd(file, params)
   ParamsTxt = M.format('%s\\params-%s.txt', Dp, ParamsCnt)
   local cmd = M.format('python "%s"', file)
   if #params > 0 then
@@ -167,7 +175,15 @@ function M.run_py(file, params)
     cmd = M.format('%s "%s"', cmd, ParamsTxt)
     ParamsCnt = ParamsCnt + 1
   end
-  M.start(cmd)
+  return cmd
+end
+
+function M.run_py(file, params)
+  M.run_py_do(M.run_py_get_cmd(file, params))
+end
+
+function M.run_py_silent(file, params)
+  M.run_py_do(M.run_py_get_cmd(file, params), true)
 end
 
 function M.clone_if_not_exist(dir, root, repo)
@@ -182,5 +198,7 @@ function M.clone_if_not_exist(dir, root, repo)
     M.run_py(M.get_py '01-git-clone.py', { dir2, Name, repo, })
   end
 end
+
+M.clone_if_not_exist 'org'
 
 return M
