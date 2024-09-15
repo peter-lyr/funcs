@@ -195,7 +195,7 @@ function M.clone_if_not_exist(dir, root, repo)
   end
   local dir2 = M.join_path(root, dir)
   if not M.is_file_exists(dir2) then
-    M.run_py(M.get_py '01-git-clone.py', { dir2, Name, repo, })
+    M.run_py(M.get_py '01-git-clone.py', { root, Name, repo, })
   end
 end
 
