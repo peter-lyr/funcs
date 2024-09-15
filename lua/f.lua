@@ -46,4 +46,32 @@ function M.is_cur_last_win()
   return #M.get_win_buf_modifiable_nrs() <= 1 and 1 or nil
 end
 
+function M.cmd(str_format, ...)
+  local cmd = string.format(str_format, ...)
+  local _sta, _ = pcall(vim.cmd, cmd)
+  if _sta then
+    return cmd
+  end
+  return nil
+end
+
+function M.window_go(dir)
+  M.cmd('wincmd %s', dir)
+end
+
+function M.window_delete(dir)
+  if dir then
+    local wid = vim.fn.win_getid()
+    M.window_go(dir)
+    if wid ~= vim.fn.win_getid() then
+      vim.cmd 'q'
+    end
+    vim.fn.win_gotoid(wid)
+  else
+    if not M.is(M.is_cur_last_win()) then
+      vim.cmd 'q'
+    end
+  end
+end
+
 return M
