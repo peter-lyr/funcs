@@ -3,6 +3,7 @@ local M = {}
 local pp = require 'plenary.path'
 
 ParamsCnt = 0
+M.win_pos = 0
 
 if vim.fn.isdirectory(Dp) == 0 then
   vim.fn.mkdir(Dp)
@@ -420,6 +421,20 @@ function M.get_cur_proj_dirs(file)
     end
   end
   return proj_dirs
+end
+
+function M.save_win_pos()
+  M.win_pos = vim.fn.win_getid()
+end
+
+function M.restore_win_pos()
+  vim.fn.win_gotoid(M.win_pos)
+end
+
+function M.nvimtree_findfile()
+  M.save_win_pos()
+  vim.cmd 'NvimTreeFindFile'
+  M.restore_win_pos()
 end
 
 return M
