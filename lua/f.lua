@@ -86,8 +86,67 @@ function M.window_delete(dir)
   end
 end
 
+function M.is_file(file)
+  local fp = M.is_file_exists(file)
+  if fp and fp:is_file() then
+    return 1
+  end
+  return nil
+end
+
+function M.is_dir(file)
+  local fp = M.is_file_exists(file)
+  if fp and fp:is_dir() then
+    return 1
+  end
+  return nil
+end
+
+function M.ui_sel(items, opts, callback)
+  if type(opts) == 'string' then
+    opts = { prompt = opts, }
+  end
+  if items and #items > 0 then
+    vim.ui.select(items, opts, callback)
+  end
+end
+
+function M.get_telescope_builtins()
+  local builtins = {}
+  for k, _ in pairs(require 'telescope.builtin') do
+    M.put(builtins, k)
+  end
+  return builtins
+end
+
+function M.is_in_tbl(item, tbl)
+  return M.is(vim.tbl_contains(tbl, item))
+end
+
+function M.get_telescope_extras()
+  local telescopes = {}
+  local builtins = M.get_telescope_builtins()
+  for _, t in ipairs(vim.fn.getcompletion('Telescope ', 'cmdline')) do
+    if not M.is_in_tbl(t, builtins) then
+      telescopes[#telescopes + 1] = t
+    end
+  end
+  return telescopes
+end
+
+function M.telescope_extras()
+  local telescopes = M.get_telescope_extras()
+  M.ui_sel(telescopes, 'telescope_extras', function(t)
+    if t then
+      M.cmd('Telescope %s', t)
+    end
+  end)
+end
+
 function M.edit(file)
-  M.cmd('e %s', file)
+  if M.is_dir(file) then
+    M.cmd('e %s', file)
+  end
 end
 
 function M.jump_or_split(file)
