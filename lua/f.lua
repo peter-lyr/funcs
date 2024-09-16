@@ -145,8 +145,9 @@ end
 
 function M.edit(file)
   if M.is_dir(file) then
-    M.cmd('e %s', file)
+    vim.cmd 'Lazy load telescope.nvim'
   end
+  M.cmd('e %s', file)
 end
 
 function M.jump_or_split(file)
