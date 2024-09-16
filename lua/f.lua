@@ -8,6 +8,10 @@ if vim.fn.isdirectory(Dp) == 0 then
   vim.fn.mkdir(Dp)
 end
 
+if vim.fn.isdirectory(DpTemp) == 0 then
+  vim.fn.mkdir(DpTemp)
+end
+
 function M.get_win_buf_nrs()
   local buf_nrs = {}
   for wnr = 1, vim.fn.winnr '$' do
@@ -168,7 +172,7 @@ function M.run_py_do(cmd, silent)
 end
 
 function M.run_py_get_cmd(file, params)
-  ParamsTxt = M.format('%s\\params-%s.txt', Dp, ParamsCnt)
+  ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
   local cmd = M.format('python "%s"', file)
   if #params > 0 then
     M.write_lines_to_file(params, ParamsTxt)
