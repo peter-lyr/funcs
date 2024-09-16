@@ -353,6 +353,14 @@ function M.nvimtree_cd(dir)
   end
 end
 
+function M.nvimtree_cd_sel(dirs)
+  M.ui_sel(dirs, 'nvimtree_cd', function(dir)
+    if dir then
+      M.nvimtree_cd(dir)
+    end
+  end)
+end
+
 function M.get_cur_file()
   return vim.api.nvim_buf_get_name(0)
 end
@@ -376,6 +384,9 @@ function M.get_file_parents(file)
   if not file then
     file = M.get_cur_file()
   end
+  if not M.is_file_exists(file) then
+    return
+  end
   local dir = M.get_file_parent(file)
   local parents = { dir, }
   for _ = 0, 64 do
@@ -393,6 +404,9 @@ function M.get_cur_proj_dirs(file)
   if not file then
     file = M.get_cur_file()
   end
+  if not M.is_file_exists(file) then
+    return
+  end
   local parents = M.get_file_parents(file)
   local proj_dirs = {}
   local proj = vim.fn['ProjectRootGet'](file)
@@ -405,6 +419,7 @@ function M.get_cur_proj_dirs(file)
       M.put(proj_dirs, proj)
     end
   end
+  return proj_dirs
 end
 
 return M
