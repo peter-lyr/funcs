@@ -87,7 +87,7 @@ function M.window_delete(dir)
 end
 
 function M.is_file(file)
-  local fp = M.is_file_exists(file)
+  local fp = M.is_file_exists(M.rep(file))
   if fp and fp:is_file() then
     return 1
   end
@@ -95,7 +95,7 @@ function M.is_file(file)
 end
 
 function M.is_dir(file)
-  local fp = M.is_file_exists(file)
+  local fp = M.is_file_exists(M.rep(file))
   if fp and fp:is_dir() then
     return 1
   end
@@ -169,7 +169,7 @@ function M.lower(content)
 end
 
 function M.new_file(file)
-  return pp:new(file)
+  return pp:new(M.rep(file))
 end
 
 function M.is_file_exists(file)
@@ -337,6 +337,41 @@ function M.lazy_map(tbls)
       vim.keymap.set(tbl['mode'], lhs, tbl[2], opt)
     end
   end
+end
+
+function M.get_file_parent(file)
+  if M.is_dir(file) then
+    return file
+  end
+  return M.new_file(file):parent().filename
+end
+
+function M.nvimtree_cd(dir)
+  if M.is_file_exists(dir) then
+    print("vim.inspect(dir):", vim.inspect(dir))
+    print("vim.inspect(M.get_file_parent(dir)):", vim.inspect(M.get_file_parent(dir)))
+    require 'nvim-tree'.change_dir(M.get_file_parent(dir))
+    M.project_cd()
+  end
+end
+
+function M.get_cur_file()
+  return vim.api.nvim_buf_get_name(0)
+end
+
+function M.project_cd()
+  vim.cmd [[
+    try
+      if &ft != 'help'
+        ProjectRootCD
+      endif
+    catch
+    endtry
+  ]]
+end
+
+function M.get_cwd()
+  return vim.loop.cwd()
 end
 
 return M
