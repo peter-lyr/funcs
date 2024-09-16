@@ -145,7 +145,7 @@ end
 
 function M.edit(file)
   if M.is_dir(file) then
-    vim.cmd 'Lazy load telescope.nvim'
+    vim.cmd 'Lazy load telescope'
   end
   M.cmd('e %s', file)
 end
