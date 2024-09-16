@@ -348,8 +348,6 @@ end
 
 function M.nvimtree_cd(dir)
   if M.is_file_exists(dir) then
-    print("vim.inspect(dir):", vim.inspect(dir))
-    print("vim.inspect(M.get_file_parent(dir)):", vim.inspect(M.get_file_parent(dir)))
     require 'nvim-tree'.change_dir(M.get_file_parent(dir))
     M.project_cd()
   end
