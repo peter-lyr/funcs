@@ -437,4 +437,18 @@ function M.nvimtree_findfile()
   M.restore_win_pos()
 end
 
+function M.next_hunk()
+  if vim.wo.diff then
+    vim.cmd [[call feedkeys("]c")]]
+  end
+  require 'gitsigns'.next_hunk()
+end
+
+function M.prev_hunk()
+  if vim.wo.diff then
+    vim.cmd [[call feedkeys("[c")]]
+  end
+  require 'gitsigns'.prev_hunk()
+end
+
 return M
