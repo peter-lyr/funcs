@@ -372,4 +372,39 @@ function M.get_cwd()
   return vim.loop.cwd()
 end
 
+function M.get_file_parents(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  local dir = M.get_file_parent(file)
+  local parents = { dir, }
+  for _ = 0, 64 do
+    dir = vim.fn.fnamemodify(dir, ':h')
+    if not M.is_in_tbl(dir, parents) then
+      M.put(parents, dir)
+    else
+      break
+    end
+  end
+  return parents
+end
+
+function M.get_cur_proj_dirs(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  local parents = M.get_file_parents(file)
+  local proj_dirs = {}
+  local proj = vim.fn['ProjectRootGet'](file)
+  if M.is(proj) then
+    M.put(proj_dirs, proj)
+  end
+  for _, parent in ipairs(parents) do
+    proj = vim.fn['ProjectRootGet'](parent)
+    if M.is(proj) and not M.is_in_tbl(proj, proj_dirs) then
+      M.put(proj_dirs, proj)
+    end
+  end
+end
+
 return M
