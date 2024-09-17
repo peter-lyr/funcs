@@ -529,13 +529,11 @@ function M.set_interval_timeout(name, interval, timeout, callback)
     if callback() then
       M.clear_interval(vim.g[name])
       vim.g[name] = 0
-      print('2-timer:', name, vim.g[name])
     end
   end, { ['repeat'] = -1, })
-  print('1-timer:', name, vim.g[name])
   M.set_timeout(timeout, function()
     if vim.g[name] > 0 then
-      vim.notify("Time Out: " .. timeout)
+      vim.notify(M.format("Time Out[%s]: %d", name, timeout))
       M.clear_interval(vim.g[name])
     end
   end)
@@ -554,10 +552,10 @@ function M.git_add_commit_push(commit, dir)
   if not dir then
     dir = M.get_cwd()
   end
-  -- M.run_in_term {
-  --   'cd', '/d', dir, '&&',
-  --   'git', 'status',
-  -- }
+  M.run_in_term {
+    'cd', '/d', dir, '&&',
+    'git', 'status',
+  }
   if not M.is(commit) then
     vim.ui.input({ prompt = 'commit info: ', }, function(c)
       if c then
