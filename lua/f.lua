@@ -492,16 +492,6 @@ function M.prev_hunk()
   require 'gitsigns'.prev_hunk()
 end
 
-function M.get_input(val, prompt, default)
-  if not val then
-    val = vim.fn.input(prompt .. ': ')
-  end
-  if not val then
-    return default
-  end
-  return val
-end
-
 function M.set_timeout(timeout, callback)
   return vim.fn.timer_start(timeout, function()
     callback()
