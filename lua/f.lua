@@ -240,12 +240,9 @@ function M.read_lines_from_file(file)
 end
 
 function M.detect(msg, sta)
-  TempPPP = TempPPP + 1
   if M.is_file(sta) then
     vim.print(M.read_lines_from_file(msg))
     return true
-  else
-    print(TempPPP)
   end
   return nil
 end
@@ -256,10 +253,11 @@ function M.run_py_get_cmd(file, params)
     ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
     OutMsgTxt = M.format('%s\\outmsg-%s.txt', DpTemp, ParamsCnt)
     OutStaTxt = M.format('%s\\outsta-%s.txt', DpTemp, ParamsCnt)
-    TempPPP = 0
     vim.fn.delete(OutStaTxt, 'rf')
     M.set_interval_timeout('params-' .. tostring(ParamsCnt), 1000, 1000 * 10, function()
       return M.detect(OutMsgTxt, OutStaTxt)
+    end, function()
+      vim.fn.delete(OutStaTxt, 'rf')
     end)
     M.write_lines_to_file(params, ParamsTxt)
     cmd = M.format('%s "%s"', cmd, ParamsTxt)
@@ -524,16 +522,19 @@ function M.clear_interval(timer)
   pcall(vim.fn.timer_stop, timer)
 end
 
-function M.set_interval_timeout(name, interval, timeout, callback)
+function M.set_interval_timeout(name, interval, timeout, callback, callback_done)
   vim.g[name] = vim.fn.timer_start(interval, function()
     if callback() then
       M.clear_interval(vim.g[name])
       vim.g[name] = 0
+      if callback_done then
+        callback_done()
+      end
     end
   end, { ['repeat'] = -1, })
   M.set_timeout(timeout, function()
     if vim.g[name] > 0 then
-      vim.notify(M.format("Time Out[%s]: %d", name, timeout))
+      vim.notify(M.format('Time Out[%s]: %d', name, timeout))
       M.clear_interval(vim.g[name])
     end
   end)
