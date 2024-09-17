@@ -257,7 +257,7 @@ function M.run_py_get_cmd(file, params)
     OutStaTxt = M.format('%s\\outsta-%s.txt', DpTemp, ParamsCnt)
     TempPPP = 0
     vim.fn.delete(OutStaTxt, 'rf')
-    M.set_interval_timeout('params-' .. tostring(ParamsCnt), 1000, 1000 * 60, function()
+    M.set_interval_timeout('params-' .. tostring(ParamsCnt), 1000, 1000 * 20, function()
       return M.detect(OutMsgTxt, OutStaTxt)
     end)
     M.write_lines_to_file(params, ParamsTxt)
