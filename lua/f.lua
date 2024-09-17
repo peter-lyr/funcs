@@ -3,6 +3,7 @@ local M = {}
 local pp = require 'plenary.path'
 
 ParamsCnt = 0
+ParamsTimers = {}
 M.win_pos = 0
 
 if vim.fn.isdirectory(Dp) == 0 then
@@ -234,10 +235,34 @@ function M.start_do(cmd, opts)
   end
 end
 
+function M.read_lines_from_file(file)
+  return vim.fn.readfile(file)
+end
+
+function M.detect(msg, sta, timer)
+  if M.is_file(sta) then
+    vim.print(M.read_lines_from_file(msg))
+    M.clear_interval(timer)
+    print('2-timer:', timer)
+  end
+end
+
 function M.run_py_get_cmd(file, params)
-  ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
   local cmd = M.format('python "%s"', file)
   if #params > 0 then
+    ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
+    OutMsgTxt = M.format('%s\\outmsg-%s.txt', DpTemp, ParamsCnt)
+    OutStaTxt = M.format('%s\\outsta-%s.txt', DpTemp, ParamsCnt)
+    vim.fn.delete(OutStaTxt, 'rf')
+    local timer = M.set_interval(100, function()
+      M.detect(OutMsgTxt, OutStaTxt, timer)
+    end)
+    print('1-timer:', timer)
+    M.set_timeout(1000 * 10, function()
+      vim.notify('TimeOut 10')
+      print('3-timer:', timer)
+      M.clear_interval(timer)
+    end)
     M.write_lines_to_file(params, ParamsTxt)
     cmd = M.format('%s "%s"', cmd, ParamsTxt)
     ParamsCnt = ParamsCnt + 1
@@ -489,6 +514,16 @@ function M.set_timeout(timeout, callback)
   return vim.fn.timer_start(timeout, function()
     callback()
   end, { ['repeat'] = 1, })
+end
+
+function M.set_interval(interval, callback)
+  return vim.fn.timer_start(interval, function()
+    callback()
+  end, { ['repeat'] = -1, })
+end
+
+function M.clear_interval(timer)
+  pcall(vim.fn.timer_stop, timer)
 end
 
 function M.git_add_commit_push_do(commit, dir)
