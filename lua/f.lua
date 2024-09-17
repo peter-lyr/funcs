@@ -357,6 +357,18 @@ function M.get_file_parent(file)
   return M.new_file(file):parent().filename
 end
 
+function M.ui(arr, opts, callback)
+  if #arr == 1 then
+    callback(arr[1])
+  else
+    M.ui_sel(arr, opts, function(choose)
+      if choose then
+        callback(choose)
+      end
+    end)
+  end
+end
+
 function M.nvimtree_cd(dir)
   if M.is_file_exists(dir) then
     require 'nvim-tree'.change_dir(M.get_file_parent(dir))
@@ -365,11 +377,7 @@ function M.nvimtree_cd(dir)
 end
 
 function M.nvimtree_cd_sel(dirs)
-  M.ui_sel(dirs, 'nvimtree_cd', function(dir)
-    if dir then
-      M.nvimtree_cd(dir)
-    end
-  end)
+  M.ui(dirs, 'nvimtree_cd', M.nvimtree_cd)
 end
 
 function M.get_cur_file()
