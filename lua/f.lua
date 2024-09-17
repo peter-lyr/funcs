@@ -537,7 +537,7 @@ function M.set_interval_timeout(name, interval, timeout, callback, callback_done
 end
 
 function M.git_add_commit_push_do(commit, dir)
-  M.run_in_term {
+  M.run_silent {
     'cd', '/d', dir, '&&',
     'git', 'add', '.', '&&',
     'git', 'commit', '-m', commit, '&&',
