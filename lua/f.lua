@@ -228,6 +228,8 @@ function M.start_do(cmd, opts)
       M.cmd([[silent !start cmd /c "%s"]], cmd)
     elseif opts.way == 'term' then
       M.cmd([[sp|te %s]], cmd)
+    elseif opts.way == 'inner' then
+      M.cmd([[!%s]], cmd)
     end
   end
 end
@@ -249,6 +251,10 @@ end
 
 function M.start_outside(cmd_params)
   M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'outside', })
+end
+
+function M.start_inner(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'inner', })
 end
 
 function M.start_outside_pause(cmd_params)
@@ -479,13 +485,23 @@ function M.get_input(val, prompt, default)
   return val
 end
 
+function M.set_timeout(timeout, callback)
+  return vim.fn.timer_start(timeout, function()
+    callback()
+  end, { ['repeat'] = 1, })
+end
+
 function M.git_add_commit_push(commit, dir)
+  if not dir then
+    dir = M.get_cwd()
+  end
+  M.start_inner {
+    'cd', '/d', dir, '&&',
+    'git', 'status',
+  }
   commit = M.get_input(commit, 'commit info', nil)
   if not M.is(commit) then
     return
-  end
-  if not dir then
-    dir = M.get_cwd()
   end
   M.start_term {
     'cd', '/d', dir, '&&',
