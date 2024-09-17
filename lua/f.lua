@@ -552,7 +552,8 @@ function M.git_add_commit_push(commit, dir)
   end
   M.run_in_term {
     'cd', '/d', dir, '&&',
-    'git', 'status',
+    'git', 'status', '&&',
+    'ping', '-n', '3'
   }
   if not M.is(commit) then
     vim.ui.input({ prompt = 'commit info: ', }, function(c)
