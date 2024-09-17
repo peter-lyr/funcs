@@ -245,25 +245,25 @@ function M.run_py_get_cmd(file, params)
   return cmd
 end
 
-function M.start_term(cmd_params)
+function M.run_in_term(cmd_params)
   M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'term', })
 end
 
-function M.start_outside(cmd_params)
+function M.run_outside(cmd_params)
   M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'outside', })
 end
 
-function M.start_inner(cmd_params)
+function M.run_inside(cmd_params)
   M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'inner', })
 end
 
-function M.start_outside_pause(cmd_params)
+function M.run_outside_pause(cmd_params)
   M.put(cmd_params, '&&')
   M.put(cmd_params, 'pause')
-  M.start_outside(cmd_params)
+  M.run_outside(cmd_params)
 end
 
-function M.start_silent(cmd_params)
+function M.run_silent(cmd_params)
   M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'silent', })
 end
 
@@ -492,7 +492,7 @@ function M.set_timeout(timeout, callback)
 end
 
 function M.git_add_commit_push_do(commit, dir)
-  M.start_term {
+  M.run_in_term {
     'cd', '/d', dir, '&&',
     'git', 'add', '.', '&&',
     'git', 'commit', '-m', commit, '&&',
@@ -504,7 +504,7 @@ function M.git_add_commit_push(commit, dir)
   if not dir then
     dir = M.get_cwd()
   end
-  M.start_term {
+  M.run_in_term {
     'cd', '/d', dir, '&&',
     'git', 'status',
   }
