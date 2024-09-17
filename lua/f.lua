@@ -246,8 +246,7 @@ function M.run_py_get_cmd(file, params)
     OutMsgTxt = M.format('%s\\outmsg-%s.txt', DpTemp, ParamsCnt)
     OutStaTxt = M.format('%s\\outsta-%s.txt', DpTemp, ParamsCnt)
     vim.fn.delete(OutStaTxt, 'rf')
-    M.set_interval_timeout('params-' .. tostring(ParamsCnt), 200, 1000 * 10, function()
-      print(ParamsCnt, "OutStaTxt:", OutStaTxt)
+    M.set_interval_timeout('params-' .. tostring(ParamsCnt), 10, 1000 * 60, function()
       if M.is_file(OutStaTxt) then
         return true
       end
@@ -550,10 +549,11 @@ function M.git_add_commit_push(commit, dir)
   if not dir then
     dir = M.get_cwd()
   end
-  M.run_in_term {
+  M.run_silent {
     'cd', '/d', dir, '&&',
-    'git', 'status', '&&',
-    'ping', 'localhost', '-n', '3'
+    'git', 'status',
+    -- '&&',
+    -- 'ping', 'localhost', '-n', '3'
   }
   if not M.is(commit) then
     vim.ui.input({ prompt = 'commit info: ', }, function(c)
