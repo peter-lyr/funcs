@@ -247,6 +247,7 @@ function M.detect(msg, sta)
   else
     print(TempPPP)
   end
+  return nil
 end
 
 function M.run_py_get_cmd(file, params)
