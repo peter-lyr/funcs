@@ -192,14 +192,6 @@ function M.join_path(dir, ...)
   return dir
 end
 
-function M.start(cmd)
-  M.cmd([[silent !start cmd /c "%s"]], cmd)
-end
-
-function M.start_silent(cmd)
-  M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
-end
-
 function M.format(str_format, ...)
   return string.format(str_format, ...)
 end
@@ -213,7 +205,7 @@ function M.write_lines_to_file(lines, file)
 end
 
 function M.get_extra_file(dir, name)
-  return M.format('%s\\%s\\%s', Config, dir, name)
+  return M.format('%s\\%s\\%s', StdConfig, dir, name)
 end
 
 function M.get_py(name)
@@ -224,11 +216,19 @@ function M.print(...)
   vim.print(...)
 end
 
-function M.run_py_do(cmd, silent)
-  if silent then
-    M.start_silent(cmd)
+function M.printf(...)
+  vim.print(string.format(...))
+end
+
+function M.start_do(cmd, opts)
+  if opts.way == 'silent' then
+    M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
   else
-    M.start(cmd)
+    if opts.way == 'outside' then
+      M.cmd([[silent !start cmd /c "%s"]], cmd)
+    elseif opts.way == 'term' then
+      M.cmd([[sp|te %s]], cmd)
+    end
   end
 end
 
@@ -243,12 +243,22 @@ function M.run_py_get_cmd(file, params)
   return cmd
 end
 
-function M.run_py(file, params)
-  M.run_py_do(M.run_py_get_cmd(file, params))
+function M.start_term(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'term', })
 end
 
-function M.run_py_silent(file, params)
-  M.run_py_do(M.run_py_get_cmd(file, params), true)
+function M.start_outside(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'outside', })
+end
+
+function M.start_outside_pause(cmd_params)
+  M.put(cmd_params, '&&')
+  M.put(cmd_params, 'pause')
+  M.start_outside(cmd_params)
+end
+
+function M.start_silent(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'silent', })
 end
 
 function M.clone_if_not_exist(dir, root, repo)
@@ -260,7 +270,7 @@ function M.clone_if_not_exist(dir, root, repo)
   end
   local dir2 = M.join_path(root, dir)
   if not M.is_file_exists(dir2) then
-    M.run_py(M.get_py '01-git-clone.py', { root, Name, repo, })
+    M.start_do(M.run_py_get_cmd(M.get_py '01-git-clone.py', { root, Name, repo, }), { way = 'outside', })
   end
 end
 
@@ -449,6 +459,32 @@ function M.prev_hunk()
     vim.cmd [[call feedkeys("[c")]]
   end
   require 'gitsigns'.prev_hunk()
+end
+
+function M.get_input(val, prompt, default)
+  if not val then
+    val = vim.fn.input(prompt .. ': ')
+  end
+  if not val then
+    return default
+  end
+  return val
+end
+
+function M.git_add_commit_push(commit, dir)
+  commit = M.get_input(commit, 'commit info', nil)
+  if not M.is(commit) then
+    return
+  end
+  if not dir then
+    dir = M.get_cwd()
+  end
+  M.start_term {
+    'cd', '/d', dir, '&&',
+    'git', 'add', '.', '&&',
+    'git', 'commit', '-m', commit, '&&',
+    'git', 'push',
+  }
 end
 
 return M
