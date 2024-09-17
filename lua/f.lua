@@ -243,8 +243,8 @@ function M.run_py_get_cmd(file, params)
   local cmd = file
   if #params > 0 then
     ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
-    OutMsgTxt = M.format('%s\\outmsg-%s.txt', DpTemp, ParamsCnt)
-    OutStaTxt = M.format('%s\\outsta-%s.txt', DpTemp, ParamsCnt)
+    OutMsgTxt = M.format('%s\\out-msg-%s.txt', DpTemp, ParamsCnt)
+    OutStaTxt = M.format('%s\\out-sta-%s.txt', DpTemp, ParamsCnt)
     vim.fn.delete(OutStaTxt, 'rf')
     M.set_interval_timeout('params-' .. tostring(ParamsCnt), 10, 1000 * 60, function()
       if M.is_file(OutStaTxt) then
