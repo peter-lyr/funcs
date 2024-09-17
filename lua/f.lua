@@ -239,11 +239,11 @@ function M.read_lines_from_file(file)
   return vim.fn.readfile(file)
 end
 
-function M.detect(msg, sta, timer)
+function M.detect(msg, sta)
+  TempPPP = TempPPP + 1
+  print(TempPPP)
   if M.is_file(sta) then
     vim.print(M.read_lines_from_file(msg))
-    M.clear_interval(timer)
-    print('2-timer:', timer)
   end
 end
 
@@ -253,15 +253,10 @@ function M.run_py_get_cmd(file, params)
     ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
     OutMsgTxt = M.format('%s\\outmsg-%s.txt', DpTemp, ParamsCnt)
     OutStaTxt = M.format('%s\\outsta-%s.txt', DpTemp, ParamsCnt)
+    TempPPP = 0
     vim.fn.delete(OutStaTxt, 'rf')
-    local timer = M.set_interval(100, function()
-      M.detect(OutMsgTxt, OutStaTxt, timer)
-    end)
-    print('1-timer:', timer)
-    M.set_timeout(1000 * 12, function()
-      vim.notify('TimeOut 12')
-      print('3-timer:', timer)
-      M.clear_interval(timer)
+    M.set_interval_timeout(100, 1000 * 60, function()
+      M.detect(OutMsgTxt, OutStaTxt)
     end)
     M.write_lines_to_file(params, ParamsTxt)
     cmd = M.format('%s "%s"', cmd, ParamsTxt)
@@ -524,6 +519,17 @@ end
 
 function M.clear_interval(timer)
   pcall(vim.fn.timer_stop, timer)
+end
+
+function M.set_interval_timeout(interval, timeout, callback)
+  local timer = vim.fn.timer_start(interval, function()
+    callback()
+    M.clear_interval(timer)
+  end, { ['repeat'] = -1, })
+  M.set_timeout(timeout, function()
+    vim.notify("Time Out: " .. timeout)
+    M.clear_interval(timer)
+  end)
 end
 
 function M.git_add_commit_push_do(commit, dir)
