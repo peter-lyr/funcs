@@ -239,14 +239,6 @@ function M.read_lines_from_file(file)
   return vim.fn.readfile(file)
 end
 
-function M.detect(msg, sta)
-  if M.is_file(sta) then
-    vim.print(M.read_lines_from_file(msg))
-    return true
-  end
-  return nil
-end
-
 function M.run_py_get_cmd(file, params)
   local cmd = M.format('python "%s"', file)
   if #params > 0 then
@@ -255,9 +247,14 @@ function M.run_py_get_cmd(file, params)
     OutStaTxt = M.format('%s\\outsta-%s.txt', DpTemp, ParamsCnt)
     vim.fn.delete(OutStaTxt, 'rf')
     M.set_interval_timeout('params-' .. tostring(ParamsCnt), 1000, 1000 * 10, function()
-      return M.detect(OutMsgTxt, OutStaTxt)
+      print(ParamsCnt, "OutStaTxt:", OutStaTxt)
+      if M.is_file(OutStaTxt) then
+        return true
+      end
+      return nil
     end, function()
       vim.fn.delete(OutStaTxt, 'rf')
+      vim.notify(vim.fn.join(M.read_lines_from_file(OutMsgTxt), '\n'))
     end)
     M.write_lines_to_file(params, ParamsTxt)
     cmd = M.format('%s "%s"', cmd, ParamsTxt)
