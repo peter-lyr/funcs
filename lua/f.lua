@@ -491,24 +491,32 @@ function M.set_timeout(timeout, callback)
   end, { ['repeat'] = 1, })
 end
 
-function M.git_add_commit_push(commit, dir)
-  if not dir then
-    dir = M.get_cwd()
-  end
-  M.start_inner {
-    'cd', '/d', dir, '&&',
-    'git', 'status',
-  }
-  commit = M.get_input(commit, 'commit info', nil)
-  if not M.is(commit) then
-    return
-  end
+function M.git_add_commit_push_do(commit, dir)
   M.start_term {
     'cd', '/d', dir, '&&',
     'git', 'add', '.', '&&',
     'git', 'commit', '-m', commit, '&&',
     'git', 'push',
   }
+end
+
+function M.git_add_commit_push(commit, dir)
+  if not dir then
+    dir = M.get_cwd()
+  end
+  M.start_term {
+    'cd', '/d', dir, '&&',
+    'git', 'status',
+  }
+  if not M.is(commit) then
+    vim.ui.input({ prompt = 'commit info: ', }, function(c)
+      if c then
+        M.git_add_commit_push_do(c, dir)
+      end
+    end)
+  else
+    M.git_add_commit_push_do(commit, dir)
+  end
 end
 
 return M
