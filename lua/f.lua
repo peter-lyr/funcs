@@ -519,7 +519,7 @@ function M.clear_interval(timer)
 end
 
 function M.set_interval_timeout(name, interval, timeout, callback, callback_done)
-  vim.g[name] = vim.fn.timer_start(interval, function()
+  vim.g[name] = M.set_interval(interval, function()
     if callback() then
       M.clear_interval(vim.g[name])
       vim.g[name] = 0
@@ -527,7 +527,7 @@ function M.set_interval_timeout(name, interval, timeout, callback, callback_done
         callback_done()
       end
     end
-  end, { ['repeat'] = -1, })
+  end)
   M.set_timeout(timeout, function()
     if vim.g[name] > 0 then
       vim.notify(M.format('Time Out[%s]: %d', name, timeout))
