@@ -223,10 +223,10 @@ end
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
-    M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
+    M.cmd([[silent !start /min cmd /c %s]], cmd)
   else
     if opts.way == 'outside' then
-      M.cmd([[silent !start cmd /c "%s"]], cmd)
+      M.cmd([[silent !start cmd /c %s]], cmd)
     elseif opts.way == 'term' then
       M.cmd([[sp|te %s]], cmd)
     elseif opts.way == 'inner' then
@@ -240,7 +240,7 @@ function M.read_lines_from_file(file)
 end
 
 function M.run_py_get_cmd(file, params)
-  local cmd = M.format('python "%s"', file)
+  local cmd = file
   if #params > 0 then
     ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
     OutMsgTxt = M.format('%s\\outmsg-%s.txt', DpTemp, ParamsCnt)
@@ -552,8 +552,6 @@ function M.git_add_commit_push(commit, dir)
   M.run_silent {
     'cd', '/d', dir, '&&',
     'git', 'status',
-    -- '&&',
-    -- 'ping', 'localhost', '-n', '3'
   }
   if not M.is(commit) then
     vim.ui.input({ prompt = 'commit info: ', }, function(c)
