@@ -410,7 +410,7 @@ function M.get_file_parents(file)
     file = M.get_cur_file()
   end
   if not M.is_file_exists(file) then
-    return
+    return {}
   end
   local dir = M.get_file_parent(file)
   local parents = { dir, }
