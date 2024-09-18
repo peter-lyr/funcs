@@ -297,8 +297,6 @@ function M.clone_if_not_exist(dir, root, repo)
   end
 end
 
-M.clone_if_not_exist 'org'
-
 function M.win_max_height()
   local cur_winnr = vim.fn.winnr()
   local cur_wininfo = vim.fn.getwininfo(vim.fn.win_getid())[1]
@@ -553,5 +551,7 @@ function M.git_add_commit_push(commit, dir)
     M.git_add_commit_push_do(commit, dir)
   end
 end
+
+require '_f_done'
 
 return M
