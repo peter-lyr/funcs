@@ -201,10 +201,6 @@ function M.join(arr, sep)
   return vim.fn.join(arr, sep)
 end
 
-function M.write_lines_to_file(lines, file)
-  vim.fn.writefile(lines, file)
-end
-
 function M.get_extra_file(dir, name)
   return M.format('%s\\%s\\%s', StdConfig, dir, name)
 end
@@ -237,6 +233,10 @@ end
 
 function M.read_lines_from_file(file)
   return vim.fn.readfile(file)
+end
+
+function M.write_lines_to_file(lines, file)
+  vim.fn.writefile(lines, file)
 end
 
 function M.run_py_get_cmd(file, params)
