@@ -284,7 +284,7 @@ function M.run_silent(cmd_params)
   M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'silent', })
 end
 
-function M.clone_if_not_exist(dir, root, repo)
+function M.clone_if_not_exist(dir, repo, root)
   if not root then
     root = Home
   end
@@ -552,6 +552,9 @@ function M.git_add_commit_push(commit, dir)
   end
 end
 
-require '_f_done'
+if vim.g._f_done then
+  vim.g._f_done = 1
+  require '_f_done'
+end
 
 return M
