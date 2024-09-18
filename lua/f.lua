@@ -544,6 +544,8 @@ function M.git_add_commit_push(commit, dir)
   end
   M.run_silent {
     'cd', '/d', dir, '&&',
+    'echo', dir, '&&',
+    'echo.', '&&',
     'git', 'status',
   }
   if not M.is(commit) then
