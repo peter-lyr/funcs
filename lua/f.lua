@@ -217,16 +217,20 @@ function M.printf(...)
   vim.print(string.format(...))
 end
 
+M.run_cmd_py = M.get_py '02-run-cmd.py'
+
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
     M.cmd([[silent !start /min cmd /c %s]], cmd)
   else
     if opts.way == 'outside' then
       M.cmd([[silent !start cmd /c %s]], cmd)
+    elseif opts.way == 'inside' then
+      M.cmd([[!%s]], cmd)
+    elseif opts.way == 'inside_silent' then
+      M.cmd([[silent !%s]], cmd)
     elseif opts.way == 'term' then
       M.cmd([[sp|te %s]], cmd)
-    elseif opts.way == 'inner' then
-      M.cmd([[!%s]], cmd)
     end
   end
 end
@@ -239,39 +243,85 @@ function M.write_lines_to_file(lines, file)
   vim.fn.writefile(lines, file)
 end
 
+function M.getlua(luafile)
+  local loaded = string.match(M.rep(luafile), '.+lua\\(.+)%.lua')
+  if not loaded then
+    return ''
+  end
+  loaded = string.gsub(loaded, '\\', '.')
+  return loaded
+end
+
+function M.echo(str_format, ...)
+  str_format = string.gsub(str_format, "'", '"')
+  M.cmd(M.format("ec '" .. str_format .. "'", ...))
+end
+
+function M.source_cur()
+  local file = M.get_cur_file()
+  local ext = string.match(file, '%.([^.]+)$')
+  if ext == 'lua' then
+    package.loaded[M.getlua(file)] = nil
+  end
+  M.echo('source %s', file)
+  M.cmd('source %s', file)
+end
+
+function M.delete_folder(dir)
+  M.run_inside_silent {
+    'cd', '/d', Home, '&&',
+    'echo', M.format('Deleting %s', dir), '&&',
+    'rd', '/s', '/q', dir,
+  }
+end
+
 function M.run_py_get_cmd(file, params)
   local cmd = file
   if #params > 0 then
-    ParamsTxt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
-    OutMsgTxt = M.format('%s\\out-msg-%s.txt', DpTemp, ParamsCnt)
-    OutStaTxt = M.format('%s\\out-sta-%s.txt', DpTemp, ParamsCnt)
-    vim.fn.delete(OutStaTxt, 'rf')
-    M.set_interval_timeout('params-' .. tostring(ParamsCnt), 10, 1000 * 60, function()
-      if M.is_file(OutStaTxt) then
-        return true
-      end
-      return nil
-    end, function()
-      vim.fn.delete(OutStaTxt, 'rf')
-      vim.notify(vim.fn.join(M.read_lines_from_file(OutMsgTxt), '\n'))
-    end)
-    M.write_lines_to_file(params, ParamsTxt)
-    cmd = M.format('%s "%s"', cmd, ParamsTxt)
+    local params_txt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
+    if M.run_cmd_py == file then
+      local out_msg_txt = M.format('%s\\out-msg-%s.txt', DpTemp, ParamsCnt)
+      local out_sta_txt = M.format('%s\\out-sta-%s.txt', DpTemp, ParamsCnt)
+      vim.fn.delete(out_sta_txt, 'rf')
+      local name = 'params-' .. tostring(ParamsCnt)
+      M.set_interval_timeout(name, 500, 1000 * 60, function()
+        if M.is_file(out_sta_txt) then
+          return true
+        end
+        return nil
+      end, function()
+        vim.fn.delete(out_sta_txt, 'rf')
+        local temp = vim.fn.join(params, ' ')
+        local temp2 = ''
+        for _ = 1, #temp do
+          temp2 = temp2 .. '='
+        end
+        vim.notify(M.format('Successful: number %d\n%s\n%s\n%s',
+          ParamsCnt, temp, temp2,
+          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')))
+      end)
+    end
+    M.write_lines_to_file(params, params_txt)
+    cmd = M.format('%s "%s"', cmd, params_txt)
     ParamsCnt = ParamsCnt + 1
   end
   return cmd
 end
 
 function M.run_in_term(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'term', })
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'term', })
 end
 
 function M.run_outside(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'outside', })
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'outside', })
 end
 
 function M.run_inside(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'inner', })
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'inside', })
+end
+
+function M.run_inside_silent(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'inside_silent', })
 end
 
 function M.run_outside_pause(cmd_params)
@@ -281,7 +331,7 @@ function M.run_outside_pause(cmd_params)
 end
 
 function M.run_silent(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.get_py '02-run-cmd.py', cmd_params), { way = 'silent', })
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'silent', })
 end
 
 function M.clone_if_not_exist(dir, repo, root)
@@ -293,7 +343,7 @@ function M.clone_if_not_exist(dir, repo, root)
   end
   local dir2 = M.join_path(root, dir)
   if not M.is_file_exists(dir2) then
-    M.start_do(M.run_py_get_cmd(M.get_py '01-git-clone.py', { root, Name, repo, }), { way = 'outside', })
+    M.start_do(M.run_py_get_cmd(M.get_py '01-git-clone.py', { root, Name, repo, dir, }), { way = 'outside', })
   end
 end
 
