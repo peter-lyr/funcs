@@ -287,7 +287,10 @@ function M.run_py_get_cmd(file, params)
       return nil
     end, function()
       vim.fn.delete(OutStaTxt, 'rf')
-      vim.notify(vim.fn.join(M.read_lines_from_file(OutMsgTxt), '\n'))
+      local lines = M.read_lines_from_file(OutMsgTxt)
+      if lines[1] ~= '000' then
+        vim.notify(vim.fn.join(lines, '\n'))
+      end
     end)
     M.write_lines_to_file(params, ParamsTxt)
     cmd = M.format('%s "%s"', cmd, ParamsTxt)
