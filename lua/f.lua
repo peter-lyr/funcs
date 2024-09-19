@@ -604,7 +604,7 @@ function M.git_add_commit_push(commit, dir)
   end
 end
 
-if vim.g._f_done then
+if not vim.g._f_done then
   vim.g._f_done = 1
   require '_f_done'
 end
