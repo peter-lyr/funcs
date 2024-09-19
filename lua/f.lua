@@ -343,7 +343,7 @@ function M.clone_if_not_exist(dir, repo, root)
   end
   local dir2 = M.join_path(root, dir)
   if not M.is_file_exists(dir2) then
-    M.start_do(M.run_py_get_cmd(M.get_py '01-git-clone.py', { root, Name, repo, dir, }), { way = 'outside', })
+    M.start_do(M.run_py_get_cmd(M.get_py '01-git-clone.py', { root, Name, repo, dir, }), { way = 'silent', })
   end
 end
 
@@ -604,9 +604,6 @@ function M.git_add_commit_push(commit, dir)
   end
 end
 
-if not vim.g._f_done then
-  vim.g._f_done = 1
-  require '_f_done'
-end
+M.clone_if_not_exist 'org'
 
 return M
