@@ -273,38 +273,6 @@ function M.delete_folder(dir)
     'echo', M.format('Deleting %s', dir), '&&',
     'rd', '/s', '/q', dir,
   }
-function M.set_timeout(timeout, callback)
-  return vim.fn.timer_start(timeout, function()
-    callback()
-  end, { ['repeat'] = 1, })
-end
-
-function M.set_interval(interval, callback)
-  return vim.fn.timer_start(interval, function()
-    callback()
-  end, { ['repeat'] = -1, })
-end
-
-function M.clear_interval(timer)
-  pcall(vim.fn.timer_stop, timer)
-end
-
-function M.set_interval_timeout(name, interval, timeout, callback, callback_done)
-  vim.g[name] = M.set_interval(interval, function()
-    if callback() then
-      M.clear_interval(vim.g[name])
-      vim.g[name] = 0
-      if callback_done then
-        callback_done()
-      end
-    end
-  end)
-  M.set_timeout(timeout, function()
-    if vim.g[name] > 0 then
-      vim.notify(M.format('Time Out[%s]: %d', name, timeout))
-      M.clear_interval(vim.g[name])
-    end
-  end)
 end
 
 function M.run_py_get_cmd(file, params)
@@ -570,6 +538,40 @@ function M.prev_hunk()
     vim.cmd [[call feedkeys("[c")]]
   end
   require 'gitsigns'.prev_hunk()
+end
+
+function M.set_timeout(timeout, callback)
+  return vim.fn.timer_start(timeout, function()
+    callback()
+  end, { ['repeat'] = 1, })
+end
+
+function M.set_interval(interval, callback)
+  return vim.fn.timer_start(interval, function()
+    callback()
+  end, { ['repeat'] = -1, })
+end
+
+function M.clear_interval(timer)
+  pcall(vim.fn.timer_stop, timer)
+end
+
+function M.set_interval_timeout(name, interval, timeout, callback, callback_done)
+  vim.g[name] = M.set_interval(interval, function()
+    if callback() then
+      M.clear_interval(vim.g[name])
+      vim.g[name] = 0
+      if callback_done then
+        callback_done()
+      end
+    end
+  end)
+  M.set_timeout(timeout, function()
+    if vim.g[name] > 0 then
+      vim.notify(M.format('Time Out[%s]: %d', name, timeout))
+      M.clear_interval(vim.g[name])
+    end
+  end)
 end
 
 function M.git_add_commit_push_do(commit, dir)
