@@ -275,11 +275,19 @@ function M.delete_folder(dir)
   }
 end
 
-function M.run_py_get_cmd(file, params)
+function M.to_table(any)
+  if type(any) ~= 'table' then
+    return { any }
+  end
+  return any
+end
+
+function M.run_py_get_cmd(file, params, just)
+  params = M.to_table(params)
   local cmd = file
   if #params > 0 then
     local params_txt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
-    if M.run_cmd_py == file then
+    if M.run_cmd_py == file and not just then
       local out_msg_txt = M.format('%s\\out-msg-%s.txt', DpTemp, ParamsCnt)
       local out_sta_txt = M.format('%s\\out-sta-%s.txt', DpTemp, ParamsCnt)
       vim.fn.delete(out_sta_txt, 'rf')
@@ -334,6 +342,32 @@ function M.run_silent(cmd_params)
   M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'silent', })
 end
 
+function M.just_run_in_term(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'term', })
+end
+
+function M.just_run_outside(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'outside', })
+end
+
+function M.just_run_inside(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'inside', })
+end
+
+function M.just_run_inside_silent(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'inside_silent', })
+end
+
+function M.just_run_outside_pause(cmd_params)
+  M.put(cmd_params, '&&')
+  M.put(cmd_params, 'pause')
+  M.just_run_outside(cmd_params)
+end
+
+function M.just_run_silent(cmd_params)
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'silent', })
+end
+
 function M.clone_if_not_exist(dir, repo, root)
   if not root then
     root = Home
@@ -343,7 +377,7 @@ function M.clone_if_not_exist(dir, repo, root)
   end
   local dir2 = M.join_path(root, dir)
   if not M.is_file_exists(dir2) then
-    M.start_do(M.run_py_get_cmd(M.get_py '01-git-clone.py', { root, Name, repo, dir, }), { way = 'silent', })
+    M.run_silent { 'cd', '/d', root, '&&', 'git', 'clone', '--recurse-submodules', '-j', '8', M.format('git@github.com:%s/%s', Name, repo), dir, }
   end
 end
 
@@ -610,6 +644,10 @@ end
 
 function M.git_reset_buffer()
   require 'gitsigns'.reset_buffer()
+end
+
+function M.git_lazy()
+  M.just_run_outside('lazygit')
 end
 
 M.clone_if_not_exist 'org'
