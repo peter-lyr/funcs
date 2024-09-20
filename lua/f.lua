@@ -604,6 +604,14 @@ function M.git_add_commit_push(commit, dir)
   end
 end
 
+function M.reset_hunk()
+  require 'gitsigns'.reset_hunk()
+end
+
+function M.git_reset_buffer()
+  require 'gitsigns'.reset_buffer()
+end
+
 M.clone_if_not_exist 'org'
 
 return M
