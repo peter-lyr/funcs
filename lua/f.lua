@@ -218,6 +218,7 @@ function M.printf(...)
 end
 
 M.run_cmd_py = M.get_py '02-run-cmd.py'
+M.git_pull_recursive_py = M.get_py '02-git-pull-recursive.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -659,6 +660,15 @@ function M.copy_multiple_filenames()
   vim.fn.setreg('e', vim.fn.expand '<cword>')
   vim.fn.setreg('r', vim.fn.expand '<cWORD>')
   vim.fn.setreg('i', vim.fn.trim(vim.fn.getline '.'))
+end
+
+function M.git_pull_recursive_do(repo)
+  M.start_do(M.run_py_get_cmd(M.git_pull_recursive_py, { repo, }), { way = 'silent', })
+end
+
+function M.git_pull_recursive()
+  M.git_pull_recursive_do(Org)
+  M.git_pull_recursive_do(StdConfig)
 end
 
 M.clone_if_not_exist 'org'
