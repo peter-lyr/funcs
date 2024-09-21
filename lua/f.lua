@@ -277,7 +277,7 @@ end
 
 function M.to_table(any)
   if type(any) ~= 'table' then
-    return { any }
+    return { any, }
   end
   return any
 end
@@ -627,6 +627,7 @@ function M.git_add_commit_push(commit, dir)
     'echo.', '&&',
     'git', 'status',
   }
+  M.copy_multiple_filenames()
   if not M.is(commit) then
     vim.ui.input({ prompt = 'commit info: ', }, function(c)
       if c then
@@ -647,7 +648,7 @@ function M.git_reset_buffer()
 end
 
 function M.git_lazy()
-  M.just_run_outside('lazygit')
+  M.just_run_outside 'lazygit'
 end
 
 function M.copy_multiple_filenames()
@@ -655,8 +656,9 @@ function M.copy_multiple_filenames()
   vim.fn.setreg('a', M.get_cur_file())
   vim.fn.setreg('b', vim.fn.bufname())
   vim.fn.setreg('t', vim.fn.fnamemodify(vim.fn.bufname(), ':t'))
-  vim.fn.setreg('e', vim.fn.expand('<cword>'))
-  vim.fn.setreg('r', vim.fn.expand('<cWORD>'))
+  vim.fn.setreg('e', vim.fn.expand '<cword>')
+  vim.fn.setreg('r', vim.fn.expand '<cWORD>')
+  vim.fn.setreg('i', vim.fn.trim(vim.fn.getline '.'))
 end
 
 M.clone_if_not_exist 'org'
