@@ -218,7 +218,7 @@ function M.printf(...)
 end
 
 M.run_cmd_py = M.get_py '02-run-cmd.py'
-M.git_pull_recursive_py = M.get_py '02-git-pull-recursive.py'
+M.git_pull_recursive_py = M.get_py '03-git-pull-recursive.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -663,7 +663,7 @@ function M.copy_multiple_filenames()
 end
 
 function M.git_pull_recursive_do(repo)
-  M.start_do(M.run_py_get_cmd(M.git_pull_recursive_py, { repo, }), { way = 'silent', })
+  M.run_silent { M.git_pull_recursive_py, repo, }
 end
 
 function M.git_pull_recursive()
