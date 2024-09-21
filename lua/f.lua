@@ -650,6 +650,15 @@ function M.git_lazy()
   M.just_run_outside('lazygit')
 end
 
+function M.copy_multiple_filenames()
+  vim.fn.setreg('w', vim.loop.cwd())
+  vim.fn.setreg('a', M.get_cur_file())
+  vim.fn.setreg('b', vim.fn.bufname())
+  vim.fn.setreg('t', vim.fn.fnamemodify(vim.fn.bufname(), ':t'))
+  vim.fn.setreg('e', vim.fn.expand('<cword>'))
+  vim.fn.setreg('r', vim.fn.expand('<cWORD>'))
+end
+
 M.clone_if_not_exist 'org'
 
 return M
