@@ -499,10 +499,16 @@ function M.lazy_map(tbls)
 end
 
 function M.get_parent(file)
+  if not file then
+    file = M.get_cur_file()
+  end
   return M.new_file(file):parent().filename
 end
 
 function M.get_file_parent(file)
+  if not file then
+    file = M.get_cur_file()
+  end
   if M.is_dir(file) then
     return file
   end
