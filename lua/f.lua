@@ -785,7 +785,6 @@ function M.git_create_submodule(root, path, public)
   if not M.is(path) then
     vim.ui.input({ prompt = M.format('Create Submodule in %s: ', root), }, function(p)
       if p then
-        M.delete_folder(M.join_path(root, p))
         M.git_create_submodule_do(root, p, public)
       end
     end)
