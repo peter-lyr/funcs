@@ -219,6 +219,7 @@ end
 
 M.run_cmd_py = M.get_py '02-run-cmd.py'
 M.git_pull_recursive_py = M.get_py '03-git-pull-recursive.py'
+M.git_push_recursive_py = M.get_py '04-git-push-recursive.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -495,6 +496,10 @@ function M.lazy_map(tbls)
   end
 end
 
+function M.get_parent(file)
+  return M.new_file(file):parent().filename
+end
+
 function M.get_file_parent(file)
   if M.is_dir(file) then
     return file
@@ -679,6 +684,29 @@ function M.git_add_commit_push(commit, dir)
   end
 end
 
+--- function M.get_all_dirs_with_dot_git(file)
+---   if not file then
+---     file = M.get_cur_file()
+---   end
+---   local parent = M.get_parent(file)
+---   local dirs = {}
+---   while 1 do
+---     local dot_git = M.join_path(parent, '.git')
+---     if M.is_file_exists(dot_git) then
+---       M.put(dirs, parent)
+---     end
+---     local temp = M.get_parent(parent)
+---     if parent == temp then
+---       break
+---     end
+---     parent = temp
+---   end
+--- end
+---
+--- function M.git_add_commit_push_all(commit, dir)
+---   M.get_all_dirs_with_dot_git()
+--- end
+
 function M.reset_hunk()
   require 'gitsigns'.reset_hunk()
 end
@@ -708,6 +736,39 @@ end
 function M.git_pull_recursive()
   M.git_pull_recursive_do(Org)
   M.git_pull_recursive_do(StdConfig)
+end
+
+function M.git_push_recursive_do(commit, file)
+  M.run_outside_pause { M.git_push_recursive_py, commit, file, }
+end
+
+function M.git_push_recursive(commit, file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  M.run_silent {
+    'cd', '/d', M.get_file_parent(file), '&&',
+    'echo', M.get_file_parent(file), '&&',
+    'echo.', '&&',
+    'git', 'status',
+  }
+  M.copy_multiple_filenames()
+  if not M.is(commit) then
+    vim.ui.input({ prompt = 'commit info: ', }, function(c)
+      if c then
+        M.git_push_recursive_do(c, file)
+      end
+    end)
+  else
+    M.git_push_recursive_do(commit, file)
+  end
+end
+
+function M.git_pull()
+  M.run_silent {
+    'cd', '/d', M.get_cwd(), '&&',
+    'git', 'pull',
+  }
 end
 
 M.clone_if_not_exist 'org'
