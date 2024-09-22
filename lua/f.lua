@@ -188,7 +188,7 @@ end
 
 function M.join_path(dir, ...)
   if ... then
-    return M.new_file(dir):joinpath(...).filename
+    return M.rep(M.new_file(dir):joinpath(...).filename)
   end
   return dir
 end
@@ -220,6 +220,8 @@ end
 M.run_cmd_py = M.get_py '02-run-cmd.py'
 M.git_pull_recursive_py = M.get_py '03-git-pull-recursive.py'
 M.git_push_recursive_py = M.get_py '04-git-push-recursive.py'
+M.git_create_submodule_py = M.get_py '05-git-create-submodule.py'
+M.git_repo_list_3digit__py = M.get_py '06-git-repo-list-3digit-.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -762,6 +764,36 @@ function M.git_push_recursive(commit, file)
   else
     M.git_push_recursive_do(commit, file)
   end
+end
+
+function M.git_create_submodule_do(root, path, public)
+  M.run_silent { M.git_create_submodule_py, root, path, public, }
+end
+
+function M.git_create_submodule(root, path, public)
+  if not root then
+    root = M.get_cwd()
+  end
+  M.run_silent { M.git_repo_list_3digit__py, root, }
+  M.copy_multiple_filenames()
+  if not M.is(path) then
+    vim.ui.input({ prompt = M.format('Create Submodule in %s: ', root), }, function(p)
+      if p then
+        M.delete_folder(M.join_path(root, p))
+        M.git_create_submodule_do(root, p, public)
+      end
+    end)
+  else
+    M.git_create_submodule_do(root, path, public)
+  end
+end
+
+function M.git_create_submodule_public(root, path)
+  M.git_create_submodule(root, path, 'public')
+end
+
+function M.git_create_submodule_private(root, path)
+  M.git_create_submodule(root, path, 'private')
 end
 
 function M.git_pull()
