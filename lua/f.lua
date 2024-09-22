@@ -283,12 +283,12 @@ function M.to_table(any)
   return any
 end
 
-function M.run_py_get_cmd(file, params, just)
+function M.run_py_get_cmd(file, params, opts)
   params = M.to_table(params)
   local cmd = file
   if #params > 0 then
     local params_txt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
-    if M.run_cmd_py == file and not just then
+    if M.run_cmd_py == file and not opts.just then
       local out_msg_txt = M.format('%s\\out-msg-%s.txt', DpTemp, ParamsCnt)
       local out_sta_txt = M.format('%s\\out-sta-%s.txt', DpTemp, ParamsCnt)
       vim.fn.delete(out_sta_txt, 'rf')
@@ -312,61 +312,100 @@ function M.run_py_get_cmd(file, params, just)
     end
     M.write_lines_to_file(params, params_txt)
     cmd = M.format('%s "%s"', cmd, params_txt)
+    if opts.no_output then
+      cmd = M.format('%s "no_output"', cmd)
+    end
     ParamsCnt = ParamsCnt + 1
   end
   return cmd
 end
 
-function M.run_in_term(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'term', })
+function M.run_in_term(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { no_output = no_output, }), { way = 'term', })
 end
 
-function M.run_outside(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'outside', })
+function M.run_outside(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { no_output = no_output, }), { way = 'outside', })
 end
 
-function M.run_inside(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'inside', })
+function M.run_inside(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { no_output = no_output, }), { way = 'inside', })
 end
 
-function M.run_inside_silent(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'inside_silent', })
+function M.run_inside_silent(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { no_output = no_output, }), { way = 'inside_silent', })
 end
 
-function M.run_outside_pause(cmd_params)
+function M.run_outside_pause(cmd_params, opts)
   M.put(cmd_params, '&&')
   M.put(cmd_params, 'pause')
-  M.run_outside(cmd_params)
+  M.run_outside(cmd_params, opts)
 end
 
-function M.run_silent(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params), { way = 'silent', })
+function M.run_silent(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { no_output = no_output, }), { way = 'silent', })
 end
 
-function M.just_run_in_term(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'term', })
+function M.just_run_in_term(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { just = true, no_output = no_output, }), { way = 'term', })
 end
 
-function M.just_run_outside(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'outside', })
+function M.just_run_outside(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { just = true, no_output = no_output, }), { way = 'outside', })
 end
 
-function M.just_run_inside(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'inside', })
+function M.just_run_inside(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { just = true, no_output = no_output, }), { way = 'inside', })
 end
 
-function M.just_run_inside_silent(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'inside_silent', })
+function M.just_run_inside_silent(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { just = true, no_output = no_output, }), { way = 'inside_silent', })
 end
 
-function M.just_run_outside_pause(cmd_params)
+function M.just_run_outside_pause(cmd_params, opts)
   M.put(cmd_params, '&&')
   M.put(cmd_params, 'pause')
-  M.just_run_outside(cmd_params)
+  M.just_run_outside(cmd_params, opts)
 end
 
-function M.just_run_silent(cmd_params)
-  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, 'just'), { way = 'silent', })
+function M.just_run_silent(cmd_params, opts)
+  local no_output = opts and opts.no_output
+  M.start_do(M.run_py_get_cmd(M.run_cmd_py, cmd_params, { just = true, no_output = no_output, }), { way = 'silent', })
+end
+
+function M.just_run_in_term_nooutput(cmd_params)
+  M.just_run_in_term(cmd_params, { just = true, no_output = true, })
+end
+
+function M.just_run_outside_nooutput(cmd_params)
+  M.just_run_outside(cmd_params, { just = true, no_output = true, })
+end
+
+function M.just_run_inside_nooutput(cmd_params)
+  M.just_run_inside(cmd_params, { just = true, no_output = true, })
+end
+
+function M.just_run_inside_silent_nooutput(cmd_params)
+  M.just_run_inside_silent(cmd_params, { just = true, no_output = true, })
+end
+
+function M.just_run_outside_pause_nooutput(cmd_params)
+  M.put(cmd_params, '&&')
+  M.put(cmd_params, 'pause')
+  M.just_run_outside_pause(cmd_params, { just = true, no_output = true, })
+end
+
+function M.just_run_silent_nooutput(cmd_params)
+  M.just_run_silent(cmd_params, { just = true, no_output = true, })
 end
 
 function M.clone_if_not_exist(dir, repo, root)
