@@ -772,8 +772,11 @@ function M.git_push_recursive(commit, file)
   end
 end
 
-function M.git_create_submodule_do(root, path, public)
-  M.run_silent { M.git_create_submodule_py, root, path, public, }
+function M.git_create_submodule_do(root, path, public, name)
+  if not name then
+    name = Name
+  end
+  M.run_silent { M.git_create_submodule_py, root, path, public, name, }
 end
 
 function M.git_create_submodule(root, path, public)
