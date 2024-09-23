@@ -310,7 +310,7 @@ function M.run_py_get_cmd(file, params, opts)
         end
         vim.notify(M.format('Successful: number %d\n%s\n%s\n%s',
           ParamsCnt, temp, temp2,
-          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')))
+          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), nil, { timeout = 1000 * 100, })
       end)
     end
     M.write_lines_to_file(params, params_txt)
