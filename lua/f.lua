@@ -310,7 +310,7 @@ function M.run_py_get_cmd(file, params, opts)
         end
         vim.notify(M.format('Successful: number %d\n%s\n%s\n%s',
           ParamsCnt, temp, temp2,
-          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')))
+          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), nil, { timeout = 1000 * 100, })
       end)
     end
     M.write_lines_to_file(params, params_txt)
@@ -543,6 +543,7 @@ function M.get_cur_file()
 end
 
 function M.project_cd()
+  vim.cmd 'Lazy load vim-projectroot'
   vim.cmd [[
     try
       if &ft != 'help'
@@ -672,6 +673,7 @@ end
 
 function M.git_add_commit_push(commit, dir)
   if not dir then
+    M.project_cd()
     dir = M.get_cwd()
   end
   M.run_silent {
@@ -745,7 +747,7 @@ function M.git_pull_recursive()
 end
 
 function M.git_push_recursive_do(commit, file)
-  M.run_silent { M.git_push_recursive_py, commit, file, }
+  M.start_do(M.run_py_get_cmd(M.git_push_recursive_py, { commit, file, }), { way = 'silent', })
 end
 
 function M.git_push_recursive(commit, file)
@@ -777,6 +779,7 @@ end
 
 function M.git_create_submodule(root, path, public)
   if not root then
+    M.project_cd()
     root = M.get_cwd()
   end
   M.run_silent { M.git_repo_list_3digit__py, root, }
@@ -801,10 +804,20 @@ function M.git_create_submodule_private(root, path)
 end
 
 function M.git_pull()
+  M.project_cd()
   M.run_silent {
     'cd', '/d', M.get_cwd(), '&&',
     'git', 'pull',
   }
+end
+
+function M.notifications_buffer()
+  local lines = vim.fn.split(vim.fn.trim(vim.fn.execute 'Notifications'), '\n')
+  if #lines == 0 then
+    return
+  end
+  vim.cmd 'wincmd n'
+  vim.fn.append(vim.fn.line '$', lines)
 end
 
 M.clone_if_not_exist 'org'
