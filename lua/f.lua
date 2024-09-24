@@ -749,7 +749,7 @@ function M.git_pull_recursive()
 end
 
 function M.git_push_recursive_do(commit, file)
-  M.run_silent { M.git_push_recursive_py, commit, file, }
+  M.start_do(M.run_py_get_cmd(M.git_push_recursive_py, {commit, file}, { no_output = no_output, }), { way = 'silent', })
 end
 
 function M.git_push_recursive(commit, file)
