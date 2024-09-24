@@ -813,6 +813,15 @@ function M.git_pull()
   }
 end
 
+function M.notifications_buffer()
+  local lines = vim.fn.split(vim.fn.trim(vim.fn.execute 'Notifications'), '\n')
+  if #lines == 0 then
+    return
+  end
+  vim.cmd 'wincmd n'
+  vim.fn.append(vim.fn.line '$', lines)
+end
+
 M.clone_if_not_exist 'org'
 
 return M
