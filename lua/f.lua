@@ -672,6 +672,7 @@ end
 
 function M.git_add_commit_push(commit, dir)
   if not dir then
+    vim.cmd 'ProjectRootCD'
     dir = M.get_cwd()
   end
   M.run_silent {
@@ -779,6 +780,7 @@ end
 
 function M.git_create_submodule(root, path, public)
   if not root then
+    vim.cmd 'ProjectRootCD'
     root = M.get_cwd()
   end
   M.run_silent { M.git_repo_list_3digit__py, root, }
@@ -803,6 +805,7 @@ function M.git_create_submodule_private(root, path)
 end
 
 function M.git_pull()
+  vim.cmd 'ProjectRootCD'
   M.run_silent {
     'cd', '/d', M.get_cwd(), '&&',
     'git', 'pull',
