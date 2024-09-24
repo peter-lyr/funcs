@@ -676,8 +676,6 @@ function M.git_add_commit_push(commit, dir)
   end
   M.run_silent {
     'cd', '/d', dir, '&&',
-    'echo', dir, '&&',
-    'echo.', '&&',
     'git', 'status',
   }
   M.copy_multiple_filenames()
@@ -756,8 +754,6 @@ function M.git_push_recursive(commit, file)
   end
   M.run_silent {
     'cd', '/d', M.get_file_parent(file), '&&',
-    'echo', M.get_file_parent(file), '&&',
-    'echo.', '&&',
     'git', 'status',
   }
   M.copy_multiple_filenames()
