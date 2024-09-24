@@ -291,7 +291,7 @@ function M.run_py_get_cmd(file, params, opts)
   local cmd = file
   if #params > 0 then
     local params_txt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
-    if M.run_cmd_py == file and not opts.just then
+    if M.run_cmd_py == file and (not opts or not opts.just) then
       local out_msg_txt = M.format('%s\\out-msg-%s.txt', DpTemp, ParamsCnt)
       local out_sta_txt = M.format('%s\\out-sta-%s.txt', DpTemp, ParamsCnt)
       vim.fn.delete(out_sta_txt, 'rf')
@@ -315,7 +315,7 @@ function M.run_py_get_cmd(file, params, opts)
     end
     M.write_lines_to_file(params, params_txt)
     cmd = M.format('%s "%s"', cmd, params_txt)
-    if opts.no_output then
+    if opts and opts.no_output then
       cmd = M.format('%s "no_output"', cmd)
     end
     ParamsCnt = ParamsCnt + 1
