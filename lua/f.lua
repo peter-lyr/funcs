@@ -822,6 +822,46 @@ function M.notifications_buffer()
   vim.fn.append(vim.fn.line '$', lines)
 end
 
+function M.get_short(content, max, sep)
+  if not sep then
+    sep = '…'
+  end
+  if not max then
+    max = vim.fn.floor(vim.o.columns * 3 / 5)
+  end
+  if #content > (max * 2 + 1) then
+    local s1 = ''
+    local s2 = ''
+    for i = (max * 2 - 1), 0, -1 do
+      s2 = string.sub(content, #content - i, #content)
+      if vim.fn.strdisplaywidth(s2) <= max then
+        break
+      end
+    end
+    for i = (max * 2 - 1), 0, -1 do
+      s1 = string.sub(content, 1, i)
+      if vim.fn.strdisplaywidth(s1) <= max then
+        break
+      end
+    end
+    return s1 .. sep .. s2
+  end
+  return content
+end
+
+function M.yank_clipbaord(text)
+  vim.fn.setreg('+', text)
+  M.echo('Copied to Clipboard: %s', M.get_short(text))
+end
+
+function M.yank_clipbaord_file_full()
+  M.yank_clipbaord(M.get_cur_file())
+end
+
+function M.yank_clipbaord_cwd()
+  M.yank_clipbaord(M.get_cwd())
+end
+
 M.clone_if_not_exist 'org'
 
 return M
