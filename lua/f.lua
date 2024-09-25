@@ -296,6 +296,7 @@ function M.run_py_get_cmd(file, params, opts)
       local out_sta_txt = M.format('%s\\%s-run-sta.txt', DpTemp, ParamsCnt)
       vim.fn.delete(out_sta_txt, 'rf')
       local name = 'run-' .. tostring(ParamsCnt)
+      local temp_cnt = ParamsCnt
       M.set_interval_timeout(name, 500, 1000 * 60, function()
         if M.is_file(out_sta_txt) then
           return true
@@ -309,7 +310,7 @@ function M.run_py_get_cmd(file, params, opts)
           temp2 = temp2 .. '='
         end
         vim.notify(M.format('Successful: number %d\n%s\n%s\n%s',
-          ParamsCnt, temp, temp2,
+          temp_cnt, temp, temp2,
           vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), nil, { timeout = 1000 * 100, })
       end)
     end
