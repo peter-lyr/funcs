@@ -747,7 +747,9 @@ function M.git_pull_recursive()
 end
 
 function M.git_push_recursive_do(commit, file)
-  M.start_do(M.run_py_get_cmd(M.git_push_recursive_py, { commit, file, }), { way = 'silent', })
+  local commit_file = DpTemp .. '\\commit.txt'
+  M.write_lines_to_file({ commit, }, commit_file)
+  M.run_silent { M.git_push_recursive_py, commit_file, file, }
 end
 
 function M.git_push_recursive(commit, file)
