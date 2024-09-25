@@ -290,12 +290,12 @@ function M.run_py_get_cmd(file, params, opts)
   params = M.to_table(params)
   local cmd = file
   if #params > 0 then
-    local params_txt = M.format('%s\\params-%s.txt', DpTemp, ParamsCnt)
+    local params_txt = M.format('%s\\%d-run-params.txt', DpTemp, ParamsCnt)
     if M.run_cmd_py == file and (not opts or not opts.just) then
-      local out_msg_txt = M.format('%s\\out-msg-%s.txt', DpTemp, ParamsCnt)
-      local out_sta_txt = M.format('%s\\out-sta-%s.txt', DpTemp, ParamsCnt)
+      local out_msg_txt = M.format('%s\\%s-run-out.txt', DpTemp, ParamsCnt)
+      local out_sta_txt = M.format('%s\\%s-run-sta.txt', DpTemp, ParamsCnt)
       vim.fn.delete(out_sta_txt, 'rf')
-      local name = 'params-' .. tostring(ParamsCnt)
+      local name = 'run-' .. tostring(ParamsCnt)
       M.set_interval_timeout(name, 500, 1000 * 60, function()
         if M.is_file(out_sta_txt) then
           return true
