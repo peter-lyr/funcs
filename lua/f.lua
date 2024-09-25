@@ -858,6 +858,18 @@ function M.yank_clipbaord_file_full()
   M.yank_clipbaord(M.get_cur_file())
 end
 
+function M.yank_clipbaord_file_bufname()
+  M.yank_clipbaord(vim.fn.bufname())
+end
+
+function M.yank_clipbaord_file_bufname_head()
+  M.yank_clipbaord(vim.fn.fnamemodify(vim.fn.bufname(), ':h'))
+end
+
+function M.yank_clipbaord_file_bufname_tail()
+  M.yank_clipbaord(vim.fn.fnamemodify(vim.fn.bufname(), ':t'))
+end
+
 function M.yank_clipbaord_cwd()
   M.yank_clipbaord(M.get_cwd())
 end
