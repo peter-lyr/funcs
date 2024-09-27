@@ -924,6 +924,22 @@ function M.yank_clipbaord_cwd()
   M.yank_clipbaord(M.get_cwd())
 end
 
+function M.quit_nvim_qt_later()
+  M.set_timeout(10, function()
+    vim.cmd 'qa!'
+  end)
+end
+
+function M.start_nvim_qt(file)
+  file = file and file or ''
+  M.cmd('silent !start nvim-qt.exe %s', file)
+end
+
+function M.restart_nvim_qt(file)
+  M.start_nvim_qt(file)
+  M.quit_nvim_qt_later()
+end
+
 M.clone_if_not_exist 'org'
 
 return M
