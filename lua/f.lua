@@ -153,7 +153,40 @@ function M.edit(file)
 end
 
 function M.jump_or_split(file)
-  M.edit(file)
+  file = M.rep(file)
+  local file_proj = M.project_get(file)
+  local jumped = nil
+  for winnr = vim.fn.winnr '$', 1, -1 do
+    local bufnr = vim.fn.winbufnr(winnr)
+    local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+    if M.is_file_exists(fname) then
+      if file == fname then
+        vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+        jumped = 1
+        break
+      end
+    end
+  end
+  if not jumped then
+    for winnr = vim.fn.winnr '$', 1, -1 do
+      local bufnr = vim.fn.winbufnr(winnr)
+      local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+      if M.is_file_exists(fname) then
+        local proj = M.project_get(fname)
+        if not M.is(file_proj) or M.is(proj) and file_proj == proj then
+          vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+          jumped = 1
+          break
+        end
+      end
+    end
+  end
+  if not jumped then
+    if M.is(M.get_cur_file()) or vim.api.nvim_get_option_value('modified', { buf = vim.fn.bufnr(), }) == true then
+      vim.cmd 'wincmd s'
+    end
+  end
+  M.cmd('e %s', file)
 end
 
 function M.rep(content)
@@ -555,6 +588,14 @@ function M.project_cd()
   ]]
 end
 
+function M.project_get(file)
+  vim.cmd 'Lazy load vim-projectroot'
+  if file then
+    return M.rep(vim.fn['ProjectRootGet'](file))
+  end
+  return M.rep(vim.fn['ProjectRootGet']())
+end
+
 function M.get_cwd()
   return vim.loop.cwd()
 end
@@ -588,12 +629,12 @@ function M.get_cur_proj_dirs(file)
   end
   local parents = M.get_file_parents(file)
   local proj_dirs = {}
-  local proj = vim.fn['ProjectRootGet'](file)
+  local proj = M.project_get(file)
   if M.is(proj) then
     M.put(proj_dirs, proj)
   end
   for _, parent in ipairs(parents) do
-    proj = vim.fn['ProjectRootGet'](parent)
+    proj = M.project_get(parent)
     if M.is(proj) and not M.is_in_tbl(proj, proj_dirs) then
       M.put(proj_dirs, proj)
     end
