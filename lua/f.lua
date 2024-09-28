@@ -330,7 +330,7 @@ function M.run_py_get_cmd(file, params, opts)
       vim.fn.delete(out_sta_txt, 'rf')
       local name = 'run-' .. tostring(ParamsCnt)
       local temp_cnt = ParamsCnt
-      M.set_interval_timeout(name, 500, 1000 * 60, function()
+      M.set_interval_timeout(name, 500, 1000 * 160, function()
         if M.is_file(out_sta_txt) then
           return true
         end
