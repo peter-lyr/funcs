@@ -855,11 +855,14 @@ function M.git_pull()
   }
 end
 
-function M.set_myft(bnr)
+function M.set_myft(bnr, ft)
   if not bnr then
     bnr = vim.fn.bufnr()
   end
-  vim.api.nvim_set_option_value('filetype', 'myft', { buf = bnr, })
+  if not ft then
+    ft = 'myft'
+  end
+  vim.api.nvim_set_option_value('filetype', ft, { buf = bnr, })
 end
 
 function M.execute_out_buffer(cmd)
