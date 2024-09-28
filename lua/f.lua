@@ -866,11 +866,11 @@ function M.execute_out_buffer(cmd)
 end
 
 function M.notifications_buffer()
-  M.execute_out_buffer('Notifications')
+  M.execute_out_buffer 'Notifications'
 end
 
 function M.message_buffer()
-  M.execute_out_buffer('message')
+  M.execute_out_buffer 'message'
 end
 
 function M.get_short(content, max, sep)
