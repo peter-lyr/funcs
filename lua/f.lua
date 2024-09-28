@@ -154,6 +154,11 @@ end
 
 function M.jump_or_split(file)
   file = M.rep(file)
+  if M.is_dir(file) then
+    vim.cmd 'wincmd s'
+    M.cmd('e %s', file)
+    return
+  end
   local file_proj = M.project_get(file)
   local jumped = nil
   for winnr = vim.fn.winnr '$', 1, -1 do
@@ -185,8 +190,6 @@ function M.jump_or_split(file)
     if M.is(M.get_cur_file()) or vim.api.nvim_get_option_value('modified', { buf = vim.fn.bufnr(), }) == true then
       vim.cmd 'wincmd s'
     end
-  elseif M.is_dir(file) then
-    vim.cmd 'wincmd s'
   end
   M.cmd('e %s', file)
 end
