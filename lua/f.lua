@@ -862,6 +862,7 @@ function M.execute_out_buffer(cmd)
   end
   vim.cmd 'wincmd n'
   vim.fn.append(vim.fn.line '$', lines)
+  vim.api.nvim_set_option_value('filetype', 'myft', { buf = vim.fn.bufnr(), })
 end
 
 function M.notifications_buffer()
