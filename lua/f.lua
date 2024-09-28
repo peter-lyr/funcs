@@ -855,6 +855,13 @@ function M.git_pull()
   }
 end
 
+function M.set_myft(bnr)
+  if not bnr then
+    bnr = vim.fn.bufnr()
+  end
+  vim.api.nvim_set_option_value('filetype', 'myft', { buf = bnr, })
+end
+
 function M.execute_out_buffer(cmd)
   local lines = vim.fn.split(vim.fn.trim(vim.fn.execute(cmd)), '\n')
   if #lines == 0 then
@@ -862,7 +869,7 @@ function M.execute_out_buffer(cmd)
   end
   vim.cmd 'wincmd n'
   vim.fn.append(vim.fn.line '$', lines)
-  vim.api.nvim_set_option_value('filetype', 'myft', { buf = vim.fn.bufnr(), })
+  M.set_myft()
 end
 
 function M.notifications_buffer()
