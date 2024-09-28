@@ -962,8 +962,8 @@ function M.restart_nvim_qt(file)
 end
 
 function M.refresh()
-  vim.cmd 'e!'
   M.project_cd()
+  vim.cmd 'e!'
 end
 
 M.clone_if_not_exist 'org'
