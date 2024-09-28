@@ -185,6 +185,8 @@ function M.jump_or_split(file)
     if M.is(M.get_cur_file()) or vim.api.nvim_get_option_value('modified', { buf = vim.fn.bufnr(), }) == true then
       vim.cmd 'wincmd s'
     end
+  elseif M.is_dir(file) then
+    vim.cmd 'wincmd s'
   end
   M.cmd('e %s', file)
 end
