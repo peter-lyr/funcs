@@ -855,13 +855,21 @@ function M.git_pull()
   }
 end
 
-function M.notifications_buffer()
-  local lines = vim.fn.split(vim.fn.trim(vim.fn.execute 'Notifications'), '\n')
+function M.execute_out_buffer(cmd)
+  local lines = vim.fn.split(vim.fn.trim(vim.fn.execute(cmd)), '\n')
   if #lines == 0 then
     return
   end
   vim.cmd 'wincmd n'
   vim.fn.append(vim.fn.line '$', lines)
+end
+
+function M.notifications_buffer()
+  M.execute_out_buffer('Notifications')
+end
+
+function M.message_buffer()
+  M.execute_out_buffer('message')
 end
 
 function M.get_short(content, max, sep)
