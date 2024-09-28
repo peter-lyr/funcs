@@ -779,13 +779,13 @@ function M.copy_multiple_filenames()
   vim.fn.setreg('i', vim.fn.trim(vim.fn.getline '.'))
 end
 
-function M.git_pull_recursive_do(repo)
-  M.run_silent { M.git_pull_recursive_py, repo, }
+function M.git_pull_recursive_do(repo, clone)
+  M.run_silent { M.git_pull_recursive_py, repo, clone, }
 end
 
-function M.git_pull_recursive()
-  M.git_pull_recursive_do(Org)
-  M.git_pull_recursive_do(StdConfig)
+function M.git_pull_recursive(clone)
+  M.git_pull_recursive_do(Org, clone)
+  M.git_pull_recursive_do(StdConfig, clone)
 end
 
 function M.git_push_recursive_do(commit, file)
