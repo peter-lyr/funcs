@@ -147,7 +147,7 @@ end
 
 function M.edit(file)
   if M.is_dir(file) then
-    vim.cmd 'Lazy load telescope'
+    M.lazy_load 'telescope'
   end
   M.cmd('e %s', file)
 end
@@ -155,7 +155,7 @@ end
 function M.jump_or_split(file)
   file = M.rep(file)
   if M.is_dir(file) then
-    vim.cmd 'Lazy load nvim-tree.lua'
+    M.lazy_load 'nvim-tree.lua'
     vim.cmd 'wincmd s'
     M.cmd('e %s', file)
     return
@@ -583,7 +583,7 @@ function M.get_cur_file()
 end
 
 function M.project_cd()
-  vim.cmd 'Lazy load vim-projectroot'
+  M.lazy_load 'vim-projectroot'
   vim.cmd [[
     try
       if &ft != 'help'
@@ -595,7 +595,7 @@ function M.project_cd()
 end
 
 function M.project_get(file)
-  vim.cmd 'Lazy load vim-projectroot'
+  M.lazy_load 'vim-projectroot'
   if file then
     return M.rep(vim.fn['ProjectRootGet'](file))
   end
@@ -881,7 +881,12 @@ function M.execute_out_buffer(cmd)
   M.set_myft()
 end
 
+function M.lazy_load(plugin)
+  M.cmd('Lazy load %s', plugin)
+end
+
 function M.notifications_buffer()
+  M.lazy_load 'nvim-notify'
   M.execute_out_buffer 'Notifications'
 end
 
