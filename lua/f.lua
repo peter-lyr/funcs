@@ -974,6 +974,15 @@ function M.curline_one_space()
   vim.cmd [[.s/ \+/ /g]]
 end
 
+function M.get_font_name_size()
+  local fontname
+  local fontsize
+  for k, v in string.gmatch(vim.g.GuiFont, '(.*:h)(%d+)') do
+    fontname, fontsize = k, v
+  end
+  return fontname, tonumber(fontsize)
+end
+
 M.clone_if_not_exist 'org'
 
 return M
