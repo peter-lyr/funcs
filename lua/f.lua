@@ -974,6 +974,30 @@ function M.curline_one_space()
   vim.cmd [[.s/ \+/ /g]]
 end
 
+function M.dec(to_change, min, ori)
+  to_change = to_change + 1
+  if to_change < min then
+    if ori then
+      return ori
+    else
+      return min
+    end
+  end
+  return to_change
+end
+
+function M.inc(to_change, max, ori)
+  to_change = to_change + 1
+  if to_change > max then
+    if ori then
+      return ori
+    else
+      return max
+    end
+  end
+  return to_change
+end
+
 function M.get_font_name_size()
   local fontname
   local fontsize
