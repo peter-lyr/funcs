@@ -954,6 +954,14 @@ function M.yank_clipbaord_cwd()
   M.yank_clipbaord(M.get_cwd())
 end
 
+function M.yank_clipbaord_cwd_head()
+  M.yank_clipbaord(vim.fn.fnamemodify(M.get_cwd(), ':h'))
+end
+
+function M.yank_clipbaord_cwd_tail()
+  M.yank_clipbaord(vim.fn.fnamemodify(M.get_cwd(), ':t'))
+end
+
 function M.quit_nvim_qt_later()
   M.set_timeout(10, function()
     vim.cmd 'qa!'
