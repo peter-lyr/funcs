@@ -985,7 +985,12 @@ end
 
 function M.curline_one_space()
   local temp = vim.fn.getreg '/'
-  vim.cmd [[.s/ \+/ /g]]
+  vim.cmd [[
+    try
+      .s/ \+/ /g
+    catch
+    endtry
+  ]]
   M.cmd('.s/%s', temp)
 end
 
@@ -1037,10 +1042,56 @@ function M.inc_font_size()
   M.change_font(fontname, fontsize)
 end
 
+function M.max_font_size()
+  local fontname, _ = M.get_font_name_size()
+  M.change_font(fontname, 72)
+end
+
+function M.min_font_size()
+  local fontname, _ = M.get_font_name_size()
+  M.change_font(fontname, 1)
+end
+
 function M.dec_font_size()
   local fontname, fontsize = M.get_font_name_size()
   fontsize = M.dec(fontsize, 1)
   M.change_font(fontname, fontsize)
+end
+
+function M.K_K_do(k)
+  if not k or not KK or not KK[k] then
+    return
+  end
+  KK[k .. 'Done'] = 1
+  local tbl = KK[k]
+  local exit = '<esc>'
+  local modes = {}
+  local keys = {}
+  for _k, v in pairs(tbl) do
+    if #v >= 2 then
+      local mode = v['mode']
+      _k = string.sub(_k, #_k, #_k)
+      if _k ~= '>' then
+        vim.keymap.set(mode, _k, v[1], { desc = v[2], nowait = true, })
+        M.put(modes, mode)
+        M.put(keys, _k)
+      end
+    end
+  end
+  vim.keymap.set({ 'n', 'v', }, exit, function()
+    KK[k .. 'Done'] = nil
+    for i = 1, #modes do
+      vim.keymap.del(modes[i], keys[i])
+    end
+    vim.keymap.del({ 'n', 'v', }, exit)
+  end, { desc = 'exit buffer map', })
+end
+
+function M.k_k(func, k)
+  func()
+  if not KK[k .. 'Done'] then
+    M.K_K_do(k)
+  end
 end
 
 M.clone_if_not_exist 'org'
