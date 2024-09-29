@@ -155,6 +155,7 @@ end
 function M.jump_or_split(file)
   file = M.rep(file)
   if M.is_dir(file) then
+    vim.cmd 'Lazy load nvim-tree.lua'
     vim.cmd 'wincmd s'
     M.cmd('e %s', file)
     return
