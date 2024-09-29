@@ -971,7 +971,9 @@ function M.refresh()
 end
 
 function M.curline_one_space()
+  local temp = vim.fn.getreg '/'
   vim.cmd [[.s/ \+/ /g]]
+  M.cmd('.s/%s', temp)
 end
 
 function M.dec(to_change, min, ori)
