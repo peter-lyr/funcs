@@ -975,7 +975,7 @@ function M.curline_one_space()
 end
 
 function M.dec(to_change, min, ori)
-  to_change = to_change + 1
+  to_change = to_change - 1
   if to_change < min then
     if ori then
       return ori
@@ -1001,10 +1001,31 @@ end
 function M.get_font_name_size()
   local fontname
   local fontsize
-  for k, v in string.gmatch(vim.g.GuiFont, '(.*:h)(%d+)') do
+  for k, v in string.gmatch(vim.g.GuiFont, '(.*):h(%d+)') do
     fontname, fontsize = k, v
   end
   return fontname, tonumber(fontsize)
+end
+
+function M.change_font(name, size)
+  M.cmd('GuiFont! %s:h%d', name, size)
+end
+
+function M.norm_font_size()
+  local fontname, _ = M.get_font_name_size()
+  M.change_font(fontname, 9)
+end
+
+function M.inc_font_size()
+  local fontname, fontsize = M.get_font_name_size()
+  fontsize = M.inc(fontsize, 72)
+  M.change_font(fontname, fontsize)
+end
+
+function M.dec_font_size()
+  local fontname, fontsize = M.get_font_name_size()
+  fontsize = M.dec(fontsize, 1)
+  M.change_font(fontname, fontsize)
 end
 
 M.clone_if_not_exist 'org'
