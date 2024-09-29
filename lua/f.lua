@@ -969,6 +969,10 @@ function M.refresh()
   vim.cmd 'e!'
 end
 
+function M.curline_one_space()
+  vim.cmd [[.s/ \+/ /g]]
+end
+
 M.clone_if_not_exist 'org'
 
 return M
