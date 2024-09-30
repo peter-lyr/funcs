@@ -3,8 +3,6 @@ local M = {}
 local pp = require 'plenary.path'
 
 ParamsCnt = 0
-ParamsTimers = {}
-M.win_pos = 0
 
 if vim.fn.isdirectory(Dp) == 0 then
   vim.fn.mkdir(Dp)
@@ -26,7 +24,7 @@ function M.get_win_buf_names()
   local buf_names = {}
   local win_buf_nrs = M.get_win_buf_nrs()
   for bnr in ipairs(win_buf_nrs) do
-    buf_names[#buf_names + 1] = vim.api.nvim_buf_get_name(bnr)
+    buf_names[#buf_names + 1] = M.get_file(bnr)
   end
   return buf_names
 end
@@ -152,7 +150,21 @@ function M.edit(file)
   M.cmd('e %s', file)
 end
 
+function M.is_term(file)
+  return M.in_str('term://', file) or M.in_str('term:\\\\', file)
+end
+
 function M.jump_or_split(file)
+  if not file then
+    return
+  end
+  if type(file) == 'number' then
+    if vim.api.nvim_buf_is_valid(file) == true then
+      file = M.get_file(file)
+    else
+      return
+    end
+  end
   file = M.rep(file)
   if M.is_dir(file) then
     M.lazy_load 'nvim-tree.lua'
@@ -164,19 +176,17 @@ function M.jump_or_split(file)
   local jumped = nil
   for winnr = vim.fn.winnr '$', 1, -1 do
     local bufnr = vim.fn.winbufnr(winnr)
-    local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
-    if M.is_file_exists(fname) then
-      if file == fname then
-        vim.fn.win_gotoid(vim.fn.win_getid(winnr))
-        jumped = 1
-        break
-      end
+    local fname = M.rep(M.get_file(bufnr))
+    if file == fname and (M.is_file_exists(fname) or M.is_term(fname)) then
+      vim.fn.win_gotoid(vim.fn.win_getid(winnr))
+      jumped = 1
+      break
     end
   end
   if not jumped then
     for winnr = vim.fn.winnr '$', 1, -1 do
       local bufnr = vim.fn.winbufnr(winnr)
-      local fname = M.rep(vim.api.nvim_buf_get_name(bufnr))
+      local fname = M.rep(M.get_file(bufnr))
       if M.is_file_exists(fname) then
         local proj = M.project_get(fname)
         if not M.is(file_proj) or M.is(proj) and file_proj == proj then
@@ -578,8 +588,12 @@ function M.nvimtree_cd_sel(dirs)
   M.ui(dirs, 'nvimtree_cd', M.nvimtree_cd)
 end
 
+function M.get_file(bnr)
+  return vim.api.nvim_buf_get_name(bnr)
+end
+
 function M.get_cur_file()
-  return vim.api.nvim_buf_get_name(0)
+  return M.get_file(0)
 end
 
 function M.project_cd()
@@ -649,11 +663,11 @@ function M.get_cur_proj_dirs(file)
 end
 
 function M.save_win_pos()
-  M.win_pos = vim.fn.win_getid()
+  vim.g.win_pos = vim.fn.win_getid()
 end
 
 function M.restore_win_pos()
-  vim.fn.win_gotoid(M.win_pos)
+  vim.fn.win_gotoid(vim.g.win_pos)
 end
 
 function M.nvimtree_findfile()
@@ -1092,6 +1106,55 @@ function M.k_k(func, k)
   if not KK[k .. 'Done'] then
     M.K_K_do(k)
   end
+end
+
+function M.get_bufs()
+  return vim.api.nvim_list_bufs()
+end
+
+function M.in_str(item, str)
+  return string.match(str, item)
+end
+
+function M.get_term_bufs()
+  local bufs = M.get_bufs()
+  if not bufs then
+    return {}
+  end
+  local term_bufs = {}
+  for _, buf in ipairs(bufs) do
+    local bname = vim.fn.bufname(buf)
+    if M.is(bname) and M.is_term(bname) then
+      M.put(term_bufs, buf)
+    end
+  end
+  return term_bufs
+end
+
+function M.jump_or_split_term()
+  local term_bufs = M.get_term_bufs()
+  if #term_bufs == 0 then
+    return
+  end
+  if not vim.g.term_index then
+    vim.g.term_index = 1
+  end
+  vim.g.term_index = M.inc(vim.g.term_index, #term_bufs, 1)
+  M.jump_or_split(term_bufs[vim.g.term_index])
+end
+
+function M.format_paragraph()
+  M.save_pos()
+  vim.cmd 'norm vip='
+  M.restore_pos()
+end
+
+function M.save_pos()
+  vim.g.save_pos = vim.fn.getpos '.'
+end
+
+function M.restore_pos()
+  pcall(vim.fn.setpos, '.', vim.g.save_pos)
 end
 
 M.clone_if_not_exist 'org'
