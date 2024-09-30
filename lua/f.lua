@@ -835,6 +835,7 @@ function M.git_push_recursive_do(commit, file)
 end
 
 function M.git_push_recursive(commit, file)
+  M.project_cd()
   if not file then
     file = M.get_cur_file()
   end
