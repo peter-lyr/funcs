@@ -1213,7 +1213,7 @@ function M.new_win_ftail_down()
   local bdir = vim.fn.fnamemodify(vim.fn.bufname(), ':h')
   vim.cmd 'new'
   if bdir ~= '.' then
-    vim.fn.setline('.', bdir)
+    vim.fn.setline(1, bdir)
   end
   M.feed_keys [[A/]]
 end
