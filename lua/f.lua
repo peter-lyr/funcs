@@ -23,8 +23,11 @@ end
 function M.get_win_buf_names()
   local buf_names = {}
   local win_buf_nrs = M.get_win_buf_nrs()
-  for bnr in ipairs(win_buf_nrs) do
-    buf_names[#buf_names + 1] = M.get_file(bnr)
+  for _, bnr in ipairs(win_buf_nrs) do
+    vim.g.bnr = bnr
+    if M.is_valid(bnr) then
+      buf_names[#buf_names + 1] = vim.g.file
+    end
   end
   return buf_names
 end
@@ -37,7 +40,7 @@ function M.is(val)
 end
 
 function M.is_buf_modifiable(bnr)
-  return not vim.api.nvim_buf_is_valid(bnr) or M.is(vim.api.nvim_get_option_value('modifiable', { buf = bnr, }))
+  return not M.is_valid(bnr) or M.is(vim.api.nvim_get_option_value('modifiable', { buf = bnr, }))
 end
 
 function M.put(arr, item)
@@ -154,13 +157,25 @@ function M.is_term(file)
   return M.in_str('term://', file) or M.in_str('term:\\\\', file)
 end
 
-function M.jump_or_split(file)
+function M.is_valid(bnr)
+  vim.g.file = nil
+  vim.g.bnr = bnr
+  vim.cmd [[
+    try
+      let g:file = nvim_buf_get_name(g:bnr)
+    catch
+    endtry
+  ]]
+  return vim.g.file
+end
+
+function M.jump_or_split(file, no_split)
   if not file then
     return
   end
   if type(file) == 'number' then
-    if vim.api.nvim_buf_is_valid(file) == true then
-      file = M.get_file(file)
+    if M.is_valid(file) then
+      file = vim.g.file
     else
       return
     end
@@ -197,12 +212,16 @@ function M.jump_or_split(file)
       end
     end
   end
-  if not jumped then
+  if not jumped and not no_split then
     if M.is(M.get_cur_file()) or vim.api.nvim_get_option_value('modified', { buf = vim.fn.bufnr(), }) == true then
       vim.cmd 'wincmd s'
     end
   end
   M.cmd('e %s', file)
+end
+
+function M.jump_or_edit(file)
+  M.jump_or_split(file, 1)
 end
 
 function M.rep(content)
@@ -1131,6 +1150,14 @@ function M.get_term_bufs()
   return term_bufs
 end
 
+function M.has_term_win()
+  local bnames = M.get_win_buf_names()
+  local a = vim.tbl_filter(function(bname)
+    return M.is_term(bname)
+  end, bnames)
+  return M.is(#a)
+end
+
 function M.jump_or_split_term()
   local term_bufs = M.get_term_bufs()
   if #term_bufs == 0 then
@@ -1140,7 +1167,11 @@ function M.jump_or_split_term()
     vim.g.term_index = 1
   end
   vim.g.term_index = M.inc(vim.g.term_index, #term_bufs, 1)
-  M.jump_or_split(term_bufs[vim.g.term_index])
+  if M.has_term_win() then
+    M.jump_or_edit(term_bufs[vim.g.term_index])
+  else
+    M.jump_or_split(term_bufs[vim.g.term_index])
+  end
 end
 
 function M.format_paragraph()
