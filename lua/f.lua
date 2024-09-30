@@ -1261,6 +1261,11 @@ function M.get_ft_bnr(ft)
   end
 end
 
+function M.cmdline(cmd)
+  M.copy_multiple_filenames()
+  M.feed_keys(M.format(':%s', cmd and cmd or ''))
+end
+
 M.clone_if_not_exist 'org'
 
 return M
