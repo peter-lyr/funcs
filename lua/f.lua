@@ -1216,14 +1216,30 @@ function M.feed_keys(keys)
   ]], keys)
 end
 
-function M.new_win_ftail_down()
+function M.new_win_ftail_do(new)
   M.project_cd()
   local bdir = vim.fn.fnamemodify(vim.fn.bufname(), ':h')
-  vim.cmd 'new'
+  vim.cmd(new)
   if bdir ~= '.' then
     vim.fn.setline(1, bdir)
   end
   M.feed_keys [[A/]]
+end
+
+function M.new_win_ftail_down()
+  M.new_win_ftail_do('new')
+end
+
+function M.new_win_ftail_up()
+  M.new_win_ftail_do('leftabove new')
+end
+
+function M.new_win_ftail_left()
+  M.new_win_ftail_do('leftabove vnew')
+end
+
+function M.new_win_ftail_right()
+  M.new_win_ftail_do('vnew')
 end
 
 function M.list_buf_info()
