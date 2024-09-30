@@ -264,6 +264,9 @@ function M.format(str_format, ...)
 end
 
 function M.join(arr, sep)
+  if not sep then
+    sep = '\n'
+  end
   return vim.fn.join(arr, sep)
 end
 
@@ -920,6 +923,11 @@ function M.lazy_load(plugin)
   M.cmd('Lazy load %s', plugin)
 end
 
+function M.notify(arr)
+  M.lazy_load 'nvim-notify'
+  vim.notify(M.join(arr))
+end
+
 function M.notifications_buffer()
   M.lazy_load 'nvim-notify'
   M.execute_out_buffer 'Notifications'
@@ -1208,6 +1216,14 @@ function M.new_win_ftail_down()
     vim.fn.setline('.', bdir)
   end
   M.feed_keys [[A/]]
+end
+
+function M.list_buf_info()
+  local infos = {}
+  for _, buf in ipairs(M.get_bufs()) do
+    M.put(infos, M.format('%s %s %s', buf, M.get_file(buf), vim.api.nvim_get_option_value('filetype', { buf = buf, })))
+  end
+  M.notify(infos)
 end
 
 M.clone_if_not_exist 'org'
