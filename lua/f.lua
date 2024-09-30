@@ -808,6 +808,14 @@ function M.git_reset_buffer()
   require 'gitsigns'.reset_buffer()
 end
 
+function M.undo_stage_hunk()
+  require 'gitsigns'.undo_stage_hunk()
+end
+
+function M.stage_hunk()
+  require 'gitsigns'.stage_hunk()
+end
+
 function M.git_lazy()
   M.just_run_outside 'lazygit'
 end
