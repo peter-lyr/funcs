@@ -1226,6 +1226,17 @@ function M.list_buf_info()
   M.notify(infos)
 end
 
+function M.get_ft_bnr(ft)
+  if not ft then
+    return nil
+  end
+  for _, buf in ipairs(M.get_win_buf_nrs()) do
+    if ft == vim.api.nvim_get_option_value('filetype', { buf = buf, }) then
+      return buf
+    end
+  end
+end
+
 M.clone_if_not_exist 'org'
 
 return M
