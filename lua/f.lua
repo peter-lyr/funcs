@@ -2,8 +2,6 @@ local M = {}
 
 local pp = require 'plenary.path'
 
-ParamsCnt = 0
-
 if vim.fn.isdirectory(Dp) == 0 then
   vim.fn.mkdir(Dp)
 end
@@ -358,13 +356,16 @@ function M.run_py_get_cmd(file, params, opts)
   params = M.to_table(params)
   local cmd = file
   if #params > 0 then
-    local params_txt = M.format('%s\\%04d-run-params.txt', DpTemp, ParamsCnt)
+    if not vim.g.run_cmd_cnt then
+      vim.g.run_cmd_cnt = 0
+    end
+    local params_txt = M.format('%s\\%04d-run-params.txt', DpTemp, vim.g.run_cmd_cnt)
     if M.run_cmd_py == file and (not opts or not opts.just) then
-      local out_msg_txt = M.format('%s\\%04d-run-out.txt', DpTemp, ParamsCnt)
-      local out_sta_txt = M.format('%s\\%04d-run-sta.txt', DpTemp, ParamsCnt)
+      local out_msg_txt = M.format('%s\\%04d-run-out.txt', DpTemp, vim.g.run_cmd_cnt)
+      local out_sta_txt = M.format('%s\\%04d-run-sta.txt', DpTemp, vim.g.run_cmd_cnt)
       vim.fn.delete(out_sta_txt, 'rf')
-      local name = 'run-' .. tostring(ParamsCnt)
-      local temp_cnt = ParamsCnt
+      local name = 'run-' .. tostring(vim.g.run_cmd_cnt)
+      local temp_cnt = vim.g.run_cmd_cnt
       M.set_interval_timeout(name, 500, 1000 * 160, function()
         if M.is_file(out_sta_txt) then
           return true
@@ -387,7 +388,7 @@ function M.run_py_get_cmd(file, params, opts)
     if opts and opts.no_output then
       cmd = M.format('%s "no_output"', cmd)
     end
-    ParamsCnt = ParamsCnt + 1
+    vim.g.run_cmd_cnt = vim.g.run_cmd_cnt + 1
   end
   return cmd
 end
