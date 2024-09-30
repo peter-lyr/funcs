@@ -1189,6 +1189,26 @@ function M.restore_pos()
   pcall(vim.fn.setpos, '.', vim.g.save_pos)
 end
 
+function M.feed_keys(keys)
+  -- M.feed_keys [[A/\<cr>]]
+  M.cmd([[
+    try
+      call feedkeys("%s")
+    catch
+    endtry
+  ]], keys)
+end
+
+function M.new_win_ftail_down()
+  M.project_cd()
+  local bdir = vim.fn.fnamemodify(vim.fn.bufname(), ':h')
+  vim.cmd 'new'
+  if bdir ~= '.' then
+    vim.fn.setline('.', bdir)
+  end
+  M.feed_keys [[A/]]
+end
+
 M.clone_if_not_exist 'org'
 
 return M
