@@ -611,6 +611,7 @@ function M.get_file_parent(file)
 end
 
 function M.ui(arr, opts, callback)
+  M.lazy_load('telescope')
   if #arr == 1 then
     callback(arr[1])
   else
@@ -626,11 +627,45 @@ function M.nvimtree_cd(dir)
   if M.is_file_exists(dir) then
     require 'nvim-tree'.change_dir(M.get_file_parent(dir))
     M.project_cd()
+    vim.cmd 'NvimTreeFindFile'
   end
 end
 
 function M.nvimtree_cd_sel(dirs)
   M.ui(dirs, 'nvimtree_cd', M.nvimtree_cd)
+end
+
+function M.fd(dir)
+  if M.is_file_exists(dir) then
+    M.cmd('Telescope fd cwd=%s', dir)
+    M.project_cd()
+  end
+end
+
+function M.fd_sel(dirs)
+  M.ui(dirs, 'fd_sel', M.fd)
+end
+
+function M.live_grep(dir)
+  if M.is_file_exists(dir) then
+    M.cmd('Telescope live_grep cwd=%s', dir)
+    M.project_cd()
+  end
+end
+
+function M.live_grep_sel(dirs)
+  M.ui(dirs, 'live_grep_sel', M.live_grep)
+end
+
+function M.grep_string(dir)
+  if M.is_file_exists(dir) then
+    M.cmd('Telescope grep_string cwd=%s', dir)
+    M.project_cd()
+  end
+end
+
+function M.grep_string_sel(dirs)
+  M.ui(dirs, 'grep_string_sel', M.grep_string)
 end
 
 function M.get_filetype(file)
