@@ -21,6 +21,9 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
+vim.g.winbar         = '%f'
+vim.g.statusline     = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
+
 function M.get_win_buf_nrs()
   local buf_nrs = {}
   for wnr = 1, vim.fn.winnr '$' do
@@ -1365,6 +1368,26 @@ end
 function M.cmdline(cmd)
   M.copy_multiple_filenames()
   M.feed_keys(M.format(':%s', cmd and cmd or ''))
+end
+
+function M.toggle_winbar()
+  if vim.opt.winbar:get() == '' then
+    vim.opt.winbar = vim.g.winbar
+  else
+    vim.opt.winbar = ''
+  end
+end
+
+function M.toggle_statusline()
+  if vim.opt.statusline:get() == '' then
+    vim.opt.statusline = vim.g.statusline
+  else
+    vim.opt.statusline = ''
+  end
+end
+
+function Statusline()
+  return M.get_cur_file()
 end
 
 M.clone_if_not_exist 'org'
