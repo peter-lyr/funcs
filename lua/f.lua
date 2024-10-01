@@ -305,6 +305,7 @@ M.git_pull_recursive_py = M.get_py '03-git-pull-recursive.py'
 M.git_push_recursive_py = M.get_py '04-git-push-recursive.py'
 M.git_create_submodule_py = M.get_py '05-git-create-submodule.py'
 M.git_repo_list_3digit__py = M.get_py '06-git-repo-list-3digit-.py'
+M.cbp2cmake_py = M.get_py '08-cbp2cmake.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -1417,6 +1418,40 @@ end
 
 function M.lsp_references()
   vim.cmd 'Telescope lsp_references'
+end
+
+function M.get_file_dirs_till_git(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  file = M.rep(file)
+  local file_path = M.new_file(file)
+  local dirs = {}
+  for _ = 1, 24 do
+    file_path = file_path:parent()
+    local name = M.rep(file_path.filename)
+    table.insert(dirs, 1, name)
+    if M.is_file_exists(M.new_file(name):joinpath '.git'.filename) then
+      break
+    end
+  end
+  return dirs
+end
+
+function M.cmake_do(root)
+  if not root then
+    return
+  end
+  M.run_outside {
+    M.cbp2cmake_py, root,
+  }
+end
+
+function M.cmake()
+  if #M.project_get() == 0 then
+    return
+  end
+  M.ui(M.get_file_dirs_till_git(), 'cmake', M.cmake_do)
 end
 
 M.clone_if_not_exist 'org'
