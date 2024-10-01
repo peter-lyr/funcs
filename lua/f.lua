@@ -120,7 +120,7 @@ function M.get_telescope_builtins()
   return builtins
 end
 
-function M.is_in_tbl(item, tbl)
+function M.in_arr(item, tbl)
   return M.is(vim.tbl_contains(tbl, item))
 end
 
@@ -128,7 +128,7 @@ function M.get_telescope_extras()
   local telescopes = {}
   local builtins = M.get_telescope_builtins()
   for _, t in ipairs(vim.fn.getcompletion('Telescope ', 'cmdline')) do
-    if not M.is_in_tbl(t, builtins) then
+    if not M.in_arr(t, builtins) then
       telescopes[#telescopes + 1] = t
     end
   end
@@ -654,7 +654,7 @@ function M.get_file_parents(file)
   local parents = { dir, }
   for _ = 0, 64 do
     dir = vim.fn.fnamemodify(dir, ':h')
-    if not M.is_in_tbl(dir, parents) then
+    if not M.in_arr(dir, parents) then
       M.put(parents, dir)
     else
       break
@@ -678,7 +678,7 @@ function M.get_cur_proj_dirs(file)
   end
   for _, parent in ipairs(parents) do
     proj = M.project_get(parent)
-    if M.is(proj) and not M.is_in_tbl(proj, proj_dirs) then
+    if M.is(proj) and not M.in_arr(proj, proj_dirs) then
       M.put(proj_dirs, proj)
     end
   end
@@ -839,31 +839,50 @@ function M.git_pull_recursive(clone)
   M.git_pull_recursive_do(StdConfig, clone)
 end
 
-function M.git_push_recursive_do(commit, file)
+function M.git_push_recursive_do_do(commit, file, opts)
   local commit_file = DpTemp .. '\\commit.txt'
   M.write_lines_to_file({ commit, }, commit_file)
-  M.run_silent { M.git_push_recursive_py, commit_file, file, }
+  M.run_silent { M.git_push_recursive_py, commit_file, file, unpack(opts), }
 end
 
-function M.git_push_recursive(commit, file)
+function M.git_push_recursive_do(commit, file, opts)
   M.project_cd()
   if not file then
     file = M.get_cur_file()
   end
+  if #file == 0 then
+    return
+  end
   M.run_silent {
     'cd', '/d', M.get_file_parent(file), '&&',
-    'git', '--no-optional-locks', 'status', '--porcelain=v1', '--ignored=matching', '-u',
+    'git', 'status', '-b', '-s', '&&',
+    'git', 'diff', '--stat',
   }
   M.copy_multiple_filenames()
+  if opts and not M.in_arr('commit', opts) then
+    commit = '.'
+  end
   if not M.is(commit) then
     vim.ui.input({ prompt = 'commit info: ', }, function(c)
       if c then
-        M.git_push_recursive_do(c, file)
+        M.git_push_recursive_do_do(c, file, opts)
       end
     end)
   else
-    M.git_push_recursive_do(commit, file)
+    M.git_push_recursive_do_do(commit, file, opts)
   end
+end
+
+function M.git_add_commit_push_recursive()
+  M.git_push_recursive_do(nil, nil, { 'add', 'commit', 'push', })
+end
+
+function M.git_commit_push_recursive()
+  M.git_push_recursive_do(nil, nil, { 'commit', 'push', })
+end
+
+function M.git_push_recursive()
+  M.git_push_recursive_do(nil, nil, { 'push', })
 end
 
 function M.git_create_submodule_do(root, path, public, name)
@@ -1227,19 +1246,19 @@ function M.new_win_ftail_do(new)
 end
 
 function M.new_win_ftail_down()
-  M.new_win_ftail_do('new')
+  M.new_win_ftail_do 'new'
 end
 
 function M.new_win_ftail_up()
-  M.new_win_ftail_do('leftabove new')
+  M.new_win_ftail_do 'leftabove new'
 end
 
 function M.new_win_ftail_left()
-  M.new_win_ftail_do('leftabove vnew')
+  M.new_win_ftail_do 'leftabove vnew'
 end
 
 function M.new_win_ftail_right()
-  M.new_win_ftail_do('vnew')
+  M.new_win_ftail_do 'vnew'
 end
 
 function M.list_buf_info()
