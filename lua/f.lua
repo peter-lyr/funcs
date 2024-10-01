@@ -2,6 +2,8 @@ local M = {}
 
 local pp = require 'plenary.path'
 
+vim.g.ui_select = vim.ui.select
+
 if vim.fn.isdirectory(Dp) == 0 then
   vim.fn.mkdir(Dp)
 end
@@ -122,6 +124,10 @@ function M.ui_sel(items, opts, callback)
     opts = { prompt = opts, }
   end
   if items and #items > 0 then
+    if vim.g.ui_select ~= vim.ui.select then
+      require 'telescope'.load_extension 'ui-select'
+      vim.g.ui_select = vim.ui.select
+    end
     vim.ui.select(items, opts, callback)
   end
 end
