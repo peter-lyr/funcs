@@ -1261,6 +1261,31 @@ function M.new_win_ftail_right()
   M.new_win_ftail_do 'vnew'
 end
 
+function M.new_win_finc_do(new)
+  M.project_cd()
+  local bfile = M.rep(vim.fn.bufname())
+  vim.cmd(new)
+  vim.fn.setline(1, bfile)
+  M.feed_keys [[099f\]]
+  M.feed_keys [[\<c-a>2l]]
+end
+
+function M.new_win_finc_down()
+  M.new_win_finc_do 'new'
+end
+
+function M.new_win_finc_up()
+  M.new_win_finc_do 'leftabove new'
+end
+
+function M.new_win_finc_left()
+  M.new_win_finc_do 'leftabove vnew'
+end
+
+function M.new_win_finc_right()
+  M.new_win_finc_do 'vnew'
+end
+
 function M.list_buf_info()
   local infos = {}
   for _, buf in ipairs(M.get_bufs()) do
