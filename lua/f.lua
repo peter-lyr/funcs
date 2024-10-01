@@ -1411,6 +1411,14 @@ function Statusline()
   return M.get_cur_file()
 end
 
+function M.lsp_document_symbols()
+  vim.cmd 'Telescope lsp_document_symbols'
+end
+
+function M.lsp_references()
+  vim.cmd 'Telescope lsp_references'
+end
+
 M.clone_if_not_exist 'org'
 
 return M
