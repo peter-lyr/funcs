@@ -1291,7 +1291,7 @@ function M.new_win_finc_do(new)
   local bfile = M.rep(vim.fn.bufname())
   vim.cmd(new)
   vim.fn.setline(1, bfile)
-  M.feed_keys [[099f\]]
+  M.feed_keys [[0f\;;;;;;;;]]
   M.feed_keys [[\<c-a>2l]]
 end
 
