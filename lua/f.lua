@@ -635,37 +635,16 @@ function M.nvimtree_cd_sel(dirs)
   M.ui(dirs, 'nvimtree_cd', M.nvimtree_cd)
 end
 
-function M.fd(dir)
+function M.telescope_do(dir)
   if M.is_file_exists(dir) then
-    M.cmd('Telescope fd cwd=%s', dir)
+    M.cmd('Telescope %s cwd=%s', vim.g.telescope_cmd, dir)
     M.project_cd()
   end
 end
 
-function M.fd_sel(dirs)
-  M.ui(dirs, 'fd_sel', M.fd)
-end
-
-function M.live_grep(dir)
-  if M.is_file_exists(dir) then
-    M.cmd('Telescope live_grep cwd=%s', dir)
-    M.project_cd()
-  end
-end
-
-function M.live_grep_sel(dirs)
-  M.ui(dirs, 'live_grep_sel', M.live_grep)
-end
-
-function M.grep_string(dir)
-  if M.is_file_exists(dir) then
-    M.cmd('Telescope grep_string cwd=%s', dir)
-    M.project_cd()
-  end
-end
-
-function M.grep_string_sel(dirs)
-  M.ui(dirs, 'grep_string_sel', M.grep_string)
+function M.telescope_sel(dirs, cmd)
+  vim.g.telescope_cmd = cmd
+  M.ui(dirs, M.format('%s sel', cmd), M.telescope_do)
 end
 
 function M.get_filetype(file)
