@@ -10,6 +10,17 @@ if vim.fn.isdirectory(DpTemp) == 0 then
   vim.fn.mkdir(DpTemp)
 end
 
+RunCmdDir = DpTemp .. '\\run-cmd'
+RunCmdOldDir = DpTemp .. '\\run-cmd-old'
+
+if vim.fn.isdirectory(RunCmdDir) == 0 then
+  vim.fn.mkdir(RunCmdDir)
+end
+
+if vim.fn.isdirectory(RunCmdOldDir) == 0 then
+  vim.fn.mkdir(RunCmdOldDir)
+end
+
 function M.get_win_buf_nrs()
   local buf_nrs = {}
   for wnr = 1, vim.fn.winnr '$' do
@@ -362,10 +373,14 @@ function M.run_py_get_cmd(file, params, opts)
     if not vim.g.run_cmd_cnt then
       vim.g.run_cmd_cnt = 0
     end
-    local params_txt = M.format('%s\\%04d-run-params.txt', DpTemp, vim.g.run_cmd_cnt)
+    if not vim.g.run_cmd_doing then
+      vim.g.run_cmd_doing = 1
+      M.just_run_silent_nooutput { 'move', '/y', M.format('"%s"', RunCmdDir), M.format('"%s-%s"', RunCmdOldDir, vim.fn.strftime '%Y%m%d-%H%M%S'), }
+    end
+    local params_txt = M.format('%s\\%04d-run-params.txt', RunCmdDir, vim.g.run_cmd_cnt)
     if M.run_cmd_py == file and (not opts or not opts.just) then
-      local out_msg_txt = M.format('%s\\%04d-run-out.txt', DpTemp, vim.g.run_cmd_cnt)
-      local out_sta_txt = M.format('%s\\%04d-run-sta.txt', DpTemp, vim.g.run_cmd_cnt)
+      local out_msg_txt = M.format('%s\\%04d-run-out.txt', RunCmdDir, vim.g.run_cmd_cnt)
+      local out_sta_txt = M.format('%s\\%04d-run-sta.txt', RunCmdDir, vim.g.run_cmd_cnt)
       vim.fn.delete(out_sta_txt, 'rf')
       local name = 'run-' .. tostring(vim.g.run_cmd_cnt)
       local temp_cnt = vim.g.run_cmd_cnt
