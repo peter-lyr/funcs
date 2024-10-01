@@ -630,6 +630,11 @@ function M.nvimtree_cd_sel(dirs)
   M.ui(dirs, 'nvimtree_cd', M.nvimtree_cd)
 end
 
+function M.get_filetype(file)
+  local ext = string.match(file, '%.([^.]+)$')
+  return ext
+end
+
 function M.get_file(bnr)
   return vim.api.nvim_buf_get_name(bnr)
 end
@@ -1267,6 +1272,7 @@ function M.new_win_ftail_do(new)
   if bdir ~= '.' then
     vim.fn.setline(1, bdir)
   end
+  M.set_myft(nil, 'myft-empty-exit')
   M.feed_keys [[A/]]
 end
 
@@ -1317,6 +1323,7 @@ function M.new_win_finc_do(new)
   vim.cmd(new)
   bname, col = M.inc_file_tail(bname)
   vim.fn.setline(1, bname)
+  M.set_myft(nil, 'myft-empty-exit')
   M.cmd('norm 0%sl', col)
 end
 
