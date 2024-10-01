@@ -382,7 +382,6 @@ function M.run_py_get_cmd(file, params, opts)
     if M.run_cmd_py == file and (not opts or not opts.just) then
       local out_msg_txt = M.format('%s\\%04d-run-out.txt', RunCmdDir, vim.g.run_cmd_cnt)
       local out_sta_txt = M.format('%s\\%04d-run-sta.txt', RunCmdDir, vim.g.run_cmd_cnt)
-      vim.fn.delete(out_sta_txt, 'rf')
       local name = 'run-' .. tostring(vim.g.run_cmd_cnt)
       local temp_cnt = vim.g.run_cmd_cnt
       M.set_interval_timeout(name, 500, 1000 * 160, function()
@@ -391,15 +390,19 @@ function M.run_py_get_cmd(file, params, opts)
         end
         return nil
       end, function()
-        vim.fn.delete(out_sta_txt, 'rf')
+        local sta = vim.fn.trim(vim.fn.join(M.read_lines_from_file(out_sta_txt), ''))
         local temp = vim.fn.join(params, ' ')
         local temp2 = ''
         for _ = 1, #temp do
           temp2 = temp2 .. '='
         end
-        vim.notify(M.format('Successful: number %d\n%s\n%s\n%s',
-          temp_cnt, temp, temp2,
-          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), nil, { timeout = 1000 * 100, })
+        local log_level = vim.log.levels.INFO
+        if sta ~= '0' then
+          log_level = vim.log.levels.ERROR
+        end
+        M.notify(M.format('Sta: %s, #%d\n%s\n%s\n%s',
+          sta, temp_cnt, temp, temp2,
+          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), log_level, { timeout = 1000 * 100, })
       end)
     end
     M.write_lines_to_file(params, params_txt)
@@ -757,7 +760,7 @@ function M.set_interval_timeout(name, interval, timeout, callback, callback_done
   end)
   M.set_timeout(timeout, function()
     if vim.g[name] > 0 then
-      vim.notify(M.format('Time Out[%s]: %d', name, timeout))
+      M.notify(M.format('Time Out[%s]: %d', name, timeout))
       M.clear_interval(vim.g[name])
     end
   end)
@@ -966,9 +969,15 @@ function M.lazy_load(plugin)
   M.cmd('Lazy load %s', plugin)
 end
 
-function M.notify(arr)
+function M.notify(text, level, opts)
   M.lazy_load 'nvim-notify'
-  vim.notify(M.join(arr))
+  if type(text) == 'table' then
+    text = M.join(text)
+  end
+  if type(text) ~= 'string' then
+    return
+  end
+  vim.notify(text, level, opts)
 end
 
 function M.notifications_buffer()
