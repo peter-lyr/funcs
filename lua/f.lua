@@ -1086,6 +1086,15 @@ function M.quit_nvim_qt_later()
 end
 
 function M.start_nvim_qt(file)
+  if file == 'session' then
+    M.cmd('silent !start nvim-qt.exe -- -S %s', SessionVim)
+    return
+  end
+  if file == 'session!' then
+    vim.cmd 'SessionsSave!'
+    M.cmd('silent !start nvim-qt.exe -- -S %s', SessionVim)
+    return
+  end
   file = file and file or ''
   M.cmd('silent !start nvim-qt.exe %s', file)
 end
