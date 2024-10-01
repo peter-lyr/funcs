@@ -21,8 +21,8 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
-vim.g.winbar         = '%f'
-vim.g.statusline     = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
+vim.g.winbar     = '%f'
+vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 
 function M.get_win_buf_nrs()
   local buf_nrs = {}
