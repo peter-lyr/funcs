@@ -1091,7 +1091,7 @@ end
 
 function M.dec(to_change, min, ori)
   to_change = to_change - 1
-  if to_change < min then
+  if min and to_change < min then
     if ori then
       return ori
     else
@@ -1103,7 +1103,7 @@ end
 
 function M.inc(to_change, max, ori)
   to_change = to_change + 1
-  if to_change > max then
+  if max and to_change > max then
     if ori then
       return ori
     else
@@ -1286,13 +1286,38 @@ function M.new_win_ftail_right()
   M.new_win_ftail_do 'vnew'
 end
 
+function M.is_number(text)
+  return tonumber(text)
+end
+
+function M.inc_file_tail(bname)
+  bname = M.rep_slash(bname)
+  local head = vim.fn.fnamemodify(bname, ':h')
+  local tail = vim.fn.fnamemodify(bname, ':t')
+  local items = vim.fn.split(tail, '-')
+  items = vim.fn.reverse(items)
+  local len = 0
+  for i, item in ipairs(items) do
+    local v = M.is_number(item)
+    local format = M.format('%%0%dd', #item)
+    if v then
+      items[i] = M.format(format, M.inc(v))
+      break
+    end
+    len = len + #item + 1
+  end
+  items = vim.fn.reverse(items)
+  return M.format('%s%s', head ~= '.' and head .. '/' or '', M.join(items, '-')), #bname - len + 1
+end
+
 function M.new_win_finc_do(new)
   M.project_cd()
-  local bfile = M.rep(vim.fn.bufname())
+  local bname = vim.fn.bufname()
+  local col
   vim.cmd(new)
-  vim.fn.setline(1, bfile)
-  M.feed_keys [[0f\;;;;;;;;]]
-  M.feed_keys [[\<c-a>2l]]
+  bname, col = M.inc_file_tail(bname)
+  vim.fn.setline(1, bname)
+  M.cmd('norm 0%sl', col)
 end
 
 function M.new_win_finc_down()
