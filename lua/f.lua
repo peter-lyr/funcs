@@ -804,7 +804,7 @@ function M.git_add_commit_push(commit, dir)
   end
   M.run_silent {
     'cd', '/d', dir, '&&',
-    'git', '--no-optional-locks', 'status', '--porcelain=v1', '--ignored=matching', '-u',
+    'git', 'status',
   }
   M.copy_multiple_filenames()
   if not M.is(commit) then
@@ -896,8 +896,7 @@ function M.git_push_recursive_do(commit, file, opts)
   end
   M.run_silent {
     'cd', '/d', M.get_file_parent(file), '&&',
-    'git', 'status', '-b', '-s', '&&',
-    'git', 'diff', '--stat',
+    'git', 'status',
   }
   M.copy_multiple_filenames()
   if opts and not M.in_arr('commit', opts) then
