@@ -612,7 +612,7 @@ end
 
 function M.ui(arr, opts, callback)
   M.lazy_load 'telescope'
-  if #arr == 1 then
+  if arr and #arr == 1 then
     callback(arr[1])
   else
     M.ui_sel(arr, opts, function(choose)
