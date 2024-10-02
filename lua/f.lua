@@ -54,7 +54,7 @@ function M.is(val)
 end
 
 function M.is_buf_modifiable(bnr)
-  return not M.is_valid(bnr) or M.is(vim.api.nvim_get_option_value('modifiable', { buf = bnr, }))
+  return not M.is_valid(bnr) or M.is(vim.bo[bnr].modifiable)
 end
 
 function M.put(arr, item)
@@ -1450,6 +1450,22 @@ end
 function M.cmdline(cmd)
   M.copy_multiple_filenames()
   M.feed_keys(M.format(':%s', cmd and cmd or ''))
+end
+
+function M.toggle_diff()
+  if vim.opt.diff:get() == false then
+    vim.opt.diff = true
+  else
+    vim.opt.diff = false
+  end
+end
+
+function M.toggle_wrap()
+  if vim.opt.wrap:get() == false then
+    vim.opt.wrap = true
+  else
+    vim.opt.wrap = false
+  end
 end
 
 function M.toggle_winbar()
