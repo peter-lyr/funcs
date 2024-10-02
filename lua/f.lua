@@ -1521,9 +1521,11 @@ function M.get_opened_projs()
   end
   local projs = {}
   for _, buf in ipairs(bufs) do
-    M.put_uniq(projs, M.get_proj(M.get_file(buf)))
+    local file = M.get_file(buf)
+    if #file > 0 and M.is_file_exists(file) then
+      M.put_uniq(projs, M.get_proj(file))
+    end
   end
-  -- M.notify(projs)
   return projs
 end
 
@@ -1536,14 +1538,13 @@ function M.get_opened_projs_bufs()
   for _, buf in ipairs(bufs) do
     local file = M.get_file(buf)
     if #file > 0 and M.is_file_exists(file) then
-      local proj = M.get_proj(M.get_file(buf))
+      local proj = M.get_proj(file)
       if not projs[proj] then
         projs[proj] = {}
       end
       M.put_uniq(projs[proj], buf)
     end
   end
-  -- M.notify(projs)
   return projs
 end
 
@@ -1571,6 +1572,7 @@ function M.opened_proj_files_sel(proj)
 end
 
 function M.opened_proj_sel()
+  M.notify(M.get_opened_projs())
   M.ui(M.get_opened_projs(), 'opened_projs', M.opened_proj_files_sel)
 end
 
