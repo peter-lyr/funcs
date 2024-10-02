@@ -1329,6 +1329,10 @@ function M.has_term_win()
   return M.is(#a)
 end
 
+function M.b(buf)
+  M.cmd('b%d', buf)
+end
+
 function M.jump_or_split_term()
   local term_bufs = M.get_term_bufs()
   if #term_bufs == 0 then
@@ -1338,11 +1342,10 @@ function M.jump_or_split_term()
     vim.g.term_index = 1
   end
   vim.g.term_index = M.inc(vim.g.term_index, #term_bufs, 1)
-  if M.has_term_win() then
-    M.jump_or_edit(term_bufs[vim.g.term_index])
-  else
-    M.jump_or_split(term_bufs[vim.g.term_index])
+  if not M.jump_term() then
+    vim.cmd 'split'
   end
+  M.b(term_bufs[vim.g.term_index])
 end
 
 function M.format_paragraph()
@@ -1632,8 +1635,27 @@ function M.opened_proj_files_sel(proj)
 end
 
 function M.opened_proj_sel()
-  M.notify(M.get_opened_projs())
   M.ui(M.get_opened_projs(), 'opened_projs', M.opened_proj_files_sel)
+end
+
+function M.jump_term()
+  for i = vim.fn.winnr '$', 1, -1 do
+    if M.is_term(M.get_file(vim.fn.winbufnr(i))) then
+      vim.fn.win_gotoid(vim.fn.win_getid(i))
+      return true
+    end
+  end
+end
+
+function M.open_term(dir)
+  if not M.jump_term() then
+    vim.cmd 'split'
+  end
+  M.cmd('cd %s|te', dir)
+end
+
+function M.open_term_sel()
+  M.ui(DIRS, 'open_term', M.open_term)
 end
 
 M.clone_if_not_exist 'org'
