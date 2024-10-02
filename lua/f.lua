@@ -1749,36 +1749,6 @@ function M.change_language(lang)
   M.cmd([[silent !start /b /min cmd /c "%s %s"]], M.input_method_py, lang)
 end
 
-M.aucmd('ModeChanged', 'inputmethod.ModeChanged', {
-  callback = function()
-    if M.in_arr(vim.fn.mode(), { 'c', 'i', 't', 'r', 'R', }) then
-      M.change_language 'ZH'
-    else
-      M.change_language 'EN'
-    end
-  end,
-})
-
-M.aucmd('CmdlineLeave', 'inputmethod.CmdlineLeave', {
-  callback = function()
-    if M.in_arr(vim.fn.mode(), { 'i', 't', 'r', 'R', }) then
-      M.change_language 'ZH'
-    else
-      M.change_language 'EN'
-    end
-  end,
-})
-
-M.aucmd('FocusLost', 'inputmethod.FocusLost', {
-  callback = function()
-    if M.in_arr(vim.fn.mode(), { 'c', 'i', 't', 'r', 'R', }) then
-      M.write_lines_to_file({ '1', }, [[C:\Windows\Temp\nvim-qt.exe-input-method.txt]])
-    else
-      M.write_lines_to_file({ '0', }, [[C:\Windows\Temp\nvim-qt.exe-input-method.txt]])
-    end
-  end,
-})
-
 M.clone_if_not_exist 'org'
 
 return M
