@@ -26,6 +26,21 @@ end
 vim.g.winbar     = '%f'
 vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 
+DIRS             = {
+  Home,
+  Dp,
+  Org,
+  Note,
+  DpTemp,
+  TreeSitter,
+  Mason,
+  StdConfig,
+  StdData,
+  LazyPath,
+  DataLazyPlugins,
+  'C:\\Program Files\\Neovim',
+}
+
 function M.get_win_buf_nrs()
   local buf_nrs = {}
   for wnr = 1, vim.fn.winnr '$' do
