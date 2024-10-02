@@ -237,7 +237,7 @@ function M.jump_or_split(file, no_split)
     end
   end
   if not jumped and not no_split then
-    if M.is(M.get_cur_file()) or vim.api.nvim_get_option_value('modified', { buf = vim.fn.bufnr(), }) == true then
+    if M.is(M.get_cur_file()) or vim.bo[vim.fn.bufnr()].modified == true then
       vim.cmd 'wincmd s'
     end
   end
@@ -979,14 +979,18 @@ function M.git_pull()
   }
 end
 
-function M.set_myft(bnr, ft)
+function M.set_ft(ft, bnr)
+  if not ft then
+    return
+  end
   if not bnr then
     bnr = vim.fn.bufnr()
   end
-  if not ft then
-    ft = 'myft'
-  end
-  vim.api.nvim_set_option_value('filetype', ft, { buf = bnr, })
+  vim.bo[bnr].filetype = ft
+end
+
+function M.set_myft(ft, bnr)
+  M.set_ft 'myft'
 end
 
 function M.execute_out_buffer(cmd)
@@ -1357,7 +1361,7 @@ function M.new_win_ftail_do(new)
   if bdir ~= '.' then
     vim.fn.setline(1, bdir)
   end
-  M.set_myft(nil, 'myft-empty-exit')
+  M.set_ft 'myft-empty-exit'
   M.feed_keys [[A/]]
 end
 
@@ -1408,7 +1412,7 @@ function M.new_win_finc_do(new)
   vim.cmd(new)
   bname, col = M.inc_file_tail(bname)
   vim.fn.setline(1, bname)
-  M.set_myft(nil, 'myft-empty-exit')
+  M.set_ft 'myft-empty-exit'
   M.cmd('norm 0%sl', col)
 end
 
@@ -1431,7 +1435,7 @@ end
 function M.list_buf_info()
   local infos = {}
   for _, buf in ipairs(M.get_bufs()) do
-    M.put(infos, M.format('%s %s %s', buf, M.get_file(buf), vim.api.nvim_get_option_value('filetype', { buf = buf, })))
+    M.put(infos, M.format('%s %s %s', buf, M.get_file(buf), vim.bo[buf].filetype))
   end
   M.notify(infos)
 end
@@ -1441,7 +1445,7 @@ function M.get_ft_bnr(ft)
     return nil
   end
   for _, buf in ipairs(M.get_win_buf_nrs()) do
-    if ft == vim.api.nvim_get_option_value('filetype', { buf = buf, }) then
+    if ft == vim.bo[buf].filetype then
       return buf
     end
   end
@@ -1452,36 +1456,61 @@ function M.cmdline(cmd)
   M.feed_keys(M.format(':%s', cmd and cmd or ''))
 end
 
-function M.toggle_diff()
-  if vim.opt.diff:get() == false then
-    vim.opt.diff = true
+function M.toggle(val)
+  if type(val) == 'boolean' then
+    if val == true then
+      return false
+    end
+    return true
+  end
+  if type(val) == 'number' then
+    if val ~= 1 then
+      return 0
+    end
+    return 1
+  end
+  return val
+end
+
+function M.set_opt(opt, val, scope)
+  if not scope then
+    scope = 'global'
+  end
+  vim.api.nvim_set_option_value(opt, val, { scope = scope, })
+end
+
+function M.get_opt(opt, scope)
+  if not scope then
+    scope = 'global'
+  end
+  return vim.api.nvim_get_option_value(opt, { scope = scope, })
+end
+
+function M.toggle_opt(opt, a, b, scope)
+  if a == nil or b == nil then
+    return
+  end
+  if M.get_opt(opt, scope) == a then
+    M.set_opt(opt, b, scope)
   else
-    vim.opt.diff = false
+    M.set_opt(opt, a, scope)
   end
 end
 
-function M.toggle_wrap()
-  if vim.opt.wrap:get() == false then
-    vim.opt.wrap = true
-  else
-    vim.opt.wrap = false
-  end
+function M.toggle_local(opt)
+  M.toggle_opt(opt, true, false, 'local')
+end
+
+function M.toggle_global(opt)
+  M.toggle_opt(opt, true, false, 'global')
 end
 
 function M.toggle_winbar()
-  if vim.opt.winbar:get() == '' then
-    vim.opt.winbar = vim.g.winbar
-  else
-    vim.opt.winbar = ''
-  end
+  M.toggle_opt('winbar', '', vim.g.winbar)
 end
 
 function M.toggle_statusline()
-  if vim.opt.statusline:get() == '' then
-    vim.opt.statusline = vim.g.statusline
-  else
-    vim.opt.statusline = ''
-  end
+  M.toggle_opt('statusline', '', vim.g.statusline)
 end
 
 function Statusline()
