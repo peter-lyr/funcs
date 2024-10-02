@@ -1501,7 +1501,7 @@ function M.toggle_local(opt)
 end
 
 function M.toggle_global(opt)
-  M.toggle_opt(opt, true, false, 'global')
+  M.toggle_opt(opt, true, false)
 end
 
 function M.toggle_winbar()
