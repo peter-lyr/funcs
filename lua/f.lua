@@ -819,36 +819,6 @@ function M.set_interval_timeout(name, interval, timeout, callback, callback_done
   end)
 end
 
-function M.git_add_commit_push_do(commit, dir)
-  M.run_silent {
-    'cd', '/d', dir, '&&',
-    'git', 'add', '.', '&&',
-    'git', 'commit', '-m', commit, '&&',
-    'git', 'push',
-  }
-end
-
-function M.git_add_commit_push(commit, dir)
-  if not dir then
-    M.project_cd()
-    dir = M.get_cwd()
-  end
-  M.run_silent {
-    'cd', '/d', dir, '&&',
-    'git', 'status',
-  }
-  M.copy_multiple_filenames()
-  if not M.is(commit) then
-    vim.ui.input({ prompt = 'commit info: ', }, function(c)
-      if c then
-        M.git_add_commit_push_do(c, dir)
-      end
-    end)
-  else
-    M.git_add_commit_push_do(commit, dir)
-  end
-end
-
 --- function M.get_all_dirs_with_dot_git(file)
 ---   if not file then
 ---     file = M.get_cur_file()
