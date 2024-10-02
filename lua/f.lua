@@ -646,9 +646,9 @@ function M.ui(arr, opts, callback)
   if arr and #arr == 1 then
     callback(arr[1])
   else
-    M.ui_sel(arr, opts, function(choose)
+    M.ui_sel(arr, opts, function(choose, index)
       if choose then
-        callback(choose)
+        callback(choose, index)
       end
     end)
   end
@@ -1696,6 +1696,29 @@ function M.cd_term_cwd(file)
   if M.is_term(file) then
     M.cd(string.match(file, 'term://(.+)//.+'))
   end
+end
+
+function M.split(text, sep)
+  if not sep then
+    sep = '\n'
+  end
+  return vim.fn.split(text, sep)
+end
+
+function M.null()
+end
+
+function M.git_diff(_, index)
+  require 'gitsigns'.diffthis(F.format('~%d', index))
+end
+
+function M.reverse(arr)
+  return vim.fn.reverse(arr)
+end
+
+function M.git_diff_sel()
+  local git_logs = M.split(vim.fn.system 'git log --oneline')
+  M.ui(git_logs, 'git diff sel', M.git_diff)
 end
 
 M.clone_if_not_exist 'org'
