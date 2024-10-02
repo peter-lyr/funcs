@@ -372,8 +372,10 @@ function M.echo(str_format, ...)
   M.cmd(M.format("ec '" .. str_format .. "'", ...))
 end
 
-function M.source_cur()
-  local file = M.get_cur_file()
+function M.source(file)
+  if not file then
+    file = M.get_cur_file()
+  end
   local ext = string.match(file, '%.([^.]+)$')
   if ext == 'lua' then
     package.loaded[M.getlua(file)] = nil
