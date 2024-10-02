@@ -61,6 +61,12 @@ function M.put(arr, item)
   arr[#arr + 1] = item
 end
 
+function M.put_uniq(arr, item)
+  if not M.in_arr(item, arr) then
+    M.put(arr, item)
+  end
+end
+
 function M.get_win_buf_modifiable_nrs()
   local buf_nrs = {}
   for bnr in ipairs(M.get_win_buf_nrs()) do
@@ -205,7 +211,7 @@ function M.jump_or_split(file, no_split)
     M.cmd('e %s', file)
     return
   end
-  local file_proj = M.project_get(file)
+  local file_proj = M.get_proj(file)
   local jumped = nil
   for winnr = vim.fn.winnr '$', 1, -1 do
     local bufnr = vim.fn.winbufnr(winnr)
@@ -221,7 +227,7 @@ function M.jump_or_split(file, no_split)
       local bufnr = vim.fn.winbufnr(winnr)
       local fname = M.rep(M.get_file(bufnr))
       if M.is_file_exists(fname) then
-        local proj = M.project_get(fname)
+        local proj = M.get_proj(fname)
         if not M.is(file_proj) or M.is(proj) and file_proj == proj then
           vim.fn.win_gotoid(vim.fn.win_getid(winnr))
           jumped = 1
@@ -679,7 +685,7 @@ function M.project_cd()
   ]]
 end
 
-function M.project_get(file)
+function M.get_proj(file)
   M.lazy_load 'vim-projectroot'
   if file then
     return M.rep(vim.fn['ProjectRootGet'](file))
@@ -720,12 +726,12 @@ function M.get_cur_proj_dirs(file)
   end
   local parents = M.get_file_parents(file)
   local proj_dirs = {}
-  local proj = M.project_get(file)
+  local proj = M.get_proj(file)
   if M.is(proj) then
     M.put(proj_dirs, proj)
   end
   for _, parent in ipairs(parents) do
-    proj = M.project_get(parent)
+    proj = M.get_proj(parent)
     if M.is(proj) and not M.in_arr(proj, proj_dirs) then
       M.put(proj_dirs, proj)
     end
@@ -997,10 +1003,58 @@ function M.lazy_load(plugin)
   M.cmd('Lazy load %s', plugin)
 end
 
+function M.repeat_str(text, times)
+  if not M.is_number(times) then
+    return ''
+  end
+  local res = ''
+  for _ = 1, times do
+    res = res .. text
+  end
+  return res
+end
+
+function M.arr2str(arr, level)
+  local text = ''
+  if not level then
+    level = 0
+  end
+  if #arr > 0 then
+    text = M.join(arr, M.format('\n%s', M.repeat_str(' ', 4 * level)))
+  end
+  local index = 0
+  for k, v in pairs(arr) do
+    index = index + 1
+    if k == index then
+      goto continue
+    end
+    local t = type(v)
+    local l = #v
+    if t == 'table' then
+      v = M.arr2str(v, level + 1)
+    else
+      v = vim.inspect(v)
+    end
+    v = M.format('%s[%d]: %s', t, l, v)
+    text = M.format('%s\n[%s]:\n    (%s)', text, k, v)
+    ::continue::
+  end
+  return text
+end
+
+-- function M.arr2str(arr)
+--   local text = vim.inspect(arr)
+--   text = string.gsub(text, ' = {', ' = {\n    ')
+--   text = string.gsub(text, '", "', '",\n     "')
+--   text = string.gsub(text, ' },\n', '\n  },\n')
+--   text = string.gsub(text, ' }\n', '\n  }\n')
+--   return text
+-- end
+
 function M.notify(text, level, opts)
   M.lazy_load 'nvim-notify'
   if type(text) == 'table' then
-    text = M.join(text)
+    text = M.arr2str(text)
   end
   if type(text) ~= 'string' then
     return
@@ -1454,10 +1508,60 @@ function M.cmake_do(root)
 end
 
 function M.cmake()
-  if #M.project_get() == 0 then
+  if #M.get_proj() == 0 then
     return
   end
   M.ui(M.get_file_dirs_till_git(), 'cmake', M.cmake_do)
+end
+
+function M.get_opened_projs()
+  local bufs = M.get_bufs()
+  if not bufs or #bufs == 0 then
+    return
+  end
+  local projs = {}
+  for _, buf in ipairs(bufs) do
+    M.put_uniq(projs, M.get_proj(M.get_file(buf)))
+  end
+  M.notify(projs)
+  return projs
+end
+
+function M.get_opened_projs_bufs()
+  local bufs = M.get_bufs()
+  if not bufs or #bufs == 0 then
+    return
+  end
+  local projs = {}
+  for _, buf in ipairs(bufs) do
+    local proj = M.get_proj(M.get_file(buf))
+    if not projs[proj] then
+      projs[proj] = {}
+    end
+    M.put(projs[proj], buf)
+  end
+  M.notify(projs)
+  return projs
+end
+
+function M.get_opened_projs_bnames()
+  local bufs = M.get_bufs()
+  if not bufs or #bufs == 0 then
+    return
+  end
+  local projs = {}
+  for _, buf in ipairs(bufs) do
+    local bname = M.get_file(buf)
+    local proj = M.get_proj(bname)
+    if #bname > 0 and M.is_file_exists(bname) then
+      if not projs[proj] then
+        projs[proj] = {}
+      end
+      M.put(projs[proj], bname)
+    end
+  end
+  M.notify(projs)
+  return projs
 end
 
 M.clone_if_not_exist 'org'
