@@ -1499,7 +1499,7 @@ function M.get_file_dirs_till_git(file)
 end
 
 function M.cmake_do(root)
-  if not root then
+  if not M.is_file_exists(root) then
     return
   end
   M.run_outside {
@@ -1523,7 +1523,7 @@ function M.get_opened_projs()
   for _, buf in ipairs(bufs) do
     M.put_uniq(projs, M.get_proj(M.get_file(buf)))
   end
-  M.notify(projs)
+  -- M.notify(projs)
   return projs
 end
 
@@ -1534,34 +1534,44 @@ function M.get_opened_projs_bufs()
   end
   local projs = {}
   for _, buf in ipairs(bufs) do
-    local proj = M.get_proj(M.get_file(buf))
-    if not projs[proj] then
-      projs[proj] = {}
-    end
-    M.put(projs[proj], buf)
-  end
-  M.notify(projs)
-  return projs
-end
-
-function M.get_opened_projs_bnames()
-  local bufs = M.get_bufs()
-  if not bufs or #bufs == 0 then
-    return
-  end
-  local projs = {}
-  for _, buf in ipairs(bufs) do
-    local bname = M.get_file(buf)
-    local proj = M.get_proj(bname)
-    if #bname > 0 and M.is_file_exists(bname) then
+    local file = M.get_file(buf)
+    if #file > 0 and M.is_file_exists(file) then
+      local proj = M.get_proj(M.get_file(buf))
       if not projs[proj] then
         projs[proj] = {}
       end
-      M.put(projs[proj], bname)
+      M.put_uniq(projs[proj], buf)
     end
   end
-  M.notify(projs)
+  -- M.notify(projs)
   return projs
+end
+
+function M.get_opened_projs_files()
+  local proj_bufs = M.get_opened_projs_bufs()
+  if not proj_bufs then
+    return
+  end
+  local files = {}
+  for proj, bufs in pairs(proj_bufs) do
+    files[proj] = {}
+    for _, buf in ipairs(bufs) do
+      M.put(files[proj], M.get_file(buf))
+    end
+  end
+  return files
+end
+
+function M.opened_proj_files(file)
+  M.jump_or_edit(file)
+end
+
+function M.opened_proj_files_sel(proj)
+  M.ui(M.get_opened_projs_files()[proj], 'opened_files', M.opened_proj_files)
+end
+
+function M.opened_proj_sel()
+  M.ui(M.get_opened_projs(), 'opened_projs', M.opened_proj_files_sel)
 end
 
 M.clone_if_not_exist 'org'
