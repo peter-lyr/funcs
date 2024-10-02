@@ -1007,7 +1007,7 @@ function M.set_ft(ft, bnr)
   vim.bo[bnr].filetype = ft
 end
 
-function M.set_myft(ft, bnr)
+function M.set_myft()
   M.set_ft 'myft'
 end
 
@@ -1663,6 +1663,7 @@ function M.open_term(dir)
     vim.cmd 'split'
   end
   M.cmd('cd %s|te', dir)
+  M.set_myft()
   vim.g.term_total = M.get_term_total()
 end
 
