@@ -1721,6 +1721,58 @@ function M.git_diff_sel()
   M.ui(git_logs, 'git diff sel', M.git_diff)
 end
 
+function M.git_get_commit_quick(which)
+  local commit
+  if which == 'regh' then
+    commit = M.join({ vim.fn.getreg 'h', }, ' ')
+  elseif which == 'reghj' then
+    commit = M.join({ vim.fn.getreg 'h', vim.fn.getreg 'j', }, ' ')
+  elseif which == 'reghjk' then
+    commit = M.join({ vim.fn.getreg 'h', vim.fn.getreg 'j', vim.fn.getreg 'k', }, ' ')
+  elseif which == 'reghjkl' then
+    commit = M.join({ vim.fn.getreg 'h', vim.fn.getreg 'j', vim.fn.getreg 'k', vim.fn.getreg 'l', }, ' ')
+  elseif which == 'yanked' then
+    commit = vim.fn.getreg '"'
+  elseif which == 'cword' then
+    commit = vim.fn.expand '<cword>'
+  elseif which == 'cWORD' then
+    commit = vim.fn.expand '<cWORD>'
+  elseif which == 'line' then
+    commit = vim.fn.trim(vim.fn.getline '.')
+  elseif M.in_str('treesitter', which) then
+    if vim.fn.mode() ~= 'n' then
+      M.feed_keys [[\<esc>]]
+    end
+    require 'nvim-treesitter.incremental_selection'.node_incremental()
+    if which == 'treesitter2' then
+      require 'nvim-treesitter.incremental_selection'.node_incremental()
+    end
+    if which == 'treesitter3' then
+      require 'nvim-treesitter.incremental_selection'.node_incremental()
+      require 'nvim-treesitter.incremental_selection'.node_incremental()
+    end
+    M.feed_keys 'y'
+    commit = vim.fn.getreg '"'
+  end
+  return commit
+end
+
+function M.git_add_commit_push_recursive_quick(which)
+  local commit = M.git_get_commit_quick(which)
+  if not commit or #commit == 0 then
+    return
+  end
+  M.git_push_recursive_do(commit, nil, { 'add', 'commit', 'push', })
+end
+
+function M.git_commit_push_recursive_quick(which)
+  local commit = M.git_get_commit_quick(which)
+  if not commit or #commit == 0 then
+    return
+  end
+  M.git_push_recursive_do(commit, nil, { 'commit', 'push', })
+end
+
 M.clone_if_not_exist 'org'
 
 return M
