@@ -1554,7 +1554,7 @@ function M.lsp_references()
   vim.cmd 'Telescope lsp_references'
 end
 
-function M.get_file_dirs_till_git(file)
+function M.get_file_dirs(file, till_git)
   if not file then
     file = M.get_cur_file()
   end
@@ -1564,8 +1564,11 @@ function M.get_file_dirs_till_git(file)
   for _ = 1, 24 do
     file_path = file_path:parent()
     local name = M.rep(file_path.filename)
+    if #dirs > 0 and dirs[1] == name then
+      break
+    end
     table.insert(dirs, 1, name)
-    if M.is_file_exists(M.new_file(name):joinpath '.git'.filename) then
+    if till_git and M.is_file_exists(M.new_file(name):joinpath '.git'.filename) then
       break
     end
   end
@@ -1585,7 +1588,7 @@ function M.cmake()
   if #M.get_proj() == 0 then
     return
   end
-  M.ui(M.get_file_dirs_till_git(), 'cmake', M.cmake_do)
+  M.ui(M.get_file_dirs(nil, 'till_git'), 'cmake', M.cmake_do)
 end
 
 function M.get_opened_projs()
@@ -1667,8 +1670,19 @@ function M.open_term(dir)
   vim.g.term_total = M.get_term_total()
 end
 
+function M.merge_tables(...)
+  local result = {}
+  for _, t in ipairs { ..., } do
+    for _, v in ipairs(t) do
+      result[#result + 1] = v
+    end
+  end
+  return result
+end
+
 function M.open_term_sel()
-  M.ui(DIRS, 'open_term', M.open_term)
+  local dirs = M.get_file_dirs()
+  M.ui(M.merge_tables(DIRS, dirs), 'open_term', M.open_term)
 end
 
 function M.cd(dir)
