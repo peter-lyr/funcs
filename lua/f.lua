@@ -346,6 +346,7 @@ function M.start_do(cmd, opts)
       M.cmd([[silent !%s]], cmd)
     elseif opts.way == 'term' then
       M.cmd([[sp|te %s]], cmd)
+      vim.g.term_total = M.has_term_win()
     end
   end
 end
@@ -1331,6 +1332,14 @@ function M.has_term_win()
   return M.is(#a)
 end
 
+function M.get_term_total()
+  local bufs = M.get_bufs()
+  local a = vim.tbl_filter(function(buf)
+    return M.is_term(M.get_file(buf))
+  end, bufs)
+  return #a
+end
+
 function M.b(buf)
   M.cmd('b%d', buf)
 end
@@ -1654,10 +1663,24 @@ function M.open_term(dir)
     vim.cmd 'split'
   end
   M.cmd('cd %s|te', dir)
+  vim.g.term_total = M.get_term_total()
 end
 
 function M.open_term_sel()
   M.ui(DIRS, 'open_term', M.open_term)
+end
+
+function M.cd(dir)
+  if M.is_dir(dir) then
+    M.cmd('cd %s', dir)
+  end
+end
+
+function M.cd_term_cwd(file)
+  vim.g.term_total = M.get_term_total()
+  if M.is_term(file) then
+    M.cd(string.match(file, 'term://(.+)//.+'))
+  end
 end
 
 M.clone_if_not_exist 'org'
