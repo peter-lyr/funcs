@@ -537,6 +537,10 @@ function M.just_run_silent_nooutput(cmd_params)
   M.just_run_silent(cmd_params, { just = true, no_output = true, })
 end
 
+function M.run(cmd)
+  M.cmd([[silent !start cmd /c "%s"]], cmd)
+end
+
 function M.run__silent(cmd)
   M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
 end
