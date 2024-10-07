@@ -1663,6 +1663,10 @@ function M.open_term_sel()
   M.ui(M.merge_tables(DIRS, dirs), 'open_term', M.open_term)
 end
 
+function M.nvimtree_cd_sel_DIRS()
+  M.nvimtree_cd_sel(DIRS)
+end
+
 function M.cd(dir)
   if M.is_dir(dir) then
     M.cmd('cd %s', dir)
