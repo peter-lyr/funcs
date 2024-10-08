@@ -545,6 +545,10 @@ function M.run__silent(cmd)
   M.cmd([[silent !start /b /min cmd /c "%s"]], cmd)
 end
 
+function M.run__pause(cmd)
+  M.cmd([[silent !start cmd /c "%s & pause"]], cmd)
+end
+
 function M.clone_if_not_exist(dir, repo, root)
   if not root then
     root = Home
@@ -1721,6 +1725,8 @@ function M.git_get_commit_quick(which)
     commit = vim.fn.expand '<cWORD>'
   elseif which == 'line' then
     commit = vim.fn.trim(vim.fn.getline '.')
+  elseif which == 'tail' then
+    commit = vim.fn.trim(vim.fn.fnamemodify(vim.fn.bufname(), ':t'))
   elseif M.in_str('treesitter', which) then
     if vim.fn.mode() ~= 'n' then
       M.feed_keys [[\<esc>]]
