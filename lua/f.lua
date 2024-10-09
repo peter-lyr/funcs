@@ -1150,6 +1150,9 @@ function M.quit_nvim_qt_later()
 end
 
 function M.start_nvim_qt(file)
+  if not file then
+    file = M.get_cur_file()
+  end
   if M.in_str('session', file) then
     if M.in_str('!', file) then
       vim.cmd 'SessionsSave!'
