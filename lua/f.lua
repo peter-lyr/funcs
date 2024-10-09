@@ -813,6 +813,15 @@ function M.clear_interval(timer)
   pcall(vim.fn.timer_stop, timer)
 end
 
+function M.set_interval_vim_g(name, interval, callback)
+  if vim.g[name] then
+    M.clear_interval(vim.g[name])
+  end
+  vim.g[name] = vim.fn.timer_start(interval, function()
+    callback()
+  end, { ['repeat'] = -1, })
+end
+
 function M.set_interval_timeout(name, interval, timeout, callback, callback_done)
   vim.g[name] = M.set_interval(interval, function()
     if callback() then
