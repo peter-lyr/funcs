@@ -883,6 +883,13 @@ function M.git_lazy()
   M.just_run_outside 'lazygit'
 end
 
+function M.get_tail(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  return vim.fn.fnamemodify(file, ':t')
+end
+
 function M.copy_multiple_filenames()
   vim.fn.setreg('w', vim.loop.cwd())
   vim.fn.setreg('a', M.get_cur_file())
