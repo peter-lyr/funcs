@@ -1719,7 +1719,7 @@ function M.null()
 end
 
 function M.git_diff(_, index)
-  require 'gitsigns'.diffthis(F.format('~%d', index))
+  require 'gitsigns'.diffthis(M.format('~%d', index))
 end
 
 function M.reverse(arr)
