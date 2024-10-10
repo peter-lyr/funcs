@@ -1662,13 +1662,18 @@ function M.jump_term()
   end
 end
 
-function M.open_term(dir)
+function M.open_term_do(cmd)
   if not M.jump_term() then
     vim.cmd 'split'
   end
-  M.cmd('cd %s|te', dir)
+  M.cmd('cd %s|te %s', vim.g.term_dir, cmd)
   M.set_myft()
   vim.g.term_total = M.get_term_total()
+end
+
+function M.open_term(dir)
+  vim.g.term_dir = dir
+  M.ui({ 'cmd', 'ipython', 'bash', 'powershell', 'lazygit', }, 'which_term', M.open_term_do)
 end
 
 function M.merge_tables(...)
