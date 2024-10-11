@@ -1348,6 +1348,7 @@ end
 function M.jump_or_split_term()
   local term_bufs = M.get_term_bufs()
   if #term_bufs == 0 then
+    M.open_term(M.get_parent())
     return
   end
   if not vim.g.term_index then
