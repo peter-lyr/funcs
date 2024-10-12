@@ -911,7 +911,12 @@ end
 
 function M.git_push_recursive_do_do(commit, file, opts)
   local commit_file = DpTemp .. '\\commit.txt'
-  M.write_lines_to_file({ commit, }, commit_file)
+  if type(commit) == 'string' then
+    commit = M.split(commit)
+  elseif type(commit) ~= 'table' then
+    commit = { tostring(commit), }
+  end
+  M.write_lines_to_file(commit, commit_file)
   M.run_silent { M.git_push_recursive_py, commit_file, file, unpack(opts), }
 end
 
