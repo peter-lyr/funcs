@@ -1529,7 +1529,12 @@ function M.toggle_opt(opt, a, b, scope)
 end
 
 function M.toggle_local(opt)
-  M.toggle_opt(opt, true, false, 'local')
+  ---- M.toggle_opt(opt, true, false, 'local')
+  if M.get_opt(opt, 'local') == true then
+    vim.cmd 'diffoff'
+  else
+    vim.cmd 'diffthis'
+  end
 end
 
 function M.toggle_global(opt)
