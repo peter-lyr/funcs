@@ -23,10 +23,10 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
-vim.g.winbar     = '%f'
-vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
+vim.g.winbar = '%{v:lua.WinBarName()}%=%#Comment#%{v:lua.WinBarProj()}'
+--- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 
-DIRS             = {
+DIRS         = {
   Home,
   Dp,
   Org,
@@ -701,6 +701,18 @@ end
 
 function M.get_cur_file()
   return M.get_file(0)
+end
+
+function M.get_cur_tail()
+  local cur_file = M.get_file(0)
+  local cur_proj = M.get_proj(cur_file)
+  return string.sub(cur_file, #cur_proj + 2, #cur_file)
+end
+
+function M.get_proj_tail()
+  local cur_file = M.get_file(0)
+  local cur_proj = M.get_proj(cur_file)
+  return vim.fn.fnamemodify(cur_proj, ':t')
 end
 
 function M.project_cd()
@@ -1547,16 +1559,26 @@ function M.toggle_global(opt)
 end
 
 function M.toggle_winbar()
+  vim.cmd 'hi WinBar guifg=#8927d6'
   M.toggle_opt('winbar', '', vim.g.winbar)
 end
 
-function M.toggle_statusline()
-  M.toggle_opt('statusline', '', vim.g.statusline)
+--- function M.toggle_statusline()
+---   M.toggle_opt('statusline', '', vim.g.statusline)
+--- end
+
+function WinBarName()
+  return M.get_cur_tail()
 end
 
-function Statusline()
-  return M.get_cur_file()
+function WinBarProj()
+  -- return M.get_proj_tail()
+  return M.get_proj()
 end
+
+--- function Statusline()
+---   return M.get_cur_file()
+--- end
 
 function M.lsp_document_symbols()
   vim.cmd 'Telescope lsp_document_symbols'
