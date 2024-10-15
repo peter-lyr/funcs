@@ -1824,6 +1824,28 @@ function M.change_language(lang)
   M.cmd([[silent !start /b /min cmd /c "%s %s"]], M.input_method_py, lang)
 end
 
+function M.diffview_stash()
+  vim.cmd 'DiffviewFileHistory --walk-reflogs --range=stash'
+end
+
+function M.diffview_open()
+  vim.cmd 'DiffviewOpen -u'
+end
+
+function M.diffview_close()
+  vim.cmd 'DiffviewClose'
+end
+
+function M.diffview_filehistory(mode)
+  if mode == 1 then
+    vim.cmd 'DiffviewFileHistory'
+  elseif mode == 2 then
+    vim.cmd 'DiffviewFileHistory --max-count=64'
+  elseif mode == 3 then
+    vim.cmd 'DiffviewFileHistory --max-count=238778'
+  end
+end
+
 M.clone_if_not_exist 'org'
 
 return M
