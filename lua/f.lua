@@ -1504,6 +1504,15 @@ function M.cmdline(cmd)
   M.feed_keys(M.format(':%s', cmd and cmd or ''))
 end
 
+vim.api.nvim_create_user_command('Run', function(params)
+  M.run__silent(M.join(params['fargs'], ' '))
+end, { nargs = '*', })
+
+function M.cmd_outside(cmd)
+  M.copy_multiple_filenames()
+  M.feed_keys(M.format(':Run %s', cmd and cmd or ''))
+end
+
 function M.toggle(val)
   if type(val) == 'boolean' then
     if val == true then
