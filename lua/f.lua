@@ -1846,6 +1846,17 @@ function M.diffview_filehistory(mode)
   end
 end
 
+function M.refresh_later()
+  M.set_timeout(100, function()
+    M.refresh()
+  end)
+end
+
+function M.git_reset_hard()
+  M.run__silent 'git reset --hard'
+  M.refresh_later()
+end
+
 M.clone_if_not_exist 'org'
 
 return M
