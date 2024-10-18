@@ -636,6 +636,11 @@ function M.lazy_map(tbls)
   end
 end
 
+function M.escape_space(text)
+  text = string.gsub(text, ' ', '\\ ')
+  return text
+end
+
 function M.get_parent(file)
   if not file then
     file = M.get_cur_file()
