@@ -1780,6 +1780,14 @@ function M.git_diff_sel()
   M.ui(git_logs, 'git diff sel', M.git_diff)
 end
 
+function M.delete_empty_line(text)
+  text = string.gsub(text, '\r', '')
+  while M.in_str('\n\n', text) do
+    text = string.gsub(text, '\n\n', '\n')
+  end
+  return text
+end
+
 function M.git_get_commit_quick(which)
   local commit
   if which == 'regh' then
@@ -1791,7 +1799,7 @@ function M.git_get_commit_quick(which)
   elseif which == 'reghjkl' then
     commit = M.join({ vim.fn.getreg 'h', vim.fn.getreg 'j', vim.fn.getreg 'k', vim.fn.getreg 'l', }, ' ')
   elseif which == 'yanked' then
-    commit = vim.fn.getreg '"'
+    commit = M.delete_empty_line(vim.fn.getreg '"')
   elseif which == 'cword' then
     commit = vim.fn.expand '<cword>'
   elseif which == 'cWORD' then
