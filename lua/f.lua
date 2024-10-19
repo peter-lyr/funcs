@@ -1195,12 +1195,14 @@ function M.start_nvim_qt(file)
     if M.in_str('!', file) then
       vim.cmd 'SessionsSave!'
     end
-    vim.cmd [[silent !start nvim-qt.exe -- -c "SessionsLoad"]]
-    --- M.cmd('silent !start nvim-qt.exe -- -S %s', SessionVim)
+    vim.cmd [[silent !start nvim.exe -c "SessionsLoad"]]
+    --- M.cmd('silent !start nvim.exe -S %s', SessionVim)
+    --- vim.cmd [[silent !start nvim-qt.exe -- -c "SessionsLoad"]]
+    --- --- M.cmd('silent !start nvim-qt.exe -- -S %s', SessionVim)
     return
   end
   file = file and file or ''
-  M.cmd('silent !start nvim-qt.exe %s', file)
+  M.cmd('silent !start nvim.exe %s', file)
 end
 
 function M.restart_nvim_qt(file)
