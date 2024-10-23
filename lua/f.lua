@@ -23,7 +23,7 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
-vim.g.winbar = '%{v:lua.WinBarName()}%<%=%#Comment#%{v:lua.WinBarProj()}'
+vim.g.winbar = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 
 DIRS         = {
