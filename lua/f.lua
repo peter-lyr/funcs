@@ -1800,6 +1800,8 @@ function M.git_get_commit_quick(which)
     commit = M.join({ vim.fn.getreg 'h', vim.fn.getreg 'j', vim.fn.getreg 'k', vim.fn.getreg 'l', }, ' ')
   elseif which == 'yanked' then
     commit = M.delete_empty_line(vim.fn.getreg '"')
+  elseif which == 'clipboard' then
+    commit = M.delete_empty_line(vim.fn.getreg '+')
   elseif which == 'cword' then
     commit = vim.fn.expand '<cword>'
   elseif which == 'cWORD' then
