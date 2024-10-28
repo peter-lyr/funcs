@@ -273,6 +273,11 @@ function M.rep_slash(content)
   return content
 end
 
+function M.double_backslash(content)
+  content = string.gsub(content, '\\', '\\\\')
+  return content
+end
+
 function M.lower(content)
   return vim.fn.tolower(content)
 end
@@ -1888,8 +1893,13 @@ function M.refresh_later()
   end)
 end
 
+function M.git_archive_do(dir)
+  M.feed_keys(':\\<c-u>silent ! cd /d ' .. M.double_backslash(dir) .. ' && git archive --output=D:\\\\Desktop\\\\temp.zip HEAD')
+end
+
 function M.git_archive()
-  M.feed_keys ':\\<c-u>silent ! git archive --output=D:\\\\Desktop\\\\temp.zip '
+  local dirs = M.get_file_dirs()
+  M.ui(dirs, 'git_archive', M.git_archive_do)
 end
 
 function M.git_reset_hard()
