@@ -1895,7 +1895,11 @@ function M.refresh_later()
 end
 
 function M.git_archive_do(dir)
-  M.feed_keys(':\\<c-u>silent ! cd /d ' .. M.double_backslash(dir) .. ' && git archive --output=D:\\\\Desktop\\\\temp.zip HEAD')
+  M.feed_keys(':\\<c-u>silent ! cd /d '
+    .. M.double_backslash(dir)
+    .. ' && git archive --output='
+    .. M.double_backslash(M.get_sh_get_folder_path 'desktop'[1])
+    .. '\\\\temp.zip HEAD')
 end
 
 function M.git_archive()
