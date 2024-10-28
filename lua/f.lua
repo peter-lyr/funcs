@@ -338,6 +338,7 @@ M.git_push_recursive_py = M.get_py '04-git-push-recursive.py'
 M.git_create_submodule_py = M.get_py '05-git-create-submodule.py'
 M.git_repo_list_3digit__py = M.get_py '06-git-repo-list-3digit-.py'
 M.cbp2cmake_py = M.get_py '08-cbp2cmake.py'
+M.sh_get_folder_path_exe = M.get_py '10-SHGetFolderPath.exe'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -1923,6 +1924,23 @@ function M.todo_quickfix(what)
   else
     F.cmd('TodoQuickFix cwd=%s=%s', cwd)
   end
+end
+
+function M.get_sh_get_folder_path(name)
+  local f = io.popen(M.sh_get_folder_path_exe .. ' ' .. (name and name or ''))
+  if f then
+    local dirs = {}
+    for dir in string.gmatch(f:read '*a', '([%S ]+)') do
+      dir = M.rep(dir)
+      if not M.in_arr(dir, dirs) then
+        dirs[#dirs + 1] = dir
+      end
+    end
+    f:close()
+    table.sort(dirs)
+    return dirs
+  end
+  return {}
 end
 
 M.clone_if_not_exist 'org'
