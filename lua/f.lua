@@ -1899,7 +1899,9 @@ function M.git_archive_do(dir)
     .. M.double_backslash(dir)
     .. ' && git archive --output='
     .. M.double_backslash(M.get_sh_get_folder_path 'desktop'[1])
-    .. '\\\\temp.zip HEAD')
+    .. '\\\\'
+    .. vim.fn.fnamemodify(dir, ':t')
+    .. '.zip HEAD')
 end
 
 function M.git_archive()
