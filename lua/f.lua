@@ -1888,6 +1888,10 @@ function M.refresh_later()
   end)
 end
 
+function M.git_archive()
+  M.feed_keys ':\\<c-u>git archive --output=D:\\\\Desktop\\\\temp.zip '
+end
+
 function M.git_reset_hard()
   M.run__silent 'git reset --hard'
   M.refresh_later()
