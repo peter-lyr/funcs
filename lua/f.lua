@@ -1933,7 +1933,7 @@ function M.todo_telescope(what)
   if what then
     M.cmd('TodoTelescope cwd=%s keywords=%s', cwd, what)
   else
-    M.cmd('TodoTelescope cwd=%s=%s', cwd)
+    M.cmd('TodoTelescope cwd=%s', cwd)
   end
 end
 
@@ -1942,7 +1942,7 @@ function M.todo_quickfix(what)
   if what then
     M.cmd('TodoQuickFix cwd=%s keywords=%s', cwd, what)
   else
-    M.cmd('TodoQuickFix cwd=%s=%s', cwd)
+    M.cmd('TodoQuickFix cwd=%s', cwd)
   end
 end
 
