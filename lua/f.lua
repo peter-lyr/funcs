@@ -1931,18 +1931,18 @@ end
 function M.todo_telescope(what)
   local cwd = M.rep(vim.loop.cwd())
   if what then
-    F.cmd('TodoTelescope cwd=%s keywords=%s', cwd, what)
+    M.cmd('TodoTelescope cwd=%s keywords=%s', cwd, what)
   else
-    F.cmd('TodoTelescope cwd=%s=%s', cwd)
+    M.cmd('TodoTelescope cwd=%s=%s', cwd)
   end
 end
 
 function M.todo_quickfix(what)
-  local cwd = F.rep(vim.loop.cwd())
+  local cwd = M.rep(vim.loop.cwd())
   if what then
-    F.cmd('TodoQuickFix cwd=%s keywords=%s', cwd, what)
+    M.cmd('TodoQuickFix cwd=%s keywords=%s', cwd, what)
   else
-    F.cmd('TodoQuickFix cwd=%s=%s', cwd)
+    M.cmd('TodoQuickFix cwd=%s=%s', cwd)
   end
 end
 
