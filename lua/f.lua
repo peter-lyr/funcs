@@ -1466,9 +1466,23 @@ function M.inc_file_tail(bname)
   for i, item in ipairs(items) do
     local v = M.is_number(item)
     local format = M.format('%%0%dd', #item)
+    vim.g.temp_timestamp = item
+    vim.g.temp_date = -1
+    --- print(item)
+    vim.cmd [[
+      try
+        let g:temp_date = msgpack#strptime('%Y%m%d', g:temp_timestamp)
+        " echomsg 'xxxxxxxxx'
+        " echomsg g:temp_date
+      catch
+        " echomsg 'wwwwwwwww'
+      endtry
+    ]]
     if v then
-      items[i] = M.format(format, M.inc(v))
-      break
+      if vim.g.temp_date < 0 then
+        items[i] = M.format(format, M.inc(v))
+        break
+      end
     end
     len = len + #item + 1
   end
