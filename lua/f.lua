@@ -1963,6 +1963,13 @@ function M.get_sh_get_folder_path(name)
   return {}
 end
 
+function M.title_cur_line()
+  local title = vim.fn.trim(vim.fn.getline '.')
+  --- M.write_lines_to_file({}, title)
+  M.cmd('w %s', title)
+  M.cmd('e %s', title)
+end
+
 M.clone_if_not_exist 'org'
 
 return M
