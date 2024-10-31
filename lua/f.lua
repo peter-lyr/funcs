@@ -1938,13 +1938,21 @@ function M.todo_telescope(what)
   end
 end
 
-function M.todo_quickfix(what)
-  local cwd = M.rep(vim.loop.cwd())
-  if what then
-    M.cmd('TodoQuickFix cwd=%s keywords=%s', cwd, what)
+function M.todo_quickfix_do(cwd)
+  if vim.g.todo_what then
+    M.cmd('TodoQuickFix cwd=%s keywords=%s', cwd, vim.g.todo_what)
   else
     M.cmd('TodoQuickFix cwd=%s', cwd)
   end
+end
+
+function M.todo_quickfix(what)
+  local cwd = M.rep(vim.loop.cwd())
+  vim.g.todo_what = nil
+  if what then
+    vim.g.todo_what = what
+  end
+  M.todo_quickfix_do(cwd)
 end
 
 function M.get_sh_get_folder_path(name)
