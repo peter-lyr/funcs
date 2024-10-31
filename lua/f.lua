@@ -1499,6 +1499,7 @@ function M.new_win_finc_do(new)
   vim.fn.setline(1, bname)
   M.set_ft 'myft-empty-exit'
   M.cmd('norm 0%sl', col)
+  vim.fn.setpos('.', { 0, 1, col + 1, })
 end
 
 function M.new_win_finc_down()
