@@ -1970,6 +1970,13 @@ function M.title_cur_line()
   M.cmd('e %s', title)
 end
 
+function M.mkdir_cur_tail()
+  local file = M.get_cur_file()
+  local parent = vim.fn.fnamemodify(file, ':p:h')
+  local dir = vim.fn.fnamemodify(file, ':t:r')
+  M.run__silent(M.format('cd /d "%s" && md "%s"', parent, dir))
+end
+
 M.clone_if_not_exist 'org'
 
 return M
