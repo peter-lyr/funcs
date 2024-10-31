@@ -1929,13 +1929,26 @@ function M.git_reset_hard()
   M.refresh_later()
 end
 
-function M.todo_telescope(what)
-  local cwd = M.rep(vim.loop.cwd())
-  if what then
-    M.cmd('TodoTelescope cwd=%s keywords=%s', cwd, what)
+function M.todo_telescope_do(cwd)
+  if vim.g.todo_what then
+    M.cmd('TodoTelescope cwd=%s keywords=%s', cwd, vim.g.todo_what)
   else
     M.cmd('TodoTelescope cwd=%s', cwd)
   end
+end
+
+function M.todo_telescope(what)
+  local cwd = M.rep(vim.loop.cwd())
+  vim.g.todo_what = nil
+  if what then
+    vim.g.todo_what = what
+  end
+  M.todo_telescope_do(cwd)
+end
+
+function M.todo_telescope_sel(dirs, what)
+  vim.g.todo_what = what
+  M.ui(dirs, M.format('%s sel', what), M.todo_telescope_do)
 end
 
 function M.todo_quickfix_do(cwd)
@@ -1953,6 +1966,11 @@ function M.todo_quickfix(what)
     vim.g.todo_what = what
   end
   M.todo_quickfix_do(cwd)
+end
+
+function M.todo_quickfix_sel(dirs, what)
+  vim.g.todo_what = what
+  M.ui(dirs, M.format('%s sel', what), M.todo_quickfix_do)
 end
 
 function M.get_sh_get_folder_path(name)
