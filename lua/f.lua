@@ -1,5 +1,4 @@
 local M = {}
-
 local pp = require 'plenary.path'
 
 vim.g.ui_select = vim.ui.select
@@ -2112,6 +2111,89 @@ function M.lsp_format()
   if M.is_buf_fts { 'markdown', } then
     M.align_table()
   end
+end
+
+function M.system_cd(file)
+  local fpath = M.new_file(file)
+  if fpath:is_dir() then
+    return 'cd /d ' .. file
+  else
+    return 'cd /d ' .. fpath:parent().filename
+  end
+end
+
+M.xxd_output_dir_path = DpTemp .. '\\xxd_output'
+
+if vim.fn.isdirectory(M.xxd_output_dir_path) == 0 then
+  vim.fn.mkdir(M.xxd_output_dir_path)
+end
+
+function M.xxd_g_c(xxd_g_c)
+  if not xxd_g_c then
+    xxd_g_c = 'bytes: 1, cols: 16'
+  end
+  local bytes = string.match(xxd_g_c, '^bytes: (%d+),')
+  local cols = string.match(xxd_g_c, 'cols: (%d+)$')
+  local bin_fname = M.rep(vim.g.xxd_file)
+  local bin_fname_tail = vim.fn.fnamemodify(bin_fname, ':t')
+  local bin_fname_full__ = string.gsub(vim.fn.fnamemodify(bin_fname, ':h'), '\\', '_')
+  bin_fname_full__ = string.gsub(bin_fname_full__, ':', '_')
+  local xxd_output_sub_dir_path = M.new_file(M.join_path(M.xxd_output_dir_path, bin_fname_full__))
+  if not xxd_output_sub_dir_path:exists() then
+    vim.fn.mkdir(xxd_output_sub_dir_path.filename)
+  end
+  local xxd = xxd_output_sub_dir_path:joinpath(bin_fname_tail .. '.xxd').filename
+  local c = xxd_output_sub_dir_path:joinpath(bin_fname_tail .. '.c').filename
+  local bak = xxd_output_sub_dir_path:joinpath(bin_fname_tail .. '.bak').filename
+  vim.fn.system(string.format('copy /y "%s" "%s"', bin_fname, bak))
+  vim.fn.system(string.format('xxd -g %d -c %d "%s" "%s"', bytes, cols, bak, xxd))
+  vim.fn.system(string.format('%s && xxd -i -c %d "%s" "%s"', M.system_cd(bak), cols, vim.fn.fnamemodify(bak, ':t'), c))
+  vim.cmd('e ' .. xxd)
+  vim.cmd 'setlocal ft=xxd'
+end
+
+function M.bin_xxd(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  vim.g.xxd_file = file
+  M.xxd_g_c()
+end
+
+function M.bin_xxd_sel(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  vim.g.xxd_file = file
+  M.ui({
+    'bytes: 1, cols: 16',
+    'bytes: 2, cols: 16',
+    'bytes: 4, cols: 16',
+    'bytes: 1, cols: 12',
+    'bytes: 2, cols: 12',
+    'bytes: 4, cols: 12',
+    'bytes: 1, cols: 8',
+    'bytes: 2, cols: 8',
+    'bytes: 4, cols: 8',
+    'bytes: 1, cols: 4',
+    'bytes: 2, cols: 4',
+    'bytes: 4, cols: 4',
+    'bytes: 1, cols: 32',
+    'bytes: 2, cols: 32',
+    'bytes: 4, cols: 32',
+    'bytes: 1, cols: 64',
+    'bytes: 2, cols: 64',
+    'bytes: 4, cols: 64',
+    'bytes: 1, cols: 20',
+    'bytes: 2, cols: 20',
+    'bytes: 4, cols: 20',
+    'bytes: 1, cols: 24',
+    'bytes: 2, cols: 24',
+    'bytes: 4, cols: 24',
+    'bytes: 1, cols: 28',
+    'bytes: 2, cols: 28',
+    'bytes: 4, cols: 28',
+  }, 'bin_xxd_sel', M.xxd_g_c)
 end
 
 M.clone_if_not_exist 'org'
