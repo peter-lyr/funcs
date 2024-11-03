@@ -2145,7 +2145,7 @@ function M.xxd_g_c(xxd_g_c)
   local xxd = xxd_output_sub_dir_path:joinpath(bin_fname_tail .. '.xxd').filename
   local c = xxd_output_sub_dir_path:joinpath(bin_fname_tail .. '.c').filename
   local bak = xxd_output_sub_dir_path:joinpath(bin_fname_tail .. '.bak').filename
-  vim.fn.system(string.format('copy /y "%s" "%s"', bin_fname, bak))
+  -- vim.fn.system(string.format('copy /y "%s" "%s"', bin_fname, bak))
   vim.fn.system(string.format('xxd -g %d -c %d "%s" "%s"', bytes, cols, bak, xxd))
   vim.fn.system(string.format('%s && xxd -i -c %d "%s" "%s"', M.system_cd(bak), cols, vim.fn.fnamemodify(bak, ':t'), c))
   vim.cmd('e ' .. xxd)
