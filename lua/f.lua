@@ -2221,6 +2221,73 @@ function M.copy_to_desktop(files)
   end
 end
 
+function M.findall(patt, str)
+  vim.g.patt = patt
+  vim.g.str = str
+  vim.g.res = {}
+  vim.cmd [[
+    python << EOF
+import re
+import vim
+try:
+  import luadata
+except:
+  import os
+  os.system('pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host mirrors.aliyun.com luadata')
+  import luadata
+patt = vim.eval('g:patt')
+string = vim.eval('g:str')
+res = re.findall(patt, string)
+if res:
+  new_res = eval(str(res).replace('(', '[').replace(')', ']'))
+  new_res = luadata.serialize(new_res, encoding='utf-8', indent=' ', indent_level=0)
+  vim.command(f"""lua vim.g.res = {new_res}""")
+EOF
+  ]]
+  return vim.g.res
+end
+
+function M.get_git_remote_url(proj)
+  local remote = ''
+  if proj then
+    remote = vim.fn.system(string.format('cd %s && git remote -v', proj))
+  else
+    remote = vim.fn.system 'git remote -v'
+  end
+  local res = M.findall('.*git@([^:]+):([^/]+)/([^ ]+).*', remote)
+  local urls = {}
+  local type = nil
+  if #res == 0 then
+    res = M.findall('https://([^ ]+)', remote)
+    for _, r in ipairs(res) do
+      local url = r
+      if not M.in_arr(url, urls) then
+        urls[#urls + 1] = url
+        type = 'https'
+      end
+    end
+  else
+    for _, r in ipairs(res) do
+      local url = string.format('%s/%s/%s', unpack(r))
+      if not M.in_arr(url, urls) then
+        urls[#urls + 1] = url
+        type = 'ssh'
+      end
+    end
+  end
+  if #urls > 0 then
+    return type, string.format('%s', urls[1])
+  end
+  return type, ''
+end
+
+function M.git_browser()
+  local _, url = M.get_git_remote_url()
+  if M.is(url) then
+    M.run__silent(M.format('start https://%s', url))
+  end
+end
+
 M.clone_if_not_exist 'org'
 
 return M
