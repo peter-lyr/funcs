@@ -955,10 +955,6 @@ function M.git_push_recursive_do_do(commit, file, opts)
 end
 
 function M.git_push_recursive_do(commit, file, opts)
-  function Sta_234_do()
-    M.git_push_recursive_do(commit, file, opts)
-  end
-
   M.project_cd()
   if not file then
     file = M.get_cur_file()
@@ -977,10 +973,18 @@ function M.git_push_recursive_do(commit, file, opts)
   if not M.is(commit) then
     vim.ui.input({ prompt = 'commit info: ', }, function(c)
       if c then
+        function Sta_234_do()
+          M.git_push_recursive_do_do(c, file, opts)
+        end
+
         M.git_push_recursive_do_do(c, file, opts)
       end
     end)
   else
+    function Sta_234_do()
+      M.git_push_recursive_do_do(commit, file, opts)
+    end
+
     M.git_push_recursive_do_do(commit, file, opts)
   end
 end
