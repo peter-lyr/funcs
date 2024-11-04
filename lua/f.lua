@@ -440,7 +440,12 @@ function M.run_py_get_cmd(file, params, opts)
           log_level = vim.log.levels.ERROR
           if sta == '234' then -- re run
             print "sta == '234'"
-            vim.print(file, params, opts)
+            if Sta_234_do then
+              Sta_234_do()
+            end
+            vim.print(file)
+            vim.print(params)
+            vim.print(opts)
             M.run_py_get_cmd(file, params, opts)
           end
         end
@@ -948,6 +953,10 @@ function M.git_push_recursive_do_do(commit, file, opts)
 end
 
 function M.git_push_recursive_do(commit, file, opts)
+  function Sta_234_do()
+    M.git_push_recursive_do(commit, file, opts)
+  end
+
   M.project_cd()
   if not file then
     file = M.get_cur_file()
