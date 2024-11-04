@@ -441,7 +441,9 @@ function M.run_py_get_cmd(file, params, opts)
           if sta == '234' then -- re run
             print "sta == '234'"
             if Sta_234_do then
+              print 'wwwwwwwwwwwwwww'
               Sta_234_do()
+              print 'WWWWWWWWWWWWWWW'
             end
             vim.print(file)
             vim.print(params)
