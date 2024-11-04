@@ -438,6 +438,9 @@ function M.run_py_get_cmd(file, params, opts)
         local log_level = vim.log.levels.INFO
         if sta ~= '0' then
           log_level = vim.log.levels.ERROR
+          if sta == '234' then -- re run
+            M.run_py_get_cmd(file, params, opts)
+          end
         end
         M.notify(M.format('Sta: %s, #%d\n%s\n%s\n%s',
           sta, temp_cnt, temp, temp2,
