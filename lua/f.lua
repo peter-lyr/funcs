@@ -2196,6 +2196,16 @@ function M.bin_xxd_sel(file)
   }, 'bin_xxd_sel', M.xxd_g_c)
 end
 
+function M.copy_to_desktop(files)
+  if not files then
+    return
+  end
+  local desktop = M.get_sh_get_folder_path 'desktop'[1]
+  for _, file in ipairs(files) do
+    M.run__silent(M.format('copy /y %s %s', file, desktop))
+  end
+end
+
 M.clone_if_not_exist 'org'
 
 return M
