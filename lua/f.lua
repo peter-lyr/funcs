@@ -448,7 +448,9 @@ function M.run_py_get_cmd(file, params, opts)
       vim.fn.system(M.format('move /y "%s" "%s\\run-cmd-%s"', RunCmdDir, RunCmdOldDir, vim.fn.strftime '%Y%m%d-%H%M%S'))
       vim.fn.mkdir(RunCmdDir)
     end
-    local temp_2 = M.complex_string_hash(tostring(file) .. tostring(params) .. tostring(opts))
+    local temp_3 = tostring(file) .. tostring(params) .. tostring(opts)
+    print('===', temp_3)
+    local temp_2 = M.complex_string_hash(temp_3)
     if not M.in_arr(temp_2, Sta_234_cnts) then
       Sta_234_cnts[temp_2] = #Sta_234_dos
     end
