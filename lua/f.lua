@@ -453,6 +453,7 @@ function M.run_py_get_cmd(file, params, opts)
     if not M.in_arr(temp_2, Sta_234_cnts) then
       Sta_234_cnts[temp_2] = #Sta_234_dos
     end
+    print('vim.inspect(Sta_234_cnts):', vim.inspect 'vim.inspect(Sta_234_cnts):')
     local params_txt = M.format('%s\\%04d-run-params.txt', RunCmdDir, vim.g.run_cmd_cnt)
     if M.run_cmd_py == file and (not opts or not opts.just) then
       local out_msg_txt = M.format('%s\\%04d-run-out.txt', RunCmdDir, vim.g.run_cmd_cnt)
@@ -477,6 +478,7 @@ function M.run_py_get_cmd(file, params, opts)
           if sta == '234' then -- re run
             local temp_5 = vim.inspect(file) .. vim.inspect(params) .. vim.inspect(opts)
             local temp_4 = M.complex_string_hash(temp_5)
+            print('==vim.inspect(Sta_234_cnts):', vim.inspect(Sta_234_cnts))
             if Sta_234_dos[Sta_234_cnts[temp_4]] then
               Sta_234_dos[Sta_234_cnts[temp_4]]()
             end
