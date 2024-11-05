@@ -22,6 +22,8 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
+Sta_234_dos  = {}
+
 vim.g.winbar = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 
@@ -417,6 +419,7 @@ function M.run_py_get_cmd(file, params, opts)
       vim.fn.system(M.format('move /y "%s" "%s\\run-cmd-%s"', RunCmdDir, RunCmdOldDir, vim.fn.strftime '%Y%m%d-%H%M%S'))
       vim.fn.mkdir(RunCmdDir)
     end
+    local sta_234_cnt = #Sta_234_dos
     local params_txt = M.format('%s\\%04d-run-params.txt', RunCmdDir, vim.g.run_cmd_cnt)
     if M.run_cmd_py == file and (not opts or not opts.just) then
       local out_msg_txt = M.format('%s\\%04d-run-out.txt', RunCmdDir, vim.g.run_cmd_cnt)
@@ -439,9 +442,8 @@ function M.run_py_get_cmd(file, params, opts)
         if sta ~= '0' then
           log_level = vim.log.levels.ERROR
           if sta == '234' then -- re run
-            if Sta_234_do then
-              Sta_234_do()
-              Sta_234_do = nil
+            if Sta_234_dos[sta_234_cnt] then
+              Sta_234_dos[sta_234_cnt]()
             end
             M.run_py_get_cmd(file, params, opts)
           end
@@ -972,6 +974,8 @@ function M.git_push_recursive_do(commit, file, opts)
           M.git_push_recursive_do_do(c, file, opts)
         end
 
+        Sta_234_dos[#Sta_234_dos + 1] = Sta_234_do
+
         M.git_push_recursive_do_do(c, file, opts)
       end
     end)
@@ -979,6 +983,8 @@ function M.git_push_recursive_do(commit, file, opts)
     function Sta_234_do()
       M.git_push_recursive_do_do(commit, file, opts)
     end
+
+    Sta_234_dos[#Sta_234_dos + 1] = Sta_234_do
 
     M.git_push_recursive_do_do(commit, file, opts)
   end
