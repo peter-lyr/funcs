@@ -23,6 +23,7 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
 end
 
 Sta_234_dos  = {}
+Sta_234_cnts = {}
 
 vim.g.winbar = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
@@ -407,6 +408,34 @@ function M.to_table(any)
   return any
 end
 
+function M.complex_string_hash(str)
+  local prime1 = 16777619
+  local offset = 2166136261
+  local hash = offset
+  for i = 1, #str do
+    local char = string.byte(str, i)
+    hash = bit.bxor(hash, char)
+    hash = hash * prime1
+  end
+  local hex_chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', }
+  local hash_str = ''
+  for _ = 1, 8 do
+    local index = bit.band(hash, 15) + 1
+    hash_str = hex_chars[index] .. hash_str
+    hash = bit.rshift(hash, 4)
+  end
+  return hash_str
+end
+
+function M.string_hash(str)
+  local hash = 0
+  for i = 1, #str do
+    local char = string.byte(str, i)
+    hash = hash * 31 + char
+  end
+  return hash
+end
+
 function M.run_py_get_cmd(file, params, opts)
   params = M.to_table(params)
   local cmd = file
@@ -419,7 +448,10 @@ function M.run_py_get_cmd(file, params, opts)
       vim.fn.system(M.format('move /y "%s" "%s\\run-cmd-%s"', RunCmdDir, RunCmdOldDir, vim.fn.strftime '%Y%m%d-%H%M%S'))
       vim.fn.mkdir(RunCmdDir)
     end
-    local sta_234_cnt = #Sta_234_dos
+    local temp_2 = M.complex_string_hash(tostring(file) .. tostring(params) .. tostring(opts))
+    if not M.in_arr(temp_2, Sta_234_cnts) then
+      Sta_234_cnts[temp_2] = #Sta_234_dos
+    end
     local params_txt = M.format('%s\\%04d-run-params.txt', RunCmdDir, vim.g.run_cmd_cnt)
     if M.run_cmd_py == file and (not opts or not opts.just) then
       local out_msg_txt = M.format('%s\\%04d-run-out.txt', RunCmdDir, vim.g.run_cmd_cnt)
@@ -442,8 +474,8 @@ function M.run_py_get_cmd(file, params, opts)
         if sta ~= '0' then
           log_level = vim.log.levels.ERROR
           if sta == '234' then -- re run
-            if Sta_234_dos[sta_234_cnt] then
-              Sta_234_dos[sta_234_cnt]()
+            if Sta_234_dos[Sta_234_cnts[temp_2]] then
+              Sta_234_dos[Sta_234_cnts[temp_2]]()
             end
             M.run_py_get_cmd(file, params, opts)
           end
