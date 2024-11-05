@@ -449,7 +449,6 @@ function M.run_py_get_cmd(file, params, opts)
       vim.fn.mkdir(RunCmdDir)
     end
     local temp_3 = vim.inspect(file) .. vim.inspect(params) .. vim.inspect(opts)
-    print('===', temp_3)
     local temp_2 = M.complex_string_hash(temp_3)
     if not M.in_arr(temp_2, Sta_234_cnts) then
       Sta_234_cnts[temp_2] = #Sta_234_dos
@@ -476,8 +475,10 @@ function M.run_py_get_cmd(file, params, opts)
         if sta ~= '0' then
           log_level = vim.log.levels.ERROR
           if sta == '234' then -- re run
-            if Sta_234_dos[Sta_234_cnts[temp_2]] then
-              Sta_234_dos[Sta_234_cnts[temp_2]]()
+            local temp_5 = vim.inspect(file) .. vim.inspect(params) .. vim.inspect(opts)
+            local temp_4 = M.complex_string_hash(temp_5)
+            if Sta_234_dos[Sta_234_cnts[temp_4]] then
+              Sta_234_dos[Sta_234_cnts[temp_4]]()
             end
             M.run_py_get_cmd(file, params, opts)
           end
