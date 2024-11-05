@@ -22,6 +22,7 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
+Sta_234_en   = nil
 Sta_234_dos  = {}
 Sta_234_cnts = {}
 
@@ -450,10 +451,14 @@ function M.run_py_get_cmd(file, params, opts)
     end
     local temp_3 = vim.inspect(file) .. vim.inspect(params) .. vim.inspect(opts)
     local temp_2 = M.complex_string_hash(temp_3)
-    if not M.in_arr(temp_2, Sta_234_cnts) then
+    if Sta_234_en and not M.in_arr(temp_2, Sta_234_cnts) then
       Sta_234_cnts[temp_2] = #Sta_234_dos
     end
-    print('vim.inspect(Sta_234_cnts):', vim.inspect 'vim.inspect(Sta_234_cnts):')
+    Sta_234_en = nil
+    print(temp_3)
+    print(temp_2)
+    print('vim.inspect(Sta_234_cnts):', vim.inspect(Sta_234_cnts))
+    print '#########'
     local params_txt = M.format('%s\\%04d-run-params.txt', RunCmdDir, vim.g.run_cmd_cnt)
     if M.run_cmd_py == file and (not opts or not opts.just) then
       local out_msg_txt = M.format('%s\\%04d-run-out.txt', RunCmdDir, vim.g.run_cmd_cnt)
@@ -477,8 +482,11 @@ function M.run_py_get_cmd(file, params, opts)
           log_level = vim.log.levels.ERROR
           if sta == '234' then -- re run
             local temp_5 = vim.inspect(file) .. vim.inspect(params) .. vim.inspect(opts)
+            print(temp_5)
             local temp_4 = M.complex_string_hash(temp_5)
+            print(temp_4)
             print('==vim.inspect(Sta_234_cnts):', vim.inspect(Sta_234_cnts))
+            print '^^^^^^^^^'
             if Sta_234_dos[Sta_234_cnts[temp_4]] then
               Sta_234_dos[Sta_234_cnts[temp_4]]()
             end
@@ -1010,6 +1018,7 @@ function M.git_push_recursive_do(commit, file, opts)
         Sta_234_dos[#Sta_234_dos + 1] = function()
           M.git_push_recursive_do_do(commit, file, opts)
         end
+        Sta_234_en = 1
         M.git_push_recursive_do_do(c, file, opts)
       end
     end)
@@ -1017,6 +1026,7 @@ function M.git_push_recursive_do(commit, file, opts)
     Sta_234_dos[#Sta_234_dos + 1] = function()
       M.git_push_recursive_do_do(commit, file, opts)
     end
+    Sta_234_en = 1
     M.git_push_recursive_do_do(commit, file, opts)
   end
 end
