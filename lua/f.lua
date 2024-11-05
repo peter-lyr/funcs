@@ -474,19 +474,21 @@ function M.run_py_get_cmd(file, params, opts)
           temp2 = temp2 .. '='
         end
         local log_level = vim.log.levels.INFO
+        local timeout = 1000 * 100
         if sta ~= '0' then
           if sta == '234' then -- re run
             if Sta_234_dos[Sta_234_cnts[temp_2]] then
               Sta_234_dos[Sta_234_cnts[temp_2]]()
             end
             M.run_py_get_cmd(file, params, opts)
+            timeout = 1000 * 5
           else
             log_level = vim.log.levels.ERROR
           end
         end
         M.notify(M.format('Sta: %s, #%d\n%s\n%s\n%s',
           sta, temp_cnt, temp, temp2,
-          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), log_level, { timeout = 1000 * 100, })
+          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), log_level, { timeout = timeout, })
       end)
     end
     M.write_lines_to_file(params, params_txt)
