@@ -1077,7 +1077,11 @@ function M.git_status_recursive_do(root)
 end
 
 function M.git_status_recursive()
-  M.ui(vim.fn.reverse(M.get_cur_proj_dirs()), 'git_status_recursive', M.git_status_recursive_do)
+  -- M.ui(vim.fn.reverse(M.get_cur_proj_dirs()), 'git_status_recursive', M.git_status_recursive_do)
+  local dirs = M.get_cur_proj_dirs()
+  if dirs then
+    M.git_status_recursive_do(dirs[#dirs])
+  end
 end
 
 function M.git_pull()
