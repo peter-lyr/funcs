@@ -1250,9 +1250,7 @@ function M.quit_nvim_qt_later()
 end
 
 function M.start_nvim_qt(file)
-  if not file then
-    file = M.get_cur_file()
-  end
+  file = file and file or ''
   if M.in_str('session', file) then
     if M.in_str('!', file) then
       vim.cmd 'SessionsSave!'
@@ -1268,7 +1266,6 @@ function M.start_nvim_qt(file)
     --- --- M.cmd('silent !start nvim-qt.exe -- -S %s', SessionVim)
     return
   end
-  file = file and file or ''
   local exe = vim.fn.system(string.format('tasklist /FI "PID eq %d"', vim.loop.os_getppid()))
   if string.find(exe, 'nvim%-qt.exe') then
     M.cmd('silent !start nvim-qt.exe -- -u ~/AppData/Local/nvim/init-qt.vim %s', file)
