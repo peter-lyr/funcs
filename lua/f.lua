@@ -342,6 +342,7 @@ M.git_create_submodule_py = M.get_py '05-git-create-submodule.py'
 M.git_repo_list_3digit__py = M.get_py '06-git-repo-list-3digit-.py'
 M.cbp2cmake_py = M.get_py '08-cbp2cmake.py'
 M.sh_get_folder_path_exe = M.get_py '10-SHGetFolderPath.exe'
+M.svn_tmp_gitkeep_py = M.get_py '13-svn_tmp.gitkeep.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -2326,6 +2327,62 @@ function M.git_browser()
   if M.is(url) then
     M.run__silent(M.format('start https://%s', url))
   end
+end
+
+function M.getcreate_dirpath(dirs)
+  dirs = M.totable(dirs)
+  local dir1 = table.remove(dirs, 1)
+  dir1 = M.rep(dir1)
+  local dir_path = M.new_file(dir1)
+  if not dir_path:exists() then
+    vim.fn.mkdir(dir_path.filename)
+  end
+  for _, dir in ipairs(dirs) do
+    dir_path = dir_path:joinpath(dir)
+    if not dir_path:exists() then
+      vim.fn.mkdir(dir_path.filename)
+    end
+  end
+  return dir_path
+end
+
+function M.getcreate_dir(dirs)
+  return M.getcreate_dirpath(dirs).filename
+end
+
+function M.get_filepath(dirs, file)
+  local dirpath = M.getcreate_dirpath(dirs)
+  return dirpath:joinpath(file)
+end
+
+function M.get_file(dirs, file)
+  return M.get_filepath(dirs, file).filename
+end
+
+function M.getcreate_filepath(dirs, file)
+  local file_path = M.get_filepath(dirs, file)
+  if not file_path:exists() then
+    file_path:touch()
+  end
+  return file_path
+end
+
+function M.getcreate_file(dirs, file)
+  return M.getcreate_filepath(dirs, file).filename
+end
+
+function M.just_init_do(git_root_dir)
+  M.run_silent {
+    'cd', '/d', git_root_dir, '&&',
+    M.svn_tmp_gitkeep_py, '&&',
+    'git', 'init', '&&',
+    'git', 'add', '.', '&&',
+    'git', 'commit', '-m', 'first commit',
+  }
+end
+
+function M.just_init()
+  M.ui(M.get_file_dirs(M.get_cur_file()), 'git init', M.just_init_do)
 end
 
 M.clone_if_not_exist 'org'
