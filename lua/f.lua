@@ -2262,6 +2262,15 @@ function M.copy_to_desktop(files)
   end
 end
 
+function M.git_add_force(files)
+  if not files then
+    return
+  end
+  for _, file in ipairs(files) do
+    M.run__silent(M.format('git add -f "%s"', file))
+  end
+end
+
 function M.findall(patt, str)
   vim.g.patt = patt
   vim.g.str = str
