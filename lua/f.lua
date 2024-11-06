@@ -233,7 +233,7 @@ function M.jump_or_split(file, no_split)
   local jumped = nil
   for winnr = vim.fn.winnr '$', 1, -1 do
     local bufnr = vim.fn.winbufnr(winnr)
-    local fname = M.rep(M.get_file(bufnr))
+    local fname = M.rep(M.get_bnr_file(bufnr))
     if file == fname and (M.is_file_exists(fname) or M.is_term(fname)) then
       vim.fn.win_gotoid(vim.fn.win_getid(winnr))
       jumped = 1
@@ -243,7 +243,7 @@ function M.jump_or_split(file, no_split)
   if not jumped then
     for winnr = vim.fn.winnr '$', 1, -1 do
       local bufnr = vim.fn.winbufnr(winnr)
-      local fname = M.rep(M.get_file(bufnr))
+      local fname = M.rep(M.get_bnr_file(bufnr))
       if M.is_file_exists(fname) then
         local proj = M.get_proj(fname)
         if not M.is(file_proj) or M.is(proj) and file_proj == proj then
@@ -752,22 +752,22 @@ function M.get_filetype(file)
   return ext
 end
 
-function M.get_file(bnr)
+function M.get_bnr_file(bnr)
   return vim.api.nvim_buf_get_name(bnr)
 end
 
 function M.get_cur_file()
-  return M.get_file(0)
+  return M.get_bnr_file(0)
 end
 
 function M.get_cur_tail()
-  local cur_file = M.get_file(0)
+  local cur_file = M.get_bnr_file(0)
   local cur_proj = M.get_proj(cur_file)
   return string.sub(cur_file, #cur_proj + 2, #cur_file)
 end
 
 function M.get_proj_tail()
-  local cur_file = M.get_file(0)
+  local cur_file = M.get_bnr_file(0)
   local cur_proj = M.get_proj(cur_file)
   return vim.fn.fnamemodify(cur_proj, ':t')
 end
@@ -1430,7 +1430,7 @@ end
 function M.get_term_total()
   local bufs = M.get_bufs()
   local a = vim.tbl_filter(function(buf)
-    return M.is_term(M.get_file(buf))
+    return M.is_term(M.get_bnr_file(buf))
   end, bufs)
   return #a
 end
@@ -1575,7 +1575,7 @@ end
 function M.list_buf_info()
   local infos = {}
   for _, buf in ipairs(M.get_bufs()) do
-    M.put(infos, M.format('%s %s %s', buf, M.get_file(buf), vim.bo[buf].filetype))
+    M.put(infos, M.format('%s %s %s', buf, M.get_bnr_file(buf), vim.bo[buf].filetype))
   end
   M.notify(infos)
 end
@@ -1733,7 +1733,7 @@ function M.get_opened_projs()
   end
   local projs = {}
   for _, buf in ipairs(bufs) do
-    local file = M.get_file(buf)
+    local file = M.get_bnr_file(buf)
     if #file > 0 and M.is_file_exists(file) then
       M.put_uniq(projs, M.get_proj(file))
     end
@@ -1748,7 +1748,7 @@ function M.get_opened_projs_bufs()
   end
   local projs = {}
   for _, buf in ipairs(bufs) do
-    local file = M.get_file(buf)
+    local file = M.get_bnr_file(buf)
     if #file > 0 and M.is_file_exists(file) then
       local proj = M.get_proj(file)
       if not projs[proj] then
@@ -1769,7 +1769,7 @@ function M.get_opened_projs_files()
   for proj, bufs in pairs(proj_bufs) do
     files[proj] = {}
     for _, buf in ipairs(bufs) do
-      M.put(files[proj], M.get_file(buf))
+      M.put(files[proj], M.get_bnr_file(buf))
     end
   end
   return files
@@ -1789,7 +1789,7 @@ end
 
 function M.jump_term()
   for i = vim.fn.winnr '$', 1, -1 do
-    if M.is_term(M.get_file(vim.fn.winbufnr(i))) then
+    if M.is_term(M.get_bnr_file(vim.fn.winbufnr(i))) then
       vim.fn.win_gotoid(vim.fn.win_getid(i))
       return true
     end
