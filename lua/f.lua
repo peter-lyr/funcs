@@ -344,6 +344,7 @@ M.cbp2cmake_py = M.get_py '08-cbp2cmake.py'
 M.sh_get_folder_path_exe = M.get_py '10-SHGetFolderPath.exe'
 M.svn_tmp_gitkeep_py = M.get_py '13-svn_tmp.gitkeep.py'
 M.copy2clip_exe = M.get_py '01-copy2clip.exe'
+M.git_status_recursive_py = M.get_py '14-git-status-recursive.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -1069,6 +1070,14 @@ end
 
 function M.git_create_submodule_private(root, path)
   M.git_create_submodule(root, path, 'private')
+end
+
+function M.git_status_recursive_do(root)
+  M.run_silent { M.git_status_recursive_py, root, }
+end
+
+function M.git_status_recursive()
+  M.ui(vim.fn.reverse(M.get_cur_proj_dirs()), 'git_status_recursive', M.git_status_recursive_do)
 end
 
 function M.git_pull()
