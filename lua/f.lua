@@ -343,6 +343,7 @@ M.git_repo_list_3digit__py = M.get_py '06-git-repo-list-3digit-.py'
 M.cbp2cmake_py = M.get_py '08-cbp2cmake.py'
 M.sh_get_folder_path_exe = M.get_py '10-SHGetFolderPath.exe'
 M.svn_tmp_gitkeep_py = M.get_py '13-svn_tmp.gitkeep.py'
+M.copy2clip_exe = M.get_py '01-copy2clip.exe'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -2269,6 +2270,13 @@ function M.git_add_force(files)
   for _, file in ipairs(files) do
     M.run__silent(M.format('git add -f "%s"', file))
   end
+end
+
+function M.system_copy(files)
+  if not files then
+    return
+  end
+  M.run__silent(M.format('%s "%s"', M.copy2clip_exe, vim.fn.join(files, '" "')))
 end
 
 function M.findall(patt, str)
