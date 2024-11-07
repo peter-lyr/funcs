@@ -1003,6 +1003,8 @@ function M.copy_multiple_filenames()
 end
 
 function M.git_pull_recursive_do(repo, clone, checkout)
+  clone = clone and 'clone' or 'no'
+  checkout = checkout and 'checkout' or 'no'
   M.run_silent { M.git_pull_recursive_py, repo, clone, checkout, }
 end
 
