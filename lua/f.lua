@@ -445,13 +445,7 @@ function M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta
     if M.is_file(out_sta_txt) then
       return true
     end
-    interval = interval * 2
-    check_timeout = check_timeout * 2
-    if interval > 1000 * 60 * 5 then
-      return true
-    end
-    M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
-    return true
+    return nil
   end, function()
     local sta = vim.fn.trim(vim.fn.join(M.read_lines_from_file(out_sta_txt), ''))
     local temp = vim.fn.join(params, ' ')
@@ -475,6 +469,16 @@ function M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta
     M.notify(M.format('Sta: %s, #%d\n%s\n%s\n%s',
       sta, temp_cnt, temp, temp2,
       vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), log_level, { timeout = timeout, })
+  end, function()
+    interval = interval * 2
+    check_timeout = check_timeout * 2
+    if interval > 1000 * 60 * 5 then --超过5分后不再检测
+      return
+    end
+    if check_timeout > 1000 * 60 * 60 * 24 then
+      check_timeout = 1000 * 60 * 60 * 24
+    end
+    M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
   end)
 end
 
@@ -906,7 +910,7 @@ function M.set_interval_vim_g(name, interval, callback)
   end, { ['repeat'] = -1, })
 end
 
-function M.set_interval_timeout(name, interval, timeout, callback, callback_done)
+function M.set_interval_timeout(name, interval, timeout, callback, callback_done, callback_timeout)
   vim.g[name] = M.set_interval(interval, function()
     if callback() then
       M.clear_interval(vim.g[name])
@@ -916,10 +920,17 @@ function M.set_interval_timeout(name, interval, timeout, callback, callback_done
       end
     end
   end)
-  M.set_timeout(timeout, function()
+  local function callback_timeout_do()
     if vim.g[name] > 0 then
       M.notify(M.format('Time Out[%s]: %d', name, timeout))
       M.clear_interval(vim.g[name])
+    end
+  end
+
+  M.set_timeout(timeout, function()
+    callback_timeout_do()
+    if callback_timeout then
+      callback_timeout()
     end
   end)
 end
