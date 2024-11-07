@@ -507,7 +507,7 @@ function M.run_py_get_cmd(file, params, opts)
       local name = 'run-' .. tostring(vim.g.run_cmd_cnt)
       local temp_cnt = vim.g.run_cmd_cnt
       local interval = 500
-      local check_timeout = 1000 * 20
+      local check_timeout = 1000 * 60 * 3
       M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
     end
     M.write_lines_to_file(params, params_txt)
@@ -912,7 +912,6 @@ end
 
 function M.set_interval_timeout(name, interval, timeout, callback, callback_done, callback_timeout)
   vim.g[name] = M.set_interval(interval, function()
-    print '.'
     if callback() then
       M.clear_interval(vim.g[name])
       vim.g[name] = -1
