@@ -440,6 +440,44 @@ function M.string_hash(str)
   return hash
 end
 
+function M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
+  M.set_interval_timeout(name, interval, check_timeout, function()
+    if M.is_file(out_sta_txt) then
+      return true
+    end
+    interval = interval * 2
+    check_timeout = check_timeout * 2
+    if interval > 1000 * 60 * 5 then
+      return true
+    end
+    M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
+    return nil
+  end, function()
+    local sta = vim.fn.trim(vim.fn.join(M.read_lines_from_file(out_sta_txt), ''))
+    local temp = vim.fn.join(params, ' ')
+    local temp2 = ''
+    for _ = 1, #temp do
+      temp2 = temp2 .. '='
+    end
+    local log_level = vim.log.levels.INFO
+    local timeout = 1000 * 100
+    if sta ~= '0' then
+      if sta == '234' then -- re run
+        if Sta_234_dos[Sta_234_cnts[temp_2]] then
+          Sta_234_dos[Sta_234_cnts[temp_2]]()
+        end
+        M.run_py_get_cmd(file, params, opts)
+        timeout = 1000 * 5
+      else
+        log_level = vim.log.levels.ERROR
+      end
+    end
+    M.notify(M.format('Sta: %s, #%d\n%s\n%s\n%s',
+      sta, temp_cnt, temp, temp2,
+      vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), log_level, { timeout = timeout, })
+  end)
+end
+
 function M.run_py_get_cmd(file, params, opts)
   params = M.to_table(params)
   local cmd = file
@@ -464,35 +502,9 @@ function M.run_py_get_cmd(file, params, opts)
       local out_sta_txt = M.format('%s\\%04d-run-sta.txt', RunCmdDir, vim.g.run_cmd_cnt)
       local name = 'run-' .. tostring(vim.g.run_cmd_cnt)
       local temp_cnt = vim.g.run_cmd_cnt
-      M.set_interval_timeout(name, 500, 1000 * 160, function()
-        if M.is_file(out_sta_txt) then
-          return true
-        end
-        return nil
-      end, function()
-        local sta = vim.fn.trim(vim.fn.join(M.read_lines_from_file(out_sta_txt), ''))
-        local temp = vim.fn.join(params, ' ')
-        local temp2 = ''
-        for _ = 1, #temp do
-          temp2 = temp2 .. '='
-        end
-        local log_level = vim.log.levels.INFO
-        local timeout = 1000 * 100
-        if sta ~= '0' then
-          if sta == '234' then -- re run
-            if Sta_234_dos[Sta_234_cnts[temp_2]] then
-              Sta_234_dos[Sta_234_cnts[temp_2]]()
-            end
-            M.run_py_get_cmd(file, params, opts)
-            timeout = 1000 * 5
-          else
-            log_level = vim.log.levels.ERROR
-          end
-        end
-        M.notify(M.format('Sta: %s, #%d\n%s\n%s\n%s',
-          sta, temp_cnt, temp, temp2,
-          vim.fn.join(M.read_lines_from_file(out_msg_txt), '\n')), log_level, { timeout = timeout, })
-      end)
+      local interval = 500
+      local check_timeout = 1000 * 160
+      M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
     end
     M.write_lines_to_file(params, params_txt)
     cmd = M.format('%s "%s"', cmd, params_txt)
