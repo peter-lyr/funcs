@@ -929,9 +929,11 @@ function M.set_interval_timeout(name, interval, timeout, callback, callback_done
   end
 
   M.set_timeout(timeout, function()
-    callback_timeout_do()
-    if callback_timeout then
-      callback_timeout()
+    if vim.g[name] then
+      callback_timeout_do()
+      if callback_timeout then
+        callback_timeout()
+      end
     end
   end)
 end
