@@ -923,6 +923,7 @@ function M.set_interval_timeout(name, interval, timeout, callback, callback_done
   local function callback_timeout_do()
     if vim.g[name] > 0 then
       M.notify(M.format('Time Out[%s]: %d', name, timeout))
+      vim.g[name] = 0
       M.clear_interval(vim.g[name])
     end
   end
