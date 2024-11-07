@@ -912,6 +912,7 @@ end
 
 function M.set_interval_timeout(name, interval, timeout, callback, callback_done, callback_timeout)
   vim.g[name] = M.set_interval(interval, function()
+    print '.'
     if callback() then
       M.clear_interval(vim.g[name])
       vim.g[name] = -1
