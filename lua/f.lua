@@ -451,7 +451,7 @@ function M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta
       return true
     end
     M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
-    return nil
+    return true
   end, function()
     local sta = vim.fn.trim(vim.fn.join(M.read_lines_from_file(out_sta_txt), ''))
     local temp = vim.fn.join(params, ' ')
