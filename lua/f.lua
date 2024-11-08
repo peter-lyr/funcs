@@ -1109,12 +1109,16 @@ function M.git_status_recursive_do(root)
   M.run_silent { M.git_status_recursive_py, root, }
 end
 
-function M.git_status_recursive()
-  -- M.ui(vim.fn.reverse(M.get_cur_proj_dirs()), 'git_status_recursive', M.git_status_recursive_do)
+function M.get_projs_root()
   local dirs = M.get_cur_proj_dirs()
   if dirs then
-    M.git_status_recursive_do(dirs[#dirs])
+    return dirs[#dirs]
   end
+end
+
+function M.git_status_recursive()
+  -- M.ui(vim.fn.reverse(M.get_cur_proj_dirs()), 'git_status_recursive', M.git_status_recursive_do)
+  M.git_status_recursive_do(M.get_projs_root())
 end
 
 function M.git_show_commits_do(file)
@@ -1124,6 +1128,8 @@ end
 function M.git_show_commits(file)
   if not file then
     file = M.get_cur_file()
+  elseif file == 'cwd' then
+    file = M.get_projs_root()
   end
   M.git_show_commits_do(file)
 end
