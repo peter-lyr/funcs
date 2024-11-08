@@ -1079,12 +1079,13 @@ function M.git_create_submodule_do(root, path, public, name)
   M.run_silent { M.git_create_submodule_py, root, path, public, name, }
 end
 
-function M.git_create_submodule(root, path, public)
+function M.git_create_submodule(root, path, public, show_what)
   if not root then
     M.project_cd()
     root = M.get_cwd()
   end
-  M.run_silent { M.git_repo_list_3digit__py, root, }
+  show_what = show_what and 'temp' or 'main'
+  M.run_silent { M.git_repo_list_3digit__py, root, show_what, }
   M.copy_multiple_filenames()
   if not M.is(path) then
     vim.ui.input({ prompt = M.format('Create Submodule in %s: ', root), }, function(p)
@@ -1103,6 +1104,14 @@ end
 
 function M.git_create_submodule_private(root, path)
   M.git_create_submodule(root, path, 'private')
+end
+
+function M.git_create_submodule_public_temp(root, path)
+  M.git_create_submodule(root, path, 'public', 'temp')
+end
+
+function M.git_create_submodule_private_temp(root, path)
+  M.git_create_submodule(root, path, 'private', 'temp')
 end
 
 function M.git_status_recursive_do(root)
