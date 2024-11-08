@@ -442,7 +442,7 @@ function M.string_hash(str)
   return hash
 end
 
-function M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
+function M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, temp_2, out_sta_txt, out_msg_txt, params, file, opts)
   M.set_interval_timeout(name, interval, check_timeout, function()
     if M.is_file(out_sta_txt) then
       return true
@@ -480,7 +480,7 @@ function M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta
     if check_timeout > 1000 * 60 * 60 * 24 then
       check_timeout = 1000 * 60 * 60 * 24
     end
-    M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
+    M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, temp_2, out_sta_txt, out_msg_txt, params, file, opts)
   end)
 end
 
@@ -510,7 +510,7 @@ function M.run_py_get_cmd(file, params, opts)
       local temp_cnt = vim.g.run_cmd_cnt
       local interval = 500
       local check_timeout = 1000 * 60 * 3
-      M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, out_sta_txt, out_msg_txt, params, file, opts)
+      M.run_py_get_cmd_check(interval, check_timeout, name, temp_cnt, temp_2, out_sta_txt, out_msg_txt, params, file, opts)
     end
     M.write_lines_to_file(params, params_txt)
     cmd = M.format('%s "%s"', cmd, params_txt)
