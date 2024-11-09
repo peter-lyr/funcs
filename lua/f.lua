@@ -2353,6 +2353,16 @@ function M.system_copy(files)
   M.run__silent(M.format('%s "%s"', M.copy2clip_exe, vim.fn.join(files, '" "')))
 end
 
+function M.system_paste(dir)
+  if not dir then
+    return
+  end
+  M.run_silent {
+    'powershell',
+    M.format([[Get-Clipboard -Format FileDropList | ForEach-Object { Copy-Item -Path $_.FullName -Recurse -Destination "%s" }]], dir),
+  }
+end
+
 function M.findall(patt, str)
   vim.g.patt = patt
   vim.g.str = str
