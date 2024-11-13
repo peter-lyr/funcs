@@ -30,21 +30,6 @@ vim.g.winbar  = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()
 vim.g.winbar2 = ' %#WinBar#%{v:lua.WinBarName()} '
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 
-DIRS          = {
-  Home,
-  Dp,
-  Org,
-  Note,
-  DpTemp,
-  TreeSitter,
-  Mason,
-  StdConfig,
-  StdData,
-  LazyPath,
-  DataLazyPlugins,
-  'C:\\Program Files\\Neovim',
-}
-
 function M.get_win_buf_nrs()
   local buf_nrs = {}
   for wnr = 1, vim.fn.winnr '$' do
@@ -1896,12 +1881,46 @@ function M.merge_tables(...)
   return result
 end
 
+function M.get_sh_get_folder_path(name)
+  local f = io.popen(M.sh_get_folder_path_exe .. ' ' .. (name and name or ''))
+  if f then
+    local dirs = {}
+    for dir in string.gmatch(f:read '*a', '([%S ]+)') do
+      dir = M.rep(dir)
+      if not M.in_arr(dir, dirs) then
+        dirs[#dirs + 1] = dir
+      end
+    end
+    f:close()
+    table.sort(dirs)
+    return dirs
+  end
+  return {}
+end
+
+DIRS = {
+  M.get_sh_get_folder_path 'desktop'[1],
+  Home,
+  Dp,
+  Org,
+  Note,
+  DpTemp,
+  TreeSitter,
+  Mason,
+  StdConfig,
+  StdData,
+  LazyPath,
+  DataLazyPlugins,
+  'C:\\Program Files\\Neovim',
+}
+
 function M.open_term_sel()
   local dirs = M.get_file_dirs()
   M.ui(M.merge_tables(DIRS, dirs), 'open_term', M.open_term)
 end
 
 function M.nvimtree_cd_sel_DIRS()
+  vim.cmd 'NvimTreeOpen'
   M.nvimtree_cd_sel(DIRS)
 end
 
@@ -2101,23 +2120,6 @@ end
 function M.todo_quickfix_sel(dirs, what)
   vim.g.todo_what = what
   M.ui(dirs, M.format('%s sel', what), M.todo_quickfix_do)
-end
-
-function M.get_sh_get_folder_path(name)
-  local f = io.popen(M.sh_get_folder_path_exe .. ' ' .. (name and name or ''))
-  if f then
-    local dirs = {}
-    for dir in string.gmatch(f:read '*a', '([%S ]+)') do
-      dir = M.rep(dir)
-      if not M.in_arr(dir, dirs) then
-        dirs[#dirs + 1] = dir
-      end
-    end
-    f:close()
-    table.sort(dirs)
-    return dirs
-  end
-  return {}
 end
 
 function M.title_cur_line()
