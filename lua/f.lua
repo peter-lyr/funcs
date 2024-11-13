@@ -11,6 +11,10 @@ if vim.fn.isdirectory(DpTemp) == 0 then
   vim.fn.mkdir(DpTemp)
 end
 
+if vim.fn.isdirectory(GitFakeRemoteDir) == 0 then
+  vim.fn.mkdir(GitFakeRemoteDir)
+end
+
 RunCmdDir = DpTemp .. '\\run-cmd'
 RunCmdOldDir = DpTemp .. '\\run-cmd-old'
 
@@ -332,6 +336,7 @@ M.svn_tmp_gitkeep_py = M.get_py '13-svn_tmp.gitkeep.py'
 M.copy2clip_exe = M.get_py '01-copy2clip.exe'
 M.git_status_recursive_py = M.get_py '14-git-status-recursive.py'
 M.git_commits_py = M.get_py '15-git-commits.py'
+M.git_init_py = M.get_py '16-git-init.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -2478,9 +2483,7 @@ function M.just_init_do(git_root_dir)
   M.run_silent {
     'cd', '/d', git_root_dir, '&&',
     M.svn_tmp_gitkeep_py, '&&',
-    'git', 'init', '&&',
-    'git', 'add', '.', '&&',
-    'git', 'commit', '-m', 'first commit',
+    M.git_init_py, git_root_dir, GitFakeRemoteDir,
   }
 end
 
