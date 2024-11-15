@@ -2084,6 +2084,17 @@ function M.git_reset_hard()
   M.refresh_later()
 end
 
+function M.git_clean_fd()
+  M.run__silent 'git clean -fd'
+  M.refresh_later()
+end
+
+function M.git_reset_hard_clean_fd()
+  M.run__silent 'git reset --hard'
+  M.run__silent 'git clean -fd'
+  M.refresh_later()
+end
+
 function M.todo_telescope_do(cwd)
   if vim.g.todo_what then
     M.cmd('TodoTelescope cwd=%s keywords=%s', cwd, vim.g.todo_what)
