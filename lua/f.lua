@@ -2511,6 +2511,7 @@ function M.just_init()
 end
 
 function M.save_sessions_at_cwd_do(project_root)
+  vim.cmd 'SessionsSave!'
   M.run__silent(M.format('copy /y "%s" "%s"', SessionVim, M.get_file({ project_root, }, vim.fn.fnamemodify(project_root, ':t') .. '.vim')))
 end
 
