@@ -2449,6 +2449,13 @@ function M.git_browser()
   end
 end
 
+function M.totable(var)
+  if type(var) ~= 'table' then
+    var = { var, }
+  end
+  return var
+end
+
 function M.getcreate_dirpath(dirs)
   dirs = M.totable(dirs)
   local dir1 = table.remove(dirs, 1)
@@ -2501,6 +2508,14 @@ end
 
 function M.just_init()
   M.ui(M.get_file_dirs(M.get_cur_file()), 'git init', M.just_init_do)
+end
+
+function M.save_sessions_at_cwd_do(project_root)
+  M.run__silent(M.format('copy /y "%s" "%s"', SessionVim, M.get_file({ project_root, }, vim.fn.fnamemodify(project_root, ':t') .. '.vim')))
+end
+
+function M.save_sessions_at_cwd()
+  M.ui(M.get_cur_proj_dirs(M.get_cur_file()), 'save_sessions_at_cwd', M.save_sessions_at_cwd_do)
 end
 
 M.clone_if_not_exist 'org'
