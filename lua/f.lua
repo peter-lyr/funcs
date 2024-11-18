@@ -1710,12 +1710,7 @@ function M.toggle_opt(opt, a, b, scope)
 end
 
 function M.toggle_local(opt)
-  ---- M.toggle_opt(opt, true, false, 'local')
-  if M.get_opt(opt, 'local') == true then
-    vim.cmd 'diffoff'
-  else
-    vim.cmd 'diffthis'
-  end
+  M.toggle_opt(opt, true, false, 'local')
 end
 
 function M.toggle_global(opt)
@@ -1725,6 +1720,14 @@ end
 function M.toggle_winbar()
   vim.cmd 'hi WinBar guifg=#8927d6'
   M.toggle_opt('winbar', '', vim.g.winbar)
+end
+
+function M.toggle_diff()
+  if M.get_opt('diff', 'local') == true then
+    vim.cmd 'diffoff'
+  else
+    vim.cmd 'diffthis'
+  end
 end
 
 function M.toggle_vim_g_winbar()
