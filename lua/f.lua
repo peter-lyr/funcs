@@ -1,5 +1,6 @@
-local M = {}
-local pp = require 'plenary.path'
+local M         = {}
+local pp        = require 'plenary.path'
+local f_s_time  = vim.fn.reltime()
 
 vim.g.ui_select = vim.ui.select
 
@@ -2542,5 +2543,7 @@ function M.load_sessions_sel()
 end
 
 M.clone_if_not_exist 'org'
+
+-- M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
 
 return M
