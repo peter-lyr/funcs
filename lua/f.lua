@@ -2519,6 +2519,28 @@ function M.save_sessions_at_cwd()
   M.ui(M.get_cur_proj_dirs(M.get_cur_file()), 'save_sessions_at_cwd', M.save_sessions_at_cwd_do)
 end
 
+function M.load_sessions_sel_do(dir)
+  local tail = vim.fn.fnamemodify(dir, ':t')
+  local vim_file = M.get_file({ dir, }, tail .. '.vim')
+  M.cmd('silent source %s', vim_file)
+end
+
+function M.load_sessions_sel()
+  local session_saved_projects = {}
+  local temp = require 'telescope._extensions.project.utils'.get_projects 'recent'
+  for _, v in ipairs(temp) do
+    local path = v.path
+    local tail = vim.fn.fnamemodify(path, ':t')
+    if M.is_file_exists(path) then
+      local vim_file = M.get_file({ path, }, tail .. '.vim')
+      if M.is_file_exists(vim_file) then
+        M.put_uniq(session_saved_projects, M.rep(path))
+      end
+    end
+  end
+  M.ui(session_saved_projects, 'load_sessions_sel', M.load_sessions_sel_do)
+end
+
 M.clone_if_not_exist 'org'
 
 return M
