@@ -2356,7 +2356,23 @@ function M.copy_to_desktop(files)
   end
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
   for _, file in ipairs(files) do
-    M.run__silent(M.format('copy /y %s %s', file, desktop))
+    if M.is_file_exists(file) then
+      M.run__silent(M.format('copy /y %s %s', file, desktop))
+    end
+  end
+end
+
+function M.delete_from_desktop(files)
+  if not files then
+    return
+  end
+  local desktop = M.get_sh_get_folder_path 'desktop'[1]
+  for _, file in ipairs(files) do
+    local tail = vim.fn.fnamemodify(file, ':t')
+    file = M.get_file({ desktop, }, tail)
+    if M.is_file_exists(file) then
+      M.run__silent(M.format('del /f /s %s', file))
+    end
   end
 end
 
