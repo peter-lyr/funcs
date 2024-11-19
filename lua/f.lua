@@ -829,6 +829,10 @@ function M.get_file_parents(file)
   return parents
 end
 
+function M.get_file_more_dirs(file)
+  return M.merge_tables(M.get_cur_proj_dirs(file), M.get_file_parents(file), DIRS)
+end
+
 function M.get_cur_proj_dirs(file)
   if not file then
     file = M.get_cur_file()
