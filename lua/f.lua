@@ -1271,6 +1271,9 @@ function M.get_short(content, max, sep)
 end
 
 function M.yank_clipbaord(text)
+  if type(text) == 'table' then
+    text = vim.fn.join(text, '\n')
+  end
   vim.fn.setreg('+', text)
   M.echo('Copied to Clipboard: %s', M.get_short(text))
 end
