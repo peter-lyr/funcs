@@ -1,5 +1,6 @@
 local M         = {}
 local pp        = require 'plenary.path'
+local ps        = require 'plenary.scandir'
 local f_s_time  = vim.fn.reltime()
 
 vim.g.ui_select = vim.ui.select
@@ -831,6 +832,11 @@ end
 
 function M.get_file_more_dirs(file)
   return M.merge_tables(M.get_cur_proj_dirs(file), M.get_file_parents(file), DIRS)
+end
+
+function M.get_sub_dirs(dir)
+  dir = M.get_file_parent(dir)
+  return ps.scan_dir(dir, { hidden = false, depth = 1, add_dirs = true, only_dirs = true, })
 end
 
 function M.get_cur_proj_dirs(file)
