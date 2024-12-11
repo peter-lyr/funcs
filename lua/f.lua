@@ -1529,6 +1529,7 @@ function M.jump_or_split_term()
     vim.cmd 'split'
   end
   M.b(term_bufs[vim.g.term_index])
+  M.set_myft()
 end
 
 function M.format_paragraph()
