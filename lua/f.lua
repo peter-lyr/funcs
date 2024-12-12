@@ -2218,6 +2218,26 @@ function M.get_paragraph(lnr)
   return paragraph
 end
 
+function M.format_number_str(num, str, left, right)
+  vim.g.num = num
+  vim.g.str = str
+  vim.g.left = left
+  vim.g.right = right
+  vim.cmd [[
+    python << EOF
+import vim
+num = vim.eval('g:num')
+s = vim.eval('g:str')
+left = vim.eval('g:left')
+right = vim.eval('g:right')
+p = left + f'%-{num}s' + right
+ret = p % s
+vim.command(f'''let g:ret = "{ret}"''')
+EOF
+  ]]
+  return vim.g.ret
+end
+
 function M.align_table()
   if vim.opt.modifiable:get() == 0 then
     return
@@ -2271,7 +2291,15 @@ function M.align_table()
     local Cells = Lines[i]
     local newCell = '|'
     for j = 1, cols do
-      newCell = newCell .. string.format(string.format(' %%-%ds |', Matrix[i][j][1] + (Cols[j] - Matrix[i][j][2])), Cells[j])
+      local len = Matrix[i][j][1] + (Cols[j] - Matrix[i][j][2])
+      local temp
+      if len >= 100 then
+        temp = string.format(' %-s', Cells[j]) .. M.repeat_str(' ', len - vim.fn.len(Cells[j])) .. ' |'
+      else
+        temp = string.format(string.format(' %%-%ds |', len), Cells[j])
+      end
+      newCell = newCell .. temp
+      -- newCell = newCell .. M.format_number_str(Matrix[i][j][1] + (Cols[j] - Matrix[i][j][2]), Cells[j], ' ', ' |')
     end
     table.insert(newLines, newCell)
   end
