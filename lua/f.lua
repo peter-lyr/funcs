@@ -764,7 +764,12 @@ function M.telescope_sel(dirs, cmd)
     vim.g.telescope_cmd = cmd
   end
   if type(dirs) ~= 'table' then
-    dirs = M.get_sub_dirs(dirs)
+    local temp = M.get_sub_dirs(dirs)
+    if #temp == 0 then
+      M.telescope_do(dirs)
+      return
+    end
+    dirs = temp
   end
   M.ui(dirs, M.format('%s sel', cmd), M.telescope_do)
 end
