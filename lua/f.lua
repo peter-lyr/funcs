@@ -757,8 +757,21 @@ function M.telescope_do(dir)
 end
 
 function M.telescope_sel(dirs, cmd)
-  vim.g.telescope_cmd = cmd
+  if not dirs then
+    return
+  end
+  if type(cmd) ~= 'number' then
+    vim.g.telescope_cmd = cmd
+  end
+  if type(dirs) ~= 'table' then
+    dirs = M.get_sub_dirs(dirs)
+  end
   M.ui(dirs, M.format('%s sel', cmd), M.telescope_do)
+end
+
+function M.telescope_sel_sel(dirs, cmd)
+  vim.g.telescope_cmd = cmd
+  M.ui(dirs, M.format('%s sel', cmd), M.telescope_sel)
 end
 
 function M.get_filetype(file)
