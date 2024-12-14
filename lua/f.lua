@@ -226,7 +226,7 @@ function M.jump_or_split(file, no_split)
   for winnr = vim.fn.winnr '$', 1, -1 do
     local bufnr = vim.fn.winbufnr(winnr)
     local fname = M.rep(M.get_bnr_file(bufnr))
-    if file == fname and (M.is_file_exists(fname) or M.is_term(fname)) then
+    if M.lower(file) == M.lower(fname) and (M.is_file_exists(fname) or M.is_term(fname)) then
       vim.fn.win_gotoid(vim.fn.win_getid(winnr))
       jumped = 1
       break
@@ -238,7 +238,7 @@ function M.jump_or_split(file, no_split)
       local fname = M.rep(M.get_bnr_file(bufnr))
       if M.is_file_exists(fname) then
         local proj = M.get_proj(fname)
-        if not M.is(file_proj) or M.is(proj) and file_proj == proj then
+        if not M.is(file_proj) or M.is(proj) and M.lower(file_proj) == M.lower(proj) then
           vim.fn.win_gotoid(vim.fn.win_getid(winnr))
           jumped = 1
           break
@@ -255,6 +255,10 @@ function M.jump_or_split(file, no_split)
 end
 
 function M.jump_or_edit(file)
+  M.jump_or_split(file, 1)
+end
+
+function Joe(file)
   M.jump_or_split(file, 1)
 end
 
