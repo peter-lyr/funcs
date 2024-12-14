@@ -2445,6 +2445,15 @@ function M.git_add_force(files)
   end
 end
 
+function M.git_delete_force(files)
+  if not files then
+    return
+  end
+  for _, file in ipairs(files) do
+    M.run__silent(M.format('git rm -f "%s"', file))
+  end
+end
+
 function M.system_copy(files)
   if not files then
     return
