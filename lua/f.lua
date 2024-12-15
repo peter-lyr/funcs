@@ -1027,15 +1027,20 @@ function M.copy_multiple_filenames()
   vim.fn.setreg('i', vim.fn.trim(vim.fn.getline '.'))
 end
 
-function M.git_pull_recursive_do(repo, clone, checkout)
+function M.git_pull_recursive_do_do(repo, clone, checkout)
   clone = clone and 'clone' or 'no'
   checkout = checkout and 'checkout' or 'no'
   M.run_silent { M.git_pull_recursive_py, repo, clone, checkout, }
 end
 
+function M.git_pull_recursive_do(dir)
+  M.git_pull_recursive_do_do(dir, vim.g.clone, vim.g.checkout)
+end
+
 function M.git_pull_recursive(clone, checkout)
-  M.git_pull_recursive_do(Org, clone, checkout)
-  M.git_pull_recursive_do(StdConfig, clone, checkout)
+  vim.g.clone = clone
+  vim.g.checkout = checkout
+  M.ui({ Org, StdConfig, }, 'git_pull_recursive_do', M.git_pull_recursive_do)
 end
 
 function M.git_push_recursive_do_do(commit, file, opts)
