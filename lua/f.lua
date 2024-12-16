@@ -2660,6 +2660,14 @@ function M.work_summary_day(morning)
   M.ui_input('work_summary_day', vim.fn.strftime '%Y-%m-%d', M.work_summary_day_do)
 end
 
+function M.work_day_append_do(day)
+  vim.fn.append('.', M.format('** %s', day))
+end
+
+function M.work_day_append()
+  M.ui_input('work_day_append', vim.fn.strftime '%Y-%m-%d', M.work_day_append_do)
+end
+
 M.clone_if_not_exist 'org'
 
 -- M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
