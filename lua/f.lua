@@ -2652,10 +2652,11 @@ function M.work_summary_day_do(day)
   if not day or #day == 0 then
     return
   end
-  M.run_outside_pause { M.work_summary_day_py, Note .. '\\work.org', day, }
+  M.run__silent(M.format('%s %s %s %s', M.work_summary_day_py, Note .. '\\work.org', day, vim.g.morning))
 end
 
-function M.work_summary_day()
+function M.work_summary_day(morning)
+  vim.g.morning = morning
   M.ui_input('work_summary_day', vim.fn.strftime '%Y-%m-%d', M.work_summary_day_do)
 end
 
