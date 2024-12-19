@@ -2669,6 +2669,27 @@ function M.work_day_append()
   M.ui_input('work_day_append', vim.fn.strftime '%Y-%m-%d', M.work_day_append_do)
 end
 
+function M.bcomp_a(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  vim.g.bcomp_a_file = file
+end
+
+function M.bcomp_l()
+  if vim.g.bcomp_a_file and vim.g.bcomp_b_file then
+    M.run__silent(M.format('bcomp "%s" "%s"', vim.g.bcomp_a_file, vim.g.bcomp_b_file))
+  end
+end
+
+function M.bcomp_b(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  vim.g.bcomp_b_file = file
+  M.bcomp_l()
+end
+
 M.clone_if_not_exist 'org'
 
 -- M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
