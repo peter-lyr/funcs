@@ -2694,7 +2694,7 @@ function M.work_summary_week_do(week)
   if not week or #week == 0 then
     return
   end
-  M.run__pause(M.format('%s %s %s', M.work_summary_week_py, Note .. '\\work.org', week))
+  M.run__silent(M.format('%s %s "%s"', M.work_summary_week_py, Note .. '\\work.org', week))
 end
 
 function M.work_summary_week()
