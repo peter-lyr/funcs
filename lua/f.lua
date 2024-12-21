@@ -344,6 +344,8 @@ M.git_status_recursive_py = M.get_py '14-git-status-recursive.py'
 M.git_commits_py = M.get_py '15-git-commits.py'
 M.git_init_py = M.get_py '16-git-init.py'
 M.work_summary_day_py = M.get_py '17-work-summary-day.py'
+M.work_summary_week_py = M.get_py '18-work-summary-week.py'
+Week1Date = { 2024, 12, 16, } -- 第一周起始日
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -2660,6 +2662,43 @@ end
 function M.work_summary_day(morning)
   vim.g.morning = morning
   M.ui_input('work_summary_day', vim.fn.strftime '%Y-%m-%d', M.work_summary_day_do)
+end
+
+function M.get_weeks()
+  vim.g.Week1Date = Week1Date
+  vim.cmd [[
+    python << EOF
+import vim
+import datetime
+Week1Date = [eval(i) for i in vim.eval('g:Week1Date')]
+week1date = datetime.datetime(*Week1Date)
+today = datetime.datetime.now()
+D = []
+TodayWeek = 0
+for i in range(26):
+  start = week1date + datetime.timedelta(weeks=i, days=0)
+  end = week1date + datetime.timedelta(weeks=i, days=6)
+  d = f"""W{i+1:02} {start.strftime('%Y-%m-%d')}~{end.strftime('%Y-%m-%d')}"""
+  if 0 <= (today-start).days <= 6:
+    TodayWeek = d
+  # print(d)
+  D.append(d)
+D.insert(0, TodayWeek)
+vim.command(f'''let g:Week1Date = {D}''')
+EOF
+  ]]
+  return vim.g.Week1Date
+end
+
+function M.work_summary_week_do(week)
+  if not week or #week == 0 then
+    return
+  end
+  M.run__pause(M.format('%s %s %s', M.work_summary_week_py, Note .. '\\work.org', week))
+end
+
+function M.work_summary_week()
+  M.ui(M.get_weeks(), 'work_summary_week', M.work_summary_week_do)
 end
 
 function M.work_day_append_do(day)
