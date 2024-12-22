@@ -2750,7 +2750,10 @@ function M.expand_cfile()
   return cfile[#cfile]
 end
 
-function M.get_cfile()
+function M.get_cfile(depth)
+  if not depth then
+    depth = 1
+  end
   local file = M.expand_cfile()
   if M.in_str('/', file) or M.in_str('\\', file) then
     if M.is_file_exists(file) then
@@ -2761,7 +2764,7 @@ function M.get_cfile()
   if M.is_file_exists(f) then
     return f
   end
-  local dirs = ps.scan_dir(M.get_cwd(), { hidden = false, depth = 256, add_dirs = true, only_dirs = true, })
+  local dirs = ps.scan_dir(M.get_cwd(), { hidden = false, depth = depth, add_dirs = true, only_dirs = true, })
   for _, dir in ipairs(dirs) do
     f = M.join_path(dir, file)
     if M.is_file_exists(f) then
@@ -2774,7 +2777,10 @@ end
 function M.go_cfile()
   local cfile = M.get_cfile()
   if not cfile then
-    return
+    cfile = M.get_cfile(64)
+    if not cfile then
+      return
+    end
   end
   if M.is_dir(cfile) then
     M.nvimtree_cd(cfile)
