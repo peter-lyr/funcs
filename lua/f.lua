@@ -1052,7 +1052,7 @@ end
 function M.git_pull_recursive(clone, checkout)
   vim.g.clone = clone
   vim.g.checkout = checkout
-  M.ui({ Org, StdConfig, Big, }, 'git_pull_recursive_do', M.git_pull_recursive_do)
+  M.ui({ Org, StdConfig, W, Big, }, 'git_pull_recursive_do', M.git_pull_recursive_do)
 end
 
 function M.git_push_recursive_do_do(commit, file, opts)
@@ -1968,6 +1968,7 @@ DIRS = {
   Dp,
   Org,
   Big,
+  W,
   Note,
   DpTemp,
   TreeSitter,
@@ -2791,6 +2792,7 @@ end
 
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
+M.clone_if_not_exist 'w'
 
 -- M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
 
