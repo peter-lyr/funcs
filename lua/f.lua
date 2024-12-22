@@ -2745,6 +2745,44 @@ function M.bcomp_b(file)
   M.bcomp_l()
 end
 
+function M.expand_cfile()
+  local cfile = vim.split(vim.fn.expand '<cfile>', '=')
+  return cfile[#cfile]
+end
+
+function M.get_cfile()
+  local file = M.expand_cfile()
+  if M.in_str('/', file) or M.in_str('\\', file) then
+    if M.is_file_exists(file) then
+      return file
+    end
+  end
+  local f = M.join_path(M.get_cwd(), file)
+  if M.is_file_exists(f) then
+    return f
+  end
+  local dirs = ps.scan_dir(M.get_cwd(), { hidden = false, depth = 256, add_dirs = true, only_dirs = true, })
+  for _, dir in ipairs(dirs) do
+    f = M.join_path(dir, file)
+    if M.is_file_exists(f) then
+      return f
+    end
+  end
+  return nil
+end
+
+function M.go_cfile()
+  local cfile = M.get_cfile()
+  if not cfile then
+    return
+  end
+  if M.is_dir(cfile) then
+    M.nvimtree_cd(cfile)
+  elseif M.is_file(cfile) then
+    M.jump_or_edit(cfile)
+  end
+end
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 
