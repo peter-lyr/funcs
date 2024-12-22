@@ -1126,7 +1126,7 @@ function M.git_create_submodule(root, path, public, show_what)
     root = M.get_cwd()
   end
   show_what = show_what and 'temp' or 'main'
-  M.run_silent { M.git_repo_list_3digit__py, root, show_what, }
+  -- M.run_silent { M.git_repo_list_3digit__py, root, show_what, }
   M.copy_multiple_filenames()
   if not M.is(path) then
     vim.ui.input({ prompt = M.format('Create Submodule in %s: ', root), }, function(p)
