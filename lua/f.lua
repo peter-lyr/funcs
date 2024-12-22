@@ -1036,6 +1036,7 @@ function M.copy_multiple_filenames()
   vim.fn.setreg('e', vim.fn.expand '<cword>')
   vim.fn.setreg('r', vim.fn.expand '<cWORD>')
   vim.fn.setreg('i', vim.fn.trim(vim.fn.getline '.'))
+  vim.fn.setreg('u', M.just_get_git_remote_url())
 end
 
 function M.git_pull_recursive_do_do(repo, clone, checkout)
@@ -2551,6 +2552,20 @@ function M.get_git_remote_url(proj)
     return type, string.format('%s', urls[1])
   end
   return type, ''
+end
+
+function M.just_get_git_remote_url(proj)
+  local remote = ''
+  if proj then
+    remote = vim.fn.system(string.format('cd %s && git remote -v', proj))
+  else
+    remote = vim.fn.system 'git remote -v'
+  end
+  local res = M.findall([[\s([^\s]*git.*\.com[^\s]+)\s]], remote)
+  if #res >= 1 then
+    return res[1]
+  end
+  return ''
 end
 
 function M.git_browser()
