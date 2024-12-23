@@ -2775,7 +2775,7 @@ function M.get_cfile(depth)
   return nil
 end
 
-function M.go_cfile()
+function M.go_cfile(force)
   local cfile = M.get_cfile()
   if not cfile then
     cfile = M.get_cfile(64)
@@ -2786,7 +2786,11 @@ function M.go_cfile()
   if M.is_dir(cfile) then
     M.nvimtree_cd(cfile)
   elseif M.is_file(cfile) then
-    M.jump_or_edit(cfile)
+    if not force and vim.fn.getfsize(cfile) >= 20 * 1024 * 1024 then
+      M.run__silent(cfile)
+    else
+      M.jump_or_edit(cfile)
+    end
   end
 end
 
