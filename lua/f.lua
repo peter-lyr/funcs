@@ -753,6 +753,7 @@ end
 
 function M.nvimtree_cd(dir)
   if M.is_file_exists(dir) then
+    M.lazy_load 'nvim-tree.lua'
     vim.cmd 'NvimTreeOpen'
     require 'nvim-tree'.change_dir(M.get_file_parent(dir))
     M.project_cd()
