@@ -1711,7 +1711,8 @@ end
 
 function M.cmdline(cmd)
   M.copy_multiple_filenames()
-  M.feed_keys(M.format(':%s', cmd and cmd or [[\<up>]]))
+  -- M.feed_keys(M.format(':%s', cmd and cmd or [[\<up>]]))
+  M.feed_keys(M.format(':%s', cmd and cmd or ''))
 end
 
 vim.api.nvim_create_user_command('Run', function(params)
