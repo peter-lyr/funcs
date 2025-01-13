@@ -912,6 +912,7 @@ end
 function M.next_hunk()
   if vim.wo.diff then
     vim.cmd [[call feedkeys("]c")]]
+    return
   end
   require 'gitsigns'.next_hunk()
 end
@@ -919,6 +920,7 @@ end
 function M.prev_hunk()
   if vim.wo.diff then
     vim.cmd [[call feedkeys("[c")]]
+    return
   end
   require 'gitsigns'.prev_hunk()
 end
