@@ -1291,6 +1291,17 @@ function M.message_buffer()
   M.execute_out_buffer 'message'
 end
 
+function M.execute_output_do(cmd)
+  if not cmd or #cmd == 0 then
+    return
+  end
+  M.execute_out_buffer(cmd)
+end
+
+function M.execute_output()
+  M.ui_input('execute_output', 'ls', M.execute_output_do)
+end
+
 function M.get_short(content, max, sep)
   if not sep then
     sep = '…'
