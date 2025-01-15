@@ -1302,6 +1302,26 @@ function M.execute_output()
   M.ui_input('execute_output', 'ls', M.execute_output_do)
 end
 
+function M.bw_all_unseen_buffer()
+  local win_bnrs = M.get_win_buf_nrs()
+  local all_bnrs = M.get_bufs()
+  -- local bw_bnrs = {}
+  local cnt = 0
+  local s = ''
+  for _, bnr in ipairs(all_bnrs) do
+    if not M.in_arr(bnr, win_bnrs) then
+      M.cmd('bw %d', bnr)
+      cnt = cnt + 1
+      s = s .. bnr .. ' '
+      -- M.put(bw_bnrs, bnr)
+    end
+  end
+  M.printf('%d buffers bw!: %s', cnt, s)
+  -- vim.print(win_bnrs)
+  -- vim.print(bw_bnrs)
+  -- vim.print(all_bnrs)
+end
+
 function M.get_short(content, max, sep)
   if not sep then
     sep = '…'
