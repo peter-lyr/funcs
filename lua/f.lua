@@ -2829,6 +2829,42 @@ function M.go_cfile(force)
   end
 end
 
+function M.fix_width_inc()
+  vim.cmd '5wincmd >'
+  vim.cmd 'set winfixwidth'
+end
+
+function M.fix_width_dec()
+  vim.cmd '5wincmd <'
+  vim.cmd 'set winfixwidth'
+end
+
+function M.fix_height_inc()
+  vim.cmd '5wincmd +'
+  vim.cmd 'set winfixheight'
+end
+
+function M.fix_height_dec()
+  vim.cmd '5wincmd -'
+  vim.cmd 'set winfixheight'
+end
+
+function M.unfix_width_inc()
+  vim.cmd 'set nowinfixwidth'
+end
+
+function M.unfix_width_dec()
+  vim.cmd 'set nowinfixwidth'
+end
+
+function M.unfix_height_inc()
+  vim.cmd 'set nowinfixheight'
+end
+
+function M.unfix_height_dec()
+  vim.cmd 'set nowinfixheight'
+end
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
