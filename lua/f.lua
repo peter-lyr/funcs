@@ -32,8 +32,6 @@ Sta_234_en                   = nil
 Sta_234_dos                  = {}
 Sta_234_cnts                 = {}
 
-vim.g.winbar                 = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
-vim.g.winbar2                = ' %#WinBar#%{v:lua.WinBarName()} '
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 
 DIRS                         = {} -- 见下面
@@ -1814,7 +1812,7 @@ function M.toggle_global(opt)
 end
 
 function M.toggle_winbar()
-  vim.cmd 'hi WinBar guifg=#8927d6'
+  vim.cmd 'hi WinBar guifg=#8927d6 gui=bold'
   M.toggle_opt('winbar', '', vim.g.winbar)
 end
 
@@ -1827,7 +1825,7 @@ function M.toggle_diff()
 end
 
 function M.toggle_vim_g_winbar()
-  vim.cmd 'hi WinBar guifg=#8927d6'
+  vim.cmd 'hi WinBar guifg=#8927d6 gui=bold'
   M.toggle_opt('winbar', vim.g.winbar2, vim.g.winbar)
 end
 
