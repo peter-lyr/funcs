@@ -851,13 +851,14 @@ function M.project_cd()
 end
 
 function M.get_proj(file)
-  return vim.schedule(function()
-    M.lazy_load 'vim-projectroot'
-    if file then
-      return M.rep(vim.fn['ProjectRootGet'](file))
-    end
-    return M.rep(vim.fn['ProjectRootGet']())
-  end) or ''
+  local proj = ''
+  M.lazy_load 'vim-projectroot'
+  if file then
+    _, proj = pcall(vim.fn['ProjectRootGet'], file)
+  else
+    _, proj = pcall(vim.fn['ProjectRootGet'])
+  end
+  return proj
 end
 
 function M.get_cwd()
