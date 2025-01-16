@@ -94,6 +94,9 @@ function M.get_win_buf_modifiable_nrs()
 end
 
 function M.is_cur_last_win()
+  if vim.fn.tabpagenr '$' > 1 then
+    return nil
+  end
   return #M.get_win_buf_modifiable_nrs() <= 1 and 1 or nil
 end
 
@@ -819,7 +822,13 @@ end
 
 function M.get_cur_tail()
   local cur_file = M.get_bnr_file(0)
+  if #cur_file == 0 then
+    return ''
+  end
   local cur_proj = M.get_proj(cur_file)
+  if not cur_proj then
+    return ''
+  end
   return string.sub(cur_file, #cur_proj + 2, #cur_file)
 end
 
@@ -842,11 +851,13 @@ function M.project_cd()
 end
 
 function M.get_proj(file)
-  M.lazy_load 'vim-projectroot'
-  if file then
-    return M.rep(vim.fn['ProjectRootGet'](file))
-  end
-  return M.rep(vim.fn['ProjectRootGet']())
+  return vim.schedule(function()
+    M.lazy_load 'vim-projectroot'
+    if file then
+      return M.rep(vim.fn['ProjectRootGet'](file))
+    end
+    return M.rep(vim.fn['ProjectRootGet']())
+  end) or nil
 end
 
 function M.get_cwd()
