@@ -2903,6 +2903,33 @@ function M.unfix_height_dec()
   vim.cmd 'set nowinfixheight'
 end
 
+function MyTabLabel(n)
+  local buflist = vim.fn.tabpagebuflist(n)
+  local winnr = vim.fn.tabpagewinnr(n)
+  local bufnr = buflist[winnr]
+  local name = M.get_bnr_file(bufnr)
+  local proj = M.get_proj(name)
+  local proj_tail = M.get_tail(proj)
+  return M.get_short(proj_tail, 28)
+end
+
+function MyTabLine()
+  local s = ''
+  for i = 0, vim.fn.tabpagenr '$' - 1 do
+    if i + 1 == vim.fn.tabpagenr() then
+      s = s .. '%#TabLineSel#'
+    else
+      s = s .. '%#TabLine#'
+    end
+    s = s .. '%' .. tostring(i + 1) .. 'T'
+    s = s .. ' %{v:lua.MyTabLabel(' .. (i + 1) .. ')} '
+  end
+  s = s .. '%#TabLineFill#%T'
+  return s
+end
+
+vim.opt.tabline = '%!v:lua.MyTabLine()'
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
