@@ -28,11 +28,15 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
-Sta_234_en                   = nil
-Sta_234_dos                  = {}
-Sta_234_cnts                 = {}
+Sta_234_en     = nil
+Sta_234_dos    = {}
+Sta_234_cnts   = {}
 
+vim.g.winbar   = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
+vim.g.winbar2  = ' %#WinBar#%{v:lua.WinBarName()} '
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
+vim.opt.winbar = vim.g.winbar2
+vim.cmd 'hi WinBar guifg=#8927d6 gui=bold'
 
 DIRS                         = {} -- 见下面
 
