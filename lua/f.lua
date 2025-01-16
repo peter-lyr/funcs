@@ -1850,7 +1850,8 @@ end
 --- end
 
 function WinBarName()
-  return M.get_cur_tail()
+  local tail = M.get_cur_tail()
+  return #tail > 0 and tail or '[No Name]'
 end
 
 function WinBarProj()
