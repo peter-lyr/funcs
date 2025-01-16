@@ -28,13 +28,17 @@ if vim.fn.isdirectory(RunCmdOldDir) == 0 then
   vim.fn.mkdir(RunCmdOldDir)
 end
 
-Sta_234_en    = nil
-Sta_234_dos   = {}
-Sta_234_cnts  = {}
+Sta_234_en                   = nil
+Sta_234_dos                  = {}
+Sta_234_cnts                 = {}
 
-vim.g.winbar  = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
-vim.g.winbar2 = ' %#WinBar#%{v:lua.WinBarName()} '
+vim.g.winbar                 = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
+vim.g.winbar2                = ' %#WinBar#%{v:lua.WinBarName()} '
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
+
+DIRS                         = {} -- 见下面
+
+M.session_saved_projects_txt = DpTemp .. '\\session_saved_projects.txt'
 
 function M.get_win_buf_nrs()
   local buf_nrs = {}
@@ -365,7 +369,10 @@ function M.start_do(cmd, opts)
 end
 
 function M.read_lines_from_file(file)
-  return vim.fn.readfile(file)
+  if M.is_file_exists(file) then
+    return vim.fn.readfile(file)
+  end
+  return {}
 end
 
 function M.write_lines_to_file(lines, file)
@@ -2687,7 +2694,7 @@ function M.load_sessions_sel_do(dir)
   M.cmd('silent source %s', vim_file)
 end
 
-function M.load_sessions_sel()
+function M.reload_sessions_sel()
   local session_saved_projects = {}
   local temp = require 'telescope._extensions.project.utils'.get_projects 'recent'
   for _, v in ipairs(temp) do
@@ -2700,7 +2707,17 @@ function M.load_sessions_sel()
       end
     end
   end
+  M.write_lines_to_file(session_saved_projects, M.session_saved_projects_txt)
   M.ui(session_saved_projects, 'load_sessions_sel', M.load_sessions_sel_do)
+end
+
+function M.load_sessions_sel()
+  local session_saved_projects = M.read_lines_from_file(M.session_saved_projects_txt)
+  if #session_saved_projects > 0 then
+    M.ui(session_saved_projects, 'load_sessions_sel', M.load_sessions_sel_do)
+  else
+    M.reload_sessions_sel()
+  end
 end
 
 function M.work_summary_day_do(day)
