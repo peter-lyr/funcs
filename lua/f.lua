@@ -2726,12 +2726,13 @@ function M.get_session_saved_projects()
 end
 
 function M.save_sessions_at_cwd_do(project_root)
-  vim.cmd 'SessionsSave!'
+  -- vim.cmd 'SessionsSave!'
   local session_saved_projects = M.get_session_saved_projects()
   local session_vim = vim.fn.fnamemodify(project_root, ':t') .. '.vim'
   M.put_uniq(session_saved_projects, project_root)
   M.write_lines_to_file(session_saved_projects, M.session_saved_projects_txt)
-  M.run__silent(M.format('copy /y "%s" "%s"', SessionVim, M.get_file({ project_root, }, session_vim)))
+  -- M.run__silent(M.format('copy /y "%s" "%s"', SessionVim, M.get_file({ project_root, }, session_vim)))
+  M.cmd('mksession %s', M.get_file({ project_root, }, session_vim))
 end
 
 function M.save_sessions_at_cwd()
