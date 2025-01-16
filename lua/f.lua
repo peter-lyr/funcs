@@ -874,7 +874,7 @@ function M.get_proj(file)
   else
     _, proj = pcall(vim.fn['ProjectRootGet'])
   end
-  return proj
+  return M.rep(proj)
 end
 
 function M.get_cwd()
@@ -2714,7 +2714,7 @@ function M.get_session_saved_projects()
   local session_saved_projects = M.read_lines_from_file(M.session_saved_projects_txt)
   local session_saved_projects_new = {}
   for _, path in ipairs(session_saved_projects) do
-    local tail = vim.fn.fnamemodify(path, ':t')
+    local tail = M.rep(vim.fn.fnamemodify(path, ':t'))
     if M.is_file_exists(path) then
       local vim_file = M.get_file({ path, }, tail .. '.vim')
       if M.is_file_exists(vim_file) then
