@@ -55,6 +55,17 @@ function M.get_win_buf_nrs()
   return buf_nrs
 end
 
+function M.get_all_win_buf_nrs()
+  local buf_nrs = {}
+  for i = 1, vim.fn.tabpagenr '$' do
+    local bufs = vim.fn.tabpagebuflist(i)
+    if #bufs > 0 then
+      buf_nrs = M.merge_tables(buf_nrs, bufs)
+    end
+  end
+  return buf_nrs
+end
+
 function M.get_win_buf_names()
   local buf_names = {}
   local win_buf_nrs = M.get_win_buf_nrs()
@@ -1329,7 +1340,7 @@ function M.execute_output()
 end
 
 function M.bw_all_unseen_buffer()
-  local win_bnrs = M.get_win_buf_nrs()
+  local win_bnrs = M.get_all_win_buf_nrs()
   local all_bnrs = M.get_bufs()
   -- local bw_bnrs = {}
   local cnt = 0
