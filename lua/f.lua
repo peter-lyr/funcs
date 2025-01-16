@@ -2916,20 +2916,24 @@ function M.fix_height_dec()
   vim.cmd 'set winfixheight'
 end
 
-function M.unfix_width_inc()
+function M.unfix_width()
   vim.cmd 'set nowinfixwidth'
 end
 
-function M.unfix_width_dec()
-  vim.cmd 'set nowinfixwidth'
-end
-
-function M.unfix_height_inc()
+function M.unfix_height()
   vim.cmd 'set nowinfixheight'
 end
 
-function M.unfix_height_dec()
-  vim.cmd 'set nowinfixheight'
+function M.unfix_width_windo()
+  M.save_win_pos()
+  vim.cmd 'windo set nowinfixwidth'
+  M.restore_win_pos()
+end
+
+function M.unfix_height_windo()
+  M.save_win_pos()
+  vim.cmd 'windo set nowinfixheight'
+  M.restore_win_pos()
 end
 
 function MyTabLabel(n)
