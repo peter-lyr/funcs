@@ -1433,7 +1433,7 @@ function M.start_nvim_qt(file)
     end
     local exe = vim.fn.system(string.format('tasklist /FI "PID eq %d"', vim.loop.os_getppid()))
     if string.find(exe, 'nvim%-qt.exe') then
-      M.cmd('silent !start nvim-qt.exe -- -u ~/AppData/Local/nvim/init-qt.vim -c "SessionsLoad" %s', file)
+      vim.cmd 'silent !start nvim-qt.exe -- -u ~/AppData/Local/nvim/init-qt.vim -c "SessionsLoad"'
     else
       vim.cmd [[silent !start nvim.exe -c "SessionsLoad"]]
     end
