@@ -2681,9 +2681,24 @@ function M.just_init()
   M.ui(M.get_file_dirs(M.get_cur_file()), 'git init', M.just_init_do)
 end
 
+function M.get_session_saved_projects()
+  local session_saved_projects = M.read_lines_from_file(M.session_saved_projects_txt)
+  local session_saved_projects_new = {}
+  for _, path in ipairs(session_saved_projects) do
+    local tail = vim.fn.fnamemodify(path, ':t')
+    if M.is_file_exists(path) then
+      local vim_file = M.get_file({ path, }, tail .. '.vim')
+      if M.is_file_exists(vim_file) then
+        M.put_uniq(session_saved_projects_new, M.rep(path))
+      end
+    end
+  end
+  return session_saved_projects_new
+end
+
 function M.save_sessions_at_cwd_do(project_root)
   vim.cmd 'SessionsSave!'
-  local session_saved_projects = M.read_lines_from_file(M.session_saved_projects_txt)
+  local session_saved_projects = M.get_session_saved_projects()
   local session_vim = vim.fn.fnamemodify(project_root, ':t') .. '.vim'
   M.put_uniq(session_saved_projects, project_root)
   M.write_lines_to_file(session_saved_projects, M.session_saved_projects_txt)
@@ -2718,7 +2733,7 @@ function M.reload_sessions_sel()
 end
 
 function M.load_sessions_sel()
-  local session_saved_projects = M.read_lines_from_file(M.session_saved_projects_txt)
+  local session_saved_projects = M.get_session_saved_projects()
   if #session_saved_projects > 0 then
     M.ui(session_saved_projects, 'load_sessions_sel', M.load_sessions_sel_do)
   else
