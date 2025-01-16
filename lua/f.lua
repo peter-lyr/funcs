@@ -826,7 +826,7 @@ function M.get_cur_tail()
     return ''
   end
   local cur_proj = M.get_proj(cur_file)
-  if not cur_proj then
+  if #cur_proj == 0 then
     return ''
   end
   return string.sub(cur_file, #cur_proj + 2, #cur_file)
@@ -857,7 +857,7 @@ function M.get_proj(file)
       return M.rep(vim.fn['ProjectRootGet'](file))
     end
     return M.rep(vim.fn['ProjectRootGet']())
-  end) or nil
+  end) or ''
 end
 
 function M.get_cwd()
