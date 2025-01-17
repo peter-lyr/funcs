@@ -2808,7 +2808,9 @@ function M.save_sessions_at_cwd_do(project_root)
   M.put_uniq(session_saved_projects, project_root)
   M.write_lines_to_file(session_saved_projects, M.session_saved_projects_txt)
   -- M.run__silent(M.format('copy /y "%s" "%s"', SessionVim, M.get_file({ project_root, }, session_vim)))
-  M.cmd('mksession %s', M.get_file({ project_root, }, session_vim))
+  local session_vim_full = M.get_file({ project_root, }, session_vim)
+  vim.fn.delete(session_vim_full)
+  M.cmd('mksession %s', session_vim_full)
   -- M.run__silent(M.format("sed -i -e '/winbar/d' %s", session_vim))
 end
 
