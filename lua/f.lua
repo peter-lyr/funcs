@@ -62,6 +62,16 @@ vim.fn.timer_start(100, function()
   M.hi_tabline()
 end, { ['repeat'] = 50, })
 
+function M.hi_winsep()
+  vim.cmd 'hi WinSeparator guibg=#111111 guifg=gray'
+  vim.cmd 'hi NvimTreeWinSeparator guibg=#111111 guifg=gray'
+end
+
+M.hi_tabline()
+vim.fn.timer_start(100, function()
+  M.hi_winsep()
+end, { ['repeat'] = 50, })
+
 function M.get_win_buf_nrs()
   local buf_nrs = {}
   for wnr = 1, vim.fn.winnr '$' do
