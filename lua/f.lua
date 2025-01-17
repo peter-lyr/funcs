@@ -42,13 +42,24 @@ DIRS                         = {} -- 见下面
 M.session_saved_projects_txt = DpTemp .. '\\session_saved_projects.txt'
 
 function M.hi_winbar()
-  vim.cmd 'hi WinBar guifg=#9927d6 guibg=#77d35e gui=bold'
-  vim.cmd 'hi WinBarNC guifg=#893716 guibg=NONE gui=NONE'
+  vim.cmd 'hi WinBar   guifg=#9927d6 guibg=#77d35e gui=bold'
+  vim.cmd 'hi WinBarNC guifg=#893716 guibg=NONE    gui=NONE'
 end
 
 M.hi_winbar()
 vim.fn.timer_start(100, function()
   M.hi_winbar()
+end, { ['repeat'] = 50, })
+
+function M.hi_tabline()
+  vim.cmd 'hi TabLineSel  guifg=#a957d6 guibg=#4753ee gui=bold'
+  vim.cmd 'hi TabLine     guifg=#397786 guibg=NONE    gui=NONE'
+  vim.cmd 'hi TabLineFill guifg=None    guibg=NONE    gui=NONE'
+end
+
+M.hi_tabline()
+vim.fn.timer_start(100, function()
+  M.hi_tabline()
 end, { ['repeat'] = 50, })
 
 function M.get_win_buf_nrs()
