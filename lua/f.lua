@@ -169,6 +169,15 @@ function M.window_delete(dir)
   end
 end
 
+function M.tabclose()
+  vim.cmd [[
+    try
+      tabclose
+    catch
+    endtry
+  ]]
+end
+
 function M.is_file(file)
   local fp = M.is_file_exists(M.rep(file))
   if fp and fp:is_file() then
