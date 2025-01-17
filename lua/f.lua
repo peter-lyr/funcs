@@ -1093,6 +1093,10 @@ function M.reset_hunk()
   require 'gitsigns'.reset_hunk()
 end
 
+function M.reset_hunk_v()
+  require 'gitsigns'.reset_hunk { vim.fn.line '.', vim.fn.line 'v', }
+end
+
 function M.git_reset_buffer()
   require 'gitsigns'.reset_buffer()
 end
