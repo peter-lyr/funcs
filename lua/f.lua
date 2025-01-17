@@ -47,9 +47,9 @@ function M.hi_winbar()
 end
 
 M.hi_winbar()
-vim.fn.timer_start(5000, function()
+vim.fn.timer_start(100, function()
   M.hi_winbar()
-end, { ['repeat'] = 1, })
+end, { ['repeat'] = 50, })
 
 function M.get_win_buf_nrs()
   local buf_nrs = {}
