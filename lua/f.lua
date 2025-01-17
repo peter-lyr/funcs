@@ -754,7 +754,7 @@ function M.map_buffer_once(mode, lhs, callback, buffer)
 end
 
 function M.map_buffer_once_q_close()
-  F.map_buffer_once({ 'n', 'v', }, 'q', function()
+  M.map_buffer_once({ 'n', 'v', }, 'q', function()
     vim.cmd 'close!'
   end)
 end
