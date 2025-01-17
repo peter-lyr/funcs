@@ -3025,7 +3025,7 @@ function MyTabLine()
     s = s .. '%' .. tostring(i + 1) .. 'T'
     s = s .. ' %{v:lua.MyTabLabel(' .. (i + 1) .. ')} '
   end
-  s = s .. '%=%#TabLineFill#%T'
+  s = s .. '%#TabLineFill#%T%='
   return s
 end
 
