@@ -1339,6 +1339,18 @@ function M.execute_output()
   M.ui_input('execute_output', 'ls', M.execute_output_do)
 end
 
+function M.bw_all_buffer()
+  local all_bnrs = M.get_bufs()
+  local cnt = 0
+  local s = ''
+  for _, bnr in ipairs(all_bnrs) do
+    cnt = cnt + 1
+    s = s .. bnr .. ' '
+    M.cmd('bw %d', bnr)
+  end
+  M.printf('%d buffers bw!: %s', cnt, s)
+end
+
 function M.bw_all_unseen_buffer()
   local win_bnrs = M.get_all_win_buf_nrs()
   local all_bnrs = M.get_bufs()
@@ -1357,6 +1369,21 @@ function M.bw_all_unseen_buffer()
   -- vim.print(win_bnrs)
   -- vim.print(bw_bnrs)
   -- vim.print(all_bnrs)
+end
+
+function M.bw_all_unseen_buffer_other_tab()
+  local win_bnrs = M.get_win_buf_nrs()
+  local all_bnrs = M.get_bufs()
+  local cnt = 0
+  local s = ''
+  for _, bnr in ipairs(all_bnrs) do
+    if not M.in_arr(bnr, win_bnrs) then
+      M.cmd('bw %d', bnr)
+      cnt = cnt + 1
+      s = s .. bnr .. ' '
+    end
+  end
+  M.printf('%d buffers bw!: %s', cnt, s)
 end
 
 function M.get_short(content, max, sep)
