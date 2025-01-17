@@ -736,6 +736,29 @@ function M.lazy_map(tbls)
   end
 end
 
+function M.map_buffer_once(mode, lhs, callback, buffer)
+  if not callback then
+    return
+  end
+  if not buffer then
+    buffer = vim.fn.bufnr()
+  end
+  vim.keymap.set(mode, lhs, function()
+    vim.keymap.del(mode, lhs, {
+      buffer = buffer,
+    })
+    callback()
+  end, {
+    buffer = buffer,
+  })
+end
+
+function M.map_buffer_once_q_close()
+  F.map_buffer_once({ 'n', 'v', }, 'q', function()
+    vim.cmd 'close!'
+  end)
+end
+
 function M.escape_space(text)
   text = string.gsub(text, ' ', '\\ ')
   return text
