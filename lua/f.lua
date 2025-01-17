@@ -3015,7 +3015,7 @@ function MyTabLabel(n)
 end
 
 function MyTabLine()
-  local s = ''
+  local s = '%='
   for i = 0, vim.fn.tabpagenr '$' - 1 do
     if i + 1 == vim.fn.tabpagenr() then
       s = s .. '%#TabLineSel#'
@@ -3025,7 +3025,7 @@ function MyTabLine()
     s = s .. '%' .. tostring(i + 1) .. 'T'
     s = s .. ' %{v:lua.MyTabLabel(' .. (i + 1) .. ')} '
   end
-  s = s .. '%#TabLineFill#%T'
+  s = s .. '%=%#TabLineFill#%T'
   return s
 end
 
