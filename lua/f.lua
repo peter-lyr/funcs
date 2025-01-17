@@ -32,8 +32,8 @@ Sta_234_en                   = nil
 Sta_234_dos                  = {}
 Sta_234_cnts                 = {}
 
-vim.g.winbar                 = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} '
-vim.g.winbar2                = ' %#WinBar#%{v:lua.WinBarName()} '
+vim.g.winbar                 = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} %#WinBarNC#'
+vim.g.winbar2                = ' %{v:lua.WinBarName()} %#WinBarNC#'
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
 vim.opt.winbar               = vim.g.winbar2
 
@@ -42,7 +42,8 @@ DIRS                         = {} -- 见下面
 M.session_saved_projects_txt = DpTemp .. '\\session_saved_projects.txt'
 
 function M.hi_winbar()
-  vim.cmd 'hi WinBar guifg=#8927d6 gui=bold'
+  vim.cmd 'hi WinBar guifg=#9927d6 guibg=#77d35e gui=bold'
+  vim.cmd 'hi WinBarNC guifg=#893716 guibg=NONE gui=NONE'
 end
 
 M.hi_winbar()
@@ -3019,6 +3020,6 @@ M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
 M.clone_if_not_exist 'l'
 
--- M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
+M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
 
 return M
