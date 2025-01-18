@@ -1533,9 +1533,16 @@ end
 function M.start_nvim_qt(file)
   file = file and file or ''
   if M.in_str('session', file) then
+    local sessionoptions = vim.opt.sessionoptions
+    if M.in_str('#', file) then
+      vim.opt.sessionoptions = 'tabpages,sesdir'
+    end
     if M.in_str('!', file) then
       vim.cmd 'SessionsSave!'
       -- M.run__silent(M.format("sed -i -e '/winbar/d' %s", SessionVim))
+    end
+    if M.in_str('#', file) then
+      vim.opt.sessionoptions = sessionoptions
     end
     local exe = vim.fn.system(string.format('tasklist /FI "PID eq %d"', vim.loop.os_getppid()))
     if string.find(exe, 'nvim%-qt.exe') then
