@@ -3062,6 +3062,20 @@ end
 
 vim.opt.tabline = '%!v:lua.MyTabLine()'
 
+function M.list_inc()
+  local lnr = vim.fn.line '.'
+  if lnr > 1 then
+    local up_line = vim.fn.getline(lnr - 1)
+    local num = M.findall([[(\d+)\.]], up_line)
+    if #num > 0 then
+      return M.format('%d. ', 1 + tonumber(num[1]))
+    else
+      return ''
+    end
+  end
+  return ''
+end
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
