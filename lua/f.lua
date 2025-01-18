@@ -697,6 +697,9 @@ function M.clone_if_not_exist(dir, repo, root)
 end
 
 function M.win_max_height()
+  if vim.api.nvim_get_option_value('winfixheight', { win = vim.fn.win_getid(), }) == true then
+    return
+  end
   local cur_winnr = vim.fn.winnr()
   local cur_wininfo = vim.fn.getwininfo(vim.fn.win_getid())[1]
   local cur_start_col = cur_wininfo['wincol']
@@ -723,6 +726,9 @@ function M.win_max_height()
 end
 
 function M.win_max_width()
+  if vim.api.nvim_get_option_value('winfixwidth', { win = vim.fn.win_getid(), }) == true then
+    return
+  end
   local cur_winnr = vim.fn.winnr()
   local winids = {}
   local winids_dict = {}
