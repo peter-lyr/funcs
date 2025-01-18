@@ -1426,9 +1426,12 @@ function M.bw_all_unseen_buffer()
   local s = ''
   for _, bnr in ipairs(all_bnrs) do
     if not M.in_arr(bnr, win_bnrs) then
+      local n = M.get_tail(vim.fn.bufname(bnr))
+      if #n > 0 then
+        s = M.format('%s [%s]', s, n)
+      end
       M.cmd('bw %d', bnr)
       cnt = cnt + 1
-      s = s .. bnr .. ' '
       -- M.put(bw_bnrs, bnr)
     end
   end
@@ -1445,9 +1448,12 @@ function M.bw_all_unseen_buffer_other_tab()
   local s = ''
   for _, bnr in ipairs(all_bnrs) do
     if not M.in_arr(bnr, win_bnrs) then
+      local n = M.get_tail(vim.fn.bufname(bnr))
+      if #n > 0 then
+        s = M.format('%s [%s]', s, n)
+      end
       M.cmd('bw %d', bnr)
       cnt = cnt + 1
-      s = s .. bnr .. ' '
     end
   end
   M.printf('%d buffers bw!: %s', cnt, s)
