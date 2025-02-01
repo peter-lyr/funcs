@@ -3080,28 +3080,56 @@ end
 
 vim.opt.tabline = '%!v:lua.MyTabLine()'
 
-function M.list_inc()
-  local lnr = vim.fn.line '.'
+function M.list_inc_do(up_line, cur_line, text)
+  local res = M.findall(text, up_line)
+  if #res > 0 then
+    local temp1 = M.findall(text, cur_line)
+    if #temp1 == 0 then
+      return text
+    end
+  end
+  return nil
+end
+
+function M.list_inc(lnr, tab)
+  local cur_line
+  if not lnr then
+    lnr = vim.fn.line '.'
+    cur_line = vim.fn.getline(lnr)
+  else
+    cur_line = ''
+  end
+  local temp
+  local up_line = vim.fn.getline(lnr - 1)
   if lnr > 1 then
-    local up_line = vim.fn.getline(lnr - 1)
     local num = M.findall([[(\d+)\.]], up_line)
     if #num > 0 then
-      local cur_line = vim.fn.getline(lnr)
       local temp1 = M.findall([[(\d+)\.]], cur_line)
       if #temp1 == 0 then
         return M.format('%d. ', 1 + tonumber(num[1]))
       end
     end
-    local res = M.findall('- ', up_line)
-    if #res > 0 then
-      local cur_line = vim.fn.getline(lnr)
-      local temp1 = M.findall('- ', cur_line)
-      if #temp1 == 0 then
-        return '- '
-      end
-    end
+    temp = M.list_inc_do(up_line, cur_line, '> > > > > > > - ')
+    if temp then return temp end
+    temp = M.list_inc_do(up_line, cur_line, '> > > > > > - ')
+    if temp then return temp end
+    temp = M.list_inc_do(up_line, cur_line, '> > > > > - ')
+    if temp then return temp end
+    temp = M.list_inc_do(up_line, cur_line, '> > > > - ')
+    if temp then return temp end
+    temp = M.list_inc_do(up_line, cur_line, '> > > - ')
+    if temp then return temp end
+    temp = M.list_inc_do(up_line, cur_line, '> > - ')
+    if temp then return temp end
+    temp = M.list_inc_do(up_line, cur_line, '> - ')
+    if temp then return temp end
+    temp = M.list_inc_do(up_line, cur_line, '- ')
+    if temp then return temp end
   end
-  return '\t'
+  if not tab then
+    tab = '\t'
+  end
+  return tab
 end
 
 M.clone_if_not_exist 'org'
