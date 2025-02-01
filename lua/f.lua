@@ -3081,14 +3081,22 @@ function M.list_inc()
     local up_line = vim.fn.getline(lnr - 1)
     local num = M.findall([[(\d+)\.]], up_line)
     if #num > 0 then
-      return M.format('%d. ', 1 + tonumber(num[1]))
+      local cur_line = vim.fn.getline(lnr)
+      local temp1 = M.findall([[(\d+)\.]], cur_line)
+      if #temp1 == 0 then
+        return M.format('%d. ', 1 + tonumber(num[1]))
+      end
     end
     local res = M.findall('- ', up_line)
     if #res > 0 then
-      return '- '
+      local cur_line = vim.fn.getline(lnr)
+      local temp1 = M.findall('- ', cur_line)
+      if #temp1 == 0 then
+        return '- '
+      end
     end
   end
-  return ''
+  return '\t'
 end
 
 M.clone_if_not_exist 'org'
