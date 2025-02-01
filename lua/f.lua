@@ -1987,12 +1987,17 @@ end
 ---   return M.get_cur_file()
 --- end
 
+function M.telescope(cmd)
+  M.lazy_load 'telescope'
+  M.cmd('Telescope %s', cmd)
+end
+
 function M.lsp_document_symbols()
-  vim.cmd 'Telescope lsp_document_symbols'
+  M.telescope 'lsp_document_symbols'
 end
 
 function M.lsp_references()
-  vim.cmd 'Telescope lsp_references'
+  M.telescope 'lsp_references'
 end
 
 function M.get_file_dirs(file, till_git)
