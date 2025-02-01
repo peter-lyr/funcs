@@ -3082,8 +3082,10 @@ function M.list_inc()
     local num = M.findall([[(\d+)\.]], up_line)
     if #num > 0 then
       return M.format('%d. ', 1 + tonumber(num[1]))
-    else
-      return ''
+    end
+    local res = M.findall('- ', up_line)
+    if #res > 0 then
+      return '- '
     end
   end
   return ''
