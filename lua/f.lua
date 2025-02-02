@@ -3093,9 +3093,11 @@ end
 
 function M.list_inc(lnr, tab)
   local cur_line
+  local no_dup = nil
   if not lnr then
     lnr = vim.fn.line '.'
     cur_line = vim.fn.getline(lnr)
+    no_dup = 1
   else
     cur_line = ''
   end
@@ -3107,6 +3109,9 @@ function M.list_inc(lnr, tab)
       local temp1 = M.findall([[(\d+)\.]], cur_line)
       if #temp1 == 0 then
         return M.format('%d. ', 1 + tonumber(num[1]))
+      end
+      if no_dup then
+        return ''
       end
     end
     temp = M.list_inc_do(up_line, cur_line, '> > > > > > > - ')
