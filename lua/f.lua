@@ -3132,6 +3132,22 @@ function M.list_inc(lnr, tab)
   return tab
 end
 
+function M.sub_ref(dir)
+  local cur_line = vim.fn.trim(vim.fn.getline '.')
+  local cur_lnr = vim.fn.line '.'
+  if dir == 1 then
+    vim.fn.setline(cur_lnr, '> ' .. cur_line)
+    vim.cmd 'norm 2l'
+    return
+  end
+  if string.sub(cur_line, 1, 2) == '> ' then
+    vim.fn.setline(cur_lnr, string.sub(cur_line, 3, #cur_line))
+    vim.cmd 'norm 2h'
+    return
+  end
+  vim.fn.setline(cur_lnr, cur_line)
+end
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
