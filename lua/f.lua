@@ -3104,9 +3104,9 @@ function M.list_inc(lnr, tab)
   local temp
   local up_line = vim.fn.getline(lnr - 1)
   if lnr > 1 then
-    local num = M.findall([[(\d+)\.]], up_line)
+    local num = M.findall([[(\d+)\. ]], up_line)
     if #num > 0 then
-      local temp1 = M.findall([[(\d+)\.]], cur_line)
+      local temp1 = M.findall([[(\d+)\. ]], cur_line)
       if #temp1 == 0 then
         return M.format('%d. ', 1 + tonumber(num[1]))
       end
