@@ -790,6 +790,7 @@ function M.map_buffer_once(mode, lhs, callback, buffer)
     callback()
   end, {
     buffer = buffer,
+    nowait = true,
   })
 end
 
