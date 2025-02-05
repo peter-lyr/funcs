@@ -3155,6 +3155,9 @@ function M.sub_ref(dir)
   vim.fn.setline(cur_lnr, cur_line)
 end
 
+function M.rename_submodule()
+end
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
