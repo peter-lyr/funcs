@@ -1145,7 +1145,6 @@ function M.copy_multiple_filenames()
   vim.fn.setreg('r', vim.fn.expand '<cWORD>')
   vim.fn.setreg('i', vim.fn.trim(vim.fn.getline '.'))
   vim.fn.setreg('u', M.just_get_git_remote_url())
-  vim.fn.setreg('g', vim.fn['gitbranch#name']())
 end
 
 function M.git_pull_recursive_do_do(repo, clone, checkout)
