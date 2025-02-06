@@ -3093,6 +3093,32 @@ function M.list_inc_do(up_line, cur_line, text)
   return nil
 end
 
+function M.list_check(lnr)
+  local cur_line
+  if not lnr then
+    lnr = vim.fn.line '.'
+    cur_line = vim.fn.getline(lnr)
+  else
+    cur_line = ''
+  end
+  if lnr > 1 then
+    local temp1 = M.findall([[(\d+\.) ]], cur_line)
+    cur_line = vim.fn.trim(cur_line)
+    if #temp1 >= 1 and #temp1[1] >= #cur_line then
+      return 1
+    end
+    if cur_line == '> > > > > > > -' then return 1 end
+    if cur_line == '> > > > > > -' then return 1 end
+    if cur_line == '> > > > > -' then return 1 end
+    if cur_line == '> > > > -' then return 1 end
+    if cur_line == '> > > -' then return 1 end
+    if cur_line == '> > -' then return 1 end
+    if cur_line == '> -' then return 1 end
+    if cur_line == '-' then return 1 end
+  end
+  return nil
+end
+
 function M.list_inc(lnr, tab)
   local cur_line
   local no_dup = nil
