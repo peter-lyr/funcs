@@ -1404,7 +1404,7 @@ function M.execute_output_do(cmd)
 end
 
 function M.execute_output()
-  M.ui_input('execute_output', 'ls', M.execute_output_do)
+  M.ui_input('execute_output', '', M.execute_output_do)
 end
 
 function M.bw_all_buffer()
