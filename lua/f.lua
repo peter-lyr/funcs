@@ -3181,6 +3181,9 @@ function M.sub_ref(dir)
   vim.fn.setline(cur_lnr, cur_line)
 end
 
+function M.get_submodules(proj)
+end
+
 function M.rename_submodule()
 end
 
