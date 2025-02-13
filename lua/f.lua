@@ -3196,6 +3196,53 @@ function M.sub_ref(dir)
   vim.fn.setline(cur_lnr, cur_line)
 end
 
+-- 问豆包
+function M.find_extra_substring(str1, str2)
+  -- 确定较长和较短的字符串
+  local longer_str, shorter_str
+  if #str1 > #str2 then
+    longer_str = str1
+    shorter_str = str2
+  else
+    longer_str = str2
+    shorter_str = str1
+  end
+  -- 如果较短字符串为空，直接返回较长字符串
+  if #shorter_str == 0 then
+    return longer_str
+  end
+  -- 遍历较长字符串，尝试找到与较短字符串匹配的起始位置
+  for i = 1, #longer_str - #shorter_str + 1 do
+    -- 截取与较短字符串长度相同的子字符串
+    local sub_str = string.sub(longer_str, i, i + #shorter_str - 1)
+    if sub_str == shorter_str then
+      -- 如果匹配成功，检查前面和后面是否有多余的字符
+      local before = string.sub(longer_str, 1, i - 1)
+      local after = string.sub(longer_str, i + #shorter_str)
+      if #before > 0 then
+        return before
+      elseif #after > 0 then
+        return after
+      end
+    end
+  end
+  -- 如果没有找到匹配，可能是插入到了中间某个位置
+  -- 尝试通过逐步比较字符来找到差异
+  local j = 1
+  for i = 1, #longer_str do
+    if j > #shorter_str or string.sub(longer_str, i, i) ~= string.sub(shorter_str, j, j) then
+      local start_index = i
+      while i <= #longer_str and (j > #shorter_str or string.sub(longer_str, i, i) ~= string.sub(shorter_str, j, j)) do
+        i = i + 1
+      end
+      return string.sub(longer_str, start_index, i - 1)
+    else
+      j = j + 1
+    end
+  end
+  return ''
+end
+
 function M.get_submodules(proj)
 end
 
