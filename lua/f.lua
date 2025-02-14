@@ -3266,6 +3266,27 @@ function M.get_buf_content(buf)
   return M.join(lines, '\n')
 end
 
+function M.gui_sel_do(cmd)
+  vim.cmd(cmd)
+end
+
+function M.gui_sel()
+  M.ui({
+    'GuiWindowOpacity 1',
+    'GuiWindowOpacity 0.9',
+    'GuiWindowOpacity 0.8',
+    'GuiWindowOpacity 0.5',
+    [[Guifont! Hack\ NFM:h9]],
+    [[Guifont! Hack\ NFM:h10]],
+    [[Guifont! Hack\ NFM:h11]],
+    [[Guifont! Hack\ NFM:h12]],
+    [[Guifont! Hack\ NFM:h13]],
+    [[Guifont! Hack\ NFM:h14]],
+    [[Guifont! Hack\ NFM:h15]],
+    [[Guifont! Hack\ NFM:h16]],
+  }, 'gui', M.gui_sel_do)
+end
+
 function M.get_submodules(proj)
 end
 
