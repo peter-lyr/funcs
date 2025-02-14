@@ -997,6 +997,18 @@ function M.get_cur_proj_dirs(file)
   return proj_dirs
 end
 
+function M.get_cur_proj_dirs_tails()
+  local projs = M.get_cur_proj_dirs()
+  if not projs then
+    return {}
+  end
+  local projs_new = {}
+  for _, proj in ipairs(projs) do
+    M.put_uniq(projs_new, proj)
+  end
+  return projs_new
+end
+
 function M.save_win_pos()
   vim.g.win_pos = vim.fn.win_getid()
 end
