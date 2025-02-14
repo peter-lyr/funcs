@@ -1004,7 +1004,7 @@ function M.get_cur_proj_dirs_tails()
   end
   local projs_new = {}
   for _, proj in ipairs(projs) do
-    M.put_uniq(projs_new, proj)
+    M.put_uniq(projs_new, M.get_tail(proj))
   end
   return projs_new
 end
