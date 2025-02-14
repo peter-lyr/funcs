@@ -3245,6 +3245,14 @@ function M.find_extra_substring(str1, str2)
   return ''
 end
 
+function M.get_buf_content(buf)
+  if not buf then
+    buf = vim.fn.bufnr()
+  end
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+  return M.join(lines, '\n')
+end
+
 function M.get_submodules(proj)
 end
 
