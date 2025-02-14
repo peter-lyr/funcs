@@ -2957,7 +2957,9 @@ function M.work_day_append()
 end
 
 function M.tts(text)
-  M.run__silent(M.format('%s "%s"', M.tts_py, text))
+  -- M.run__silent(M.format('%s "%s"', M.tts_py, text))
+  local temp_tts_txt = DpTemp .. '\\tts.txt'
+  M.write_lines_to_file({ text, }, temp_tts_txt)
 end
 
 function M.bcomp_a(file)
