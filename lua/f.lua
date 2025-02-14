@@ -3026,6 +3026,7 @@ end
 
 function M.go_cfile(force)
   local cfile = M.get_cfile()
+  if not cfile then return end
   cfile = M.new_file(cfile):absolute()
   if not cfile then
     cfile = M.get_cfile(64)
