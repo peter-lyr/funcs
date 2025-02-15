@@ -3391,10 +3391,9 @@ function M.create_file(fname)
   M.cmd('e %s\\%s', vim.g.create_root_dir, fname)
 end
 
-function M.create_index_file()
-  local parent = M.get_parent()
-  local files = M.get_files_deep_1(parent)
-  local tails = M.get_tails(files, parent)
+function M.get_markdowns(dir)
+  local files = M.get_files_deep_1(dir)
+  local tails = M.get_tails(files, dir)
   local markdowns = {}
   for _, tail in ipairs(tails) do
     if M.lower(M.get_extension(tail)) == 'md' then
@@ -3402,6 +3401,12 @@ function M.create_index_file()
     end
   end
   table.sort(markdowns)
+  return markdowns
+end
+
+function M.create_index_file()
+  local parent = M.get_parent()
+  local markdowns = M.get_markdowns(parent)
   local last_file = markdowns[#markdowns]
   local l = M.split(last_file, '-')
   if #l < 2 then
@@ -3442,6 +3447,30 @@ function M.create_index_file()
   end
   vim.g.create_root_dir = M.rep(parent)
   M.ui_input(M.format('create new file under %s', parent), title, M.create_file)
+end
+
+function M.sel_open_same_index_file_do(file)
+  M.cmd('e %s', file)
+end
+
+function M.sel_open_same_index_file(file)
+  if not file then
+    file = M.get_cur_file()
+  end
+  file = M.get_tail(file)
+  local l = M.split(file, '-')
+  local index_1 = l[1]
+  local parent = M.get_parent()
+  local markdowns = M.get_markdowns(parent)
+  local files = {}
+  for _, tail in ipairs(markdowns) do
+    local res = M.findall(M.format([[%s-\d+-.*]], index_1), tail)
+    if #res > 0 then
+      M.put_uniq(files, res[1])
+    end
+  end
+  M.ui(files, 'open', M.sel_open_same_index_file_do)
+  return files
 end
 
 M.clone_if_not_exist 'org'
