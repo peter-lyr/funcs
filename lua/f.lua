@@ -2885,6 +2885,15 @@ function M.load_sessions_sel_do(dir)
   M.cmd('silent source %s', vim_file)
 end
 
+function M.get_recent_projects()
+  local recent_projects = {}
+  local temp = require 'telescope._extensions.project.utils'.get_projects 'recent'
+  for _, v in ipairs(temp) do
+    M.put_uniq(recent_projects, v.path)
+  end
+  return recent_projects
+end
+
 function M.reload_sessions_sel()
   local session_saved_projects = {}
   local temp = require 'telescope._extensions.project.utils'.get_projects 'recent'
@@ -3288,6 +3297,35 @@ function M.gui_sel()
 end
 
 function M.get_submodules(proj)
+  local recent_projects = M.get_recent_projects()
+  if not proj then
+    proj = M.lower(M.rep(M.get_cwd()))
+  end
+  if not recent_projects then
+    return {}
+  end
+  local submodules = {}
+  for _, _p in ipairs(recent_projects) do
+    local p = M.lower(M.rep(_p))
+    local dir = M.lower(M.rep(p))
+    local dir_git = M.join_path(dir, '.git')
+    if string.sub(p, 1, #proj) == proj and string.sub(p, #proj + 1, #proj + 1) == '\\' and M.is_file_exists(dir_git) then
+      dir = M.lower(M.rep(M.get_parent(dir)))
+      dir_git = M.lower(M.rep(M.join_path(dir, '.git')))
+      while 1 do
+        if dir == proj then
+          M.put_uniq(submodules, p)
+          break
+        end
+        if M.is_file_exists(dir_git) then
+          break
+        end
+        dir = M.lower(M.rep(M.get_parent(dir)))
+        dir_git = M.lower(M.rep(M.join_path(dir, '.git')))
+      end
+    end
+  end
+  return submodules
 end
 
 function M.rename_submodule()
