@@ -405,6 +405,7 @@ M.git_init_py = M.get_py '16-git-init.py'
 M.work_summary_day_py = M.get_py '17-work-summary-day.py'
 M.work_summary_week_py = M.get_py '18-work-summary-week.py'
 M.tts_py = M.get_py '19-tts.py'
+M.rename_submodule_py = M.get_py '20-rename-submodule.py'
 Week1Date = { 2024, 12, 16, } -- 第一周起始日
 
 function M.start_do(cmd, opts)
@@ -3299,8 +3300,9 @@ end
 function M.get_submodules(proj)
   local recent_projects = M.get_recent_projects()
   if not proj then
-    proj = M.lower(M.rep(M.get_cwd()))
+    proj = M.get_cwd()
   end
+  proj = M.lower(M.rep(proj))
   if not recent_projects then
     return {}
   end
@@ -3328,7 +3330,50 @@ function M.get_submodules(proj)
   return submodules
 end
 
-function M.rename_submodule()
+function M.get_tails(projs, root)
+  if not root then
+    root = M.get_cwd()
+  end
+  root = M.lower(M.rep(root))
+  local tails = {}
+  for _, proj in ipairs(projs) do
+    M.put_uniq(tails, string.sub(proj, #root + 2, #proj))
+  end
+  return tails
+end
+
+function M.get_submodules_tails(proj, submodules)
+  if not proj then
+    proj = M.get_cwd()
+  end
+  proj = M.lower(M.rep(proj))
+  local submodules_tails = {}
+  for _, submodule in ipairs(submodules) do
+    M.put_uniq(submodules_tails, string.sub(submodule, #proj + 2, #submodule))
+  end
+  return submodules_tails
+end
+
+function M.rename_submodule_do_do(submodule_new_name)
+  -- M.run__silent(M.format('%s "%s" "%s" "%s" "%s"', M.rename_submodule_py, vim.g.submodules_root, vim.g.submodule_old_name, submodule_new_name, vim.g.submodule_remote_url))
+  M.run_silent { M.rename_submodule_py, vim.g.submodules_root, vim.g.submodule_old_name, submodule_new_name, vim.g.submodule_remote_url, }
+end
+
+function M.rename_submodule_do(submodule_old_name, index)
+  local submodule_old_path = vim.g.submodules[index]
+  vim.g.submodule_old_name = submodule_old_name
+  vim.g.submodule_remote_url = M.just_get_git_remote_url(submodule_old_path)
+  M.ui_input('rename to new submodule name', submodule_old_name, M.rename_submodule_do_do)
+end
+
+function M.rename_submodule(proj)
+  if not proj then
+    proj = M.get_cwd()
+  end
+  vim.g.submodules_root = M.lower(M.rep(proj))
+  vim.g.submodules = M.get_submodules()
+  local submodules_tails = M.get_tails(vim.g.submodules)
+  M.ui(submodules_tails, 'rename_submodule', M.rename_submodule_do)
 end
 
 M.clone_if_not_exist 'org'
