@@ -3376,6 +3376,66 @@ function M.rename_submodule(proj)
   M.ui(submodules_tails, 'rename_submodule', M.rename_submodule_do)
 end
 
+function M.get_files_deep_1(dir)
+  if not dir then
+    dir = M.get_cwd()
+  end
+  return ps.scan_dir(dir, { hidden = false, depth = 1, add_dirs = false, only_dirs = false, })
+end
+
+function M.get_extension(file)
+  return vim.fn.fnamemodify(file, ':e')
+end
+
+function M.create_file(fname)
+  M.cmd('e %s\\%s', vim.g.create_root_dir, fname)
+end
+
+function M.create_index_file()
+  local parent = M.get_parent()
+  local files = M.get_files_deep_1(parent)
+  local tails = M.get_tails(files, parent)
+  local markdowns = {}
+  for _, tail in ipairs(tails) do
+    if M.lower(M.get_extension(tail)) == 'md' then
+      M.put_uniq(markdowns, tail)
+    end
+  end
+  table.sort(markdowns)
+  local last_file = markdowns[#markdowns]
+  local l = M.split(last_file, '-')
+  if #l < 2 then
+    return ''
+  end
+  local today = vim.fn.strftime '%Y%m%d'
+  local index_1 = l[1]
+  local index_2 = l[2]
+  local date = today
+  if #l >= 3 then
+    date = l[3]
+  end
+  local title = '--'
+  local cnt_1 = tonumber(index_1)
+  if not cnt_1 then
+    return ''
+  end
+  local cnt_2 = tonumber(index_2)
+  if not cnt_2 then
+    return ''
+  end
+  local format = M.format('%%0%dd', #index_1)
+  local cnt_str = M.format(format, cnt_1)
+  local cnt_str_plus_1 = M.format(format, cnt_1 + 1)
+  if today ~= date then
+    title = M.format('%s-1-%s-', cnt_str_plus_1, today)
+    return title
+  end
+  title = M.format('%s-%s-', cnt_str, cnt_2 + 1)
+  vim.g.create_root_dir = M.rep(parent)
+  M.ui_input('create new file', title, M.create_file)
+  return title
+end
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
