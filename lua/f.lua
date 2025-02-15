@@ -3423,17 +3423,25 @@ function M.create_index_file()
   if not cnt_2 then
     return ''
   end
+  if cnt_2 > 1 then
+    for _, tail in ipairs(markdowns) do
+      local res = M.findall(M.format([[%s-\d+-(\d{8})-.*]], index_1), tail)
+      if #res > 0 then
+        date = res[1]
+        break
+      end
+    end
+  end
   local format = M.format('%%0%dd', #index_1)
   local cnt_str = M.format(format, cnt_1)
   local cnt_str_plus_1 = M.format(format, cnt_1 + 1)
   if today ~= date then
     title = M.format('%s-1-%s-', cnt_str_plus_1, today)
-    return title
+  else
+    title = M.format('%s-%s-', cnt_str, cnt_2 + 1)
   end
-  title = M.format('%s-%s-', cnt_str, cnt_2 + 1)
   vim.g.create_root_dir = M.rep(parent)
-  M.ui_input('create new file', title, M.create_file)
-  return title
+  M.ui_input(M.format('create new file under %s', parent), title, M.create_file)
 end
 
 M.clone_if_not_exist 'org'
