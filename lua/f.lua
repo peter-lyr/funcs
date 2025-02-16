@@ -2279,6 +2279,11 @@ function M.git_get_commit_quick(which)
       require 'nvim-treesitter.incremental_selection'.node_incremental()
       require 'nvim-treesitter.incremental_selection'.node_incremental()
     end
+    if which == 'treesitter4' then
+      require 'nvim-treesitter.incremental_selection'.node_incremental()
+      require 'nvim-treesitter.incremental_selection'.node_incremental()
+      require 'nvim-treesitter.incremental_selection'.node_incremental()
+    end
     M.feed_keys 'y'
     commit = vim.fn.getreg '"'
   end
