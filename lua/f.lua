@@ -2978,10 +2978,28 @@ function M.work_day_append()
   M.ui_input('work_day_append', vim.fn.strftime '%Y-%m-%d', M.work_day_append_do)
 end
 
+M.tts_text = ''
+
+M.tts_end_flag_chars = {
+  '，', '。', '？', '；', '：', '、', '——', '》', '）', '】', '”', '’',
+  ',', '\\.', '?', ';', ':', '"',
+}
+
+function M.tts_speak()
+  local temp_tts_txt = DpTemp .. '\\tts.txt'
+  M.write_lines_to_file({ M.tts_text, }, temp_tts_txt)
+  M.tts_text = ''
+end
+
 function M.tts(text)
   -- M.run__silent(M.format('%s "%s"', M.tts_py, text))
-  local temp_tts_txt = DpTemp .. '\\tts.txt'
-  M.write_lines_to_file({ text, }, temp_tts_txt)
+  M.tts_text = M.tts_text .. text
+  for _, char in ipairs(M.tts_end_flag_chars) do
+    if M.in_str(char, text) then
+      M.tts_speak()
+      break
+    end
+  end
 end
 
 function M.bcomp_a(file)
