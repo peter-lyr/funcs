@@ -2987,6 +2987,9 @@ M.tts_end_flag_chars = {
 
 function M.tts_speak()
   local temp_tts_txt = DpTemp .. '\\tts.txt'
+  if M.tts_text == '' then
+    return
+  end
   M.write_lines_to_file({ M.tts_text, }, temp_tts_txt)
   M.tts_text = ''
 end
