@@ -3388,7 +3388,13 @@ end
 function M.rename_submodule_do(submodule_old_name, index)
   local submodule_old_path = vim.g.submodules[index]
   vim.g.submodule_old_name = submodule_old_name
+  local roo_remote_url = M.just_get_git_remote_url(vim.g.submodules_root)
   vim.g.submodule_remote_url = M.just_get_git_remote_url(submodule_old_path)
+  if roo_remote_url == vim.g.submodule_remote_url then
+    M.notify(M.format('same remote url: %s in %s', vim.g.submodule_remote_url, vim.g.submodules_root))
+    return
+  end
+  M.notify(M.format('%s/%s: %s', vim.g.submodules_root, vim.g.submodule_old_name, vim.g.submodule_remote_url))
   M.ui_input('rename to new submodule name', submodule_old_name, M.rename_submodule_do_do)
 end
 
