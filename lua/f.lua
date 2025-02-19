@@ -1554,9 +1554,25 @@ function M.yank_clipbaord_cwd_tail()
   M.yank_clipbaord(vim.fn.fnamemodify(M.get_cwd(), ':t'))
 end
 
+M.kill_nvim_two_exes_bat = M.join_path(DpTemp, 'kill_nvim_two_exes.bat')
+
+function M.quit_nvim_qt_prepare()
+  local tbl = {
+    M.format('taskkill /f /pid %d', vim.loop.os_getppid()),
+    M.format('taskkill /f /pid %d', vim.loop.os_getpid()),
+  }
+  M.write_lines_to_file(tbl, M.kill_nvim_two_exes_bat)
+end
+
+function M.quit_nvim_qt()
+  M.quit_nvim_qt_prepare()
+  M.run_silent { M.kill_nvim_two_exes_bat, }
+end
+
 function M.quit_nvim_qt_later()
+  M.quit_nvim_qt_prepare()
   M.set_timeout(10, function()
-    vim.cmd 'qa!'
+    M.quit_nvim_qt()
   end)
 end
 
