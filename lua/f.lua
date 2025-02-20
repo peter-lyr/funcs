@@ -1186,6 +1186,14 @@ function M.git_pull_recursive(clone, checkout)
   M.ui({ Org, StdConfig, L, W, P, Big, }, 'git_pull_recursive_do', M.git_pull_recursive_do)
 end
 
+function M.git_pull_recursive_all()
+  vim.g.clone = 'clone'
+  vim.g.checkout = nil
+  for _, repo in ipairs { StdConfig, L, W, P, } do
+    M.git_pull_recursive_do(repo)
+  end
+end
+
 function M.git_push_recursive_do_do(commit, file, opts)
   local commit_file = DpTemp .. '\\commit.txt'
   if type(commit) == 'string' then
