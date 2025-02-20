@@ -3461,21 +3461,27 @@ function M.get_markdowns(dir)
 end
 
 function M.create_index_file()
+  local today = vim.fn.strftime '%Y%m%d'
   local parent = M.get_parent()
   local markdowns = M.get_markdowns(parent)
+  local title
+  if #markdowns == 0 then
+    title = M.format('001-1-%s-', today)
+    vim.g.create_root_dir = M.rep(parent)
+    M.ui_input(M.format('create new file under %s', parent), title, M.create_file)
+  end
   local last_file = markdowns[#markdowns]
   local l = M.split(last_file, '-')
   if #l < 2 then
     return ''
   end
-  local today = vim.fn.strftime '%Y%m%d'
   local index_1 = l[1]
   local index_2 = l[2]
   local date = today
   if #l >= 3 then
     date = l[3]
   end
-  local title = '--'
+  title = '--'
   local cnt_1 = tonumber(index_1)
   if not cnt_1 then
     return ''
