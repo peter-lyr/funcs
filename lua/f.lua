@@ -2666,6 +2666,28 @@ function M.bin_xxd_sel(file)
   }, 'bin_xxd_sel', M.xxd_g_c)
 end
 
+function M.run_under_desktop_do(args)
+  if not args then
+    return
+  end
+  local desktop = M.get_sh_get_folder_path 'desktop'[1]
+  for _, file in ipairs(vim.g.files) do
+    local tail = vim.fn.fnamemodify(file, ':t')
+    file = M.get_file({ desktop, }, tail)
+    if M.is_file_exists(file) then
+      M.run__silent(M.format('cd /d %s & %s %s', desktop, file, args))
+    end
+  end
+end
+
+function M.run_under_desktop(files)
+  if not files then
+    return
+  end
+  vim.g.files = files
+  M.ui_input('run_under_desktop_do', '', M.run_under_desktop_do)
+end
+
 function M.copy_to_desktop(files)
   if not files then
     return
