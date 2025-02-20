@@ -35,7 +35,7 @@ Sta_234_cnts                 = {}
 vim.g.winbar                 = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} %#WinBarNC#'
 vim.g.winbar2                = ' %{v:lua.WinBarName()} %#WinBarNC#'
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
-vim.opt.winbar               = vim.g.winbar2
+-- vim.opt.winbar               = vim.g.winbar2
 
 DIRS                         = {} -- 见下面
 
@@ -2035,8 +2035,12 @@ end
 ---   return M.get_cur_file()
 --- end
 
-function M.telescope(cmd)
+function M.telescope(cmd, dir)
   M.lazy_load 'telescope'
+  if dir then
+    M.cmd('Telescope %s cwd=%s', cmd, dir)
+    return
+  end
   M.cmd('Telescope %s', cmd)
 end
 
