@@ -2173,7 +2173,7 @@ function M.merge_tables(...)
   local result = {}
   for _, t in ipairs { ..., } do
     for _, v in ipairs(t) do
-      result[#result + 1] = v
+      M.put_uniq(result, v)
     end
   end
   return result
