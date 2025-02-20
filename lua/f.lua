@@ -2684,6 +2684,7 @@ function M.run_under_desktop(files)
   if not files then
     return
   end
+  M.copy_to_desktop(files)
   vim.g.files = files
   M.ui_input('run_under_desktop_do', '', M.run_under_desktop_do)
 end
