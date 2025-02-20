@@ -3076,7 +3076,7 @@ function M.get_cfile(depth)
   return nil
 end
 
-function M.go_cfile(force)
+function M.go_cfile(force, fd)
   local cfile = M.get_cfile()
   if not cfile then return end
   cfile = M.new_file(cfile):absolute()
@@ -3085,6 +3085,14 @@ function M.go_cfile(force)
     if not cfile then
       return
     end
+  end
+  if fd then -- 用telescope去找文件
+    if not M.is_dir(cfile) then
+      cfile = M.get_parent(cfile)
+    end
+    vim.g.telescope_cmd = 'fd'
+    M.telescope_do(cfile)
+    return
   end
   if M.is_dir(cfile) then
     M.nvimtree_cd(cfile)
