@@ -3571,17 +3571,20 @@ function M.sel_open_same_index_file(file)
   return files
 end
 
-function M.toggle_sides()
-  if M.toggle_sides_en then
-    M.toggle_sides_en = nil
-    vim.opt.showtabline = 0
-    vim.opt.laststatus = 0
-    vim.opt.cmdheight = 0
-  else
+function M.toggle_sides(val)
+  if val then
+    M.toggle_sides_en = val
+  end
+  if M.toggle_sides_en == 1 then
     vim.opt.tabline = '%!v:lua.MyTabLine()'
     vim.opt.showtabline = 1
     vim.opt.laststatus = 3
     vim.opt.cmdheight = 1
+  else
+    M.toggle_sides_en = 0
+    vim.opt.showtabline = 0
+    vim.opt.laststatus = 0
+    vim.opt.cmdheight = 0
     M.toggle_sides_en = 1
   end
 end
