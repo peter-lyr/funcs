@@ -3571,6 +3571,19 @@ function M.sel_open_same_index_file(file)
   return files
 end
 
+function M.toggle_sides()
+  if M.toggle_sides_en then
+    M.toggle_sides_en = nil
+    vim.opt.showtabline = 0
+    vim.opt.laststatus = 0
+  else
+    vim.opt.tabline = '%!v:lua.MyTabLine()'
+    vim.opt.showtabline = 1
+    vim.opt.laststatus = 3
+    M.toggle_sides_en = 1
+  end
+end
+
 M.clone_if_not_exist 'org'
 M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
