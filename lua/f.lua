@@ -3586,8 +3586,8 @@ function M.toggle_sides()
   end
 end
 
-M.clone_if_not_exist 'org'
-M.clone_if_not_exist 'big'
+-- M.clone_if_not_exist 'org'
+-- M.clone_if_not_exist 'big'
 M.clone_if_not_exist 'w'
 M.clone_if_not_exist 'l'
 M.clone_if_not_exist 'p'
