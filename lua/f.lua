@@ -1,7 +1,7 @@
 local M         = {}
 local pp        = require 'plenary.path'
 local ps        = require 'plenary.scandir'
-local f_s_time  = vim.fn.reltime()
+-- local f_s_time  = vim.fn.reltime()
 
 vim.g.ui_select = vim.ui.select
 
@@ -3597,6 +3597,6 @@ M.clone_if_not_exist 'w'
 M.clone_if_not_exist 'l'
 M.clone_if_not_exist 'p'
 
-M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
+-- M.printf('[f.lua time] %.2f ms', vim.fn.reltimefloat(vim.fn.reltime(f_s_time)) * 1000)
 
 return M
