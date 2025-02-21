@@ -1574,6 +1574,7 @@ end
 
 function M.quit_nvim_qt()
   M.quit_nvim_qt_prepare()
+  vim.cmd 'wshada!'
   M.run_silent { M.kill_nvim_two_exes_bat, }
 end
 
