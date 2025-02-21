@@ -3576,10 +3576,12 @@ function M.toggle_sides()
     M.toggle_sides_en = nil
     vim.opt.showtabline = 0
     vim.opt.laststatus = 0
+    vim.opt.cmdheight = 0
   else
     vim.opt.tabline = '%!v:lua.MyTabLine()'
     vim.opt.showtabline = 1
     vim.opt.laststatus = 3
+    vim.opt.cmdheight = 1
     M.toggle_sides_en = 1
   end
 end
