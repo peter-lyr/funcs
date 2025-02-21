@@ -3580,8 +3580,8 @@ function M.toggle_sides(val)
     vim.opt.showtabline = 1
     vim.opt.laststatus = 3
     vim.opt.cmdheight = 1
-  else
     M.toggle_sides_en = 0
+  else
     vim.opt.showtabline = 0
     vim.opt.laststatus = 0
     vim.opt.cmdheight = 0
