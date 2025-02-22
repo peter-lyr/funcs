@@ -3028,7 +3028,7 @@ function M.work_summary_week()
 end
 
 function M.work_day_append_do(day)
-  vim.fn.append('.', M.format('** %s', day))
+  vim.fn.append('.', M.format('## %s', day))
 end
 
 function M.work_day_append()
