@@ -2982,7 +2982,7 @@ function M.work_summary_day_do(day)
   if not day or #day == 0 then
     return
   end
-  M.run__silent(M.format('%s %s %s %s', M.work_summary_day_py, W .. '\\work.org', day, vim.g.morning))
+  M.run__silent(M.format('%s %s %s %s', M.work_summary_day_py, W .. '\\work.md', day, vim.g.morning))
 end
 
 function M.work_summary_day(morning)
@@ -3020,7 +3020,7 @@ function M.work_summary_week_do(week)
   if not week or #week == 0 then
     return
   end
-  M.run__silent(M.format('%s %s "%s"', M.work_summary_week_py, W .. '\\work.org', week))
+  M.run__silent(M.format('%s %s "%s"', M.work_summary_week_py, W .. '\\work.md', week))
 end
 
 function M.work_summary_week()
