@@ -3581,11 +3581,15 @@ function M.toggle_sides(val)
     vim.opt.laststatus = 3
     vim.opt.cmdheight = 1
     M.toggle_sides_en = 0
+    vim.g.statuslineen = 1
   else
     vim.opt.showtabline = 0
     vim.opt.laststatus = 0
     vim.opt.cmdheight = 0
     M.toggle_sides_en = 1
+    vim.g.statuslineen = nil
+    -- vim.opt.statusline = M.repeat_str('─', 20)
+    vim.opt.statusline = M.repeat_str('═', 20)
   end
 end
 
