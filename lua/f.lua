@@ -3385,6 +3385,18 @@ function M.gui_sel()
     [[Guifont! Hack\ NFM:h14]],
     [[Guifont! Hack\ NFM:h15]],
     [[Guifont! Hack\ NFM:h16]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h5]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h6]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h7]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h8]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h9]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h10]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h11]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h12]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h13]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h14]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h15]],
+    [[Guifont! Inconsolata\ Nerd\ Font\ Mono:h16]],
   }, 'gui', M.gui_sel_do)
 end
 
