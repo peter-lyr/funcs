@@ -3372,6 +3372,7 @@ function M.gui_sel()
     'GuiWindowOpacity 0.9',
     'GuiWindowOpacity 0.8',
     'GuiWindowOpacity 0.5',
+    'GuiFont! *',
     [[Guifont! Hack\ NFM:h5]],
     [[Guifont! Hack\ NFM:h6]],
     [[Guifont! Hack\ NFM:h7]],
