@@ -3500,6 +3500,22 @@ function M.create_file(fname)
   M.cmd('e %s\\%s', vim.g.create_root_dir, fname)
 end
 
+function M.get_markdowns_compare(a, b)
+  local numA = tonumber(a:match("^(%d+)-"))
+  local numB = tonumber(b:match("^(%d+)-"))
+  if numA == numB then
+    numA = tonumber(a:match("^%d+-(%d+)"))
+    numB = tonumber(b:match("^%d+-(%d+)"))
+    if numA == numB then
+      numA = tonumber(a:match("^%d+-%d+-(%d+)"))
+      numB = tonumber(b:match("^%d+-%d+-(%d+)"))
+      return numA < numB
+    end
+    return numA < numB
+  end
+  return numA < numB
+end
+
 function M.get_markdowns(dir)
   local files = M.get_files_deep_1(dir)
   local tails = M.get_tails(files, dir)
@@ -3509,7 +3525,7 @@ function M.get_markdowns(dir)
       M.put_uniq(markdowns, tail)
     end
   end
-  table.sort(markdowns)
+  table.sort(markdowns, M.get_markdowns_compare)
   return markdowns
 end
 
