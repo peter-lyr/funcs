@@ -1626,7 +1626,12 @@ end
 
 function M.refresh()
   M.project_cd()
-  vim.cmd 'e!'
+  vim.cmd [[
+    try
+      e!
+    catch
+    endtry
+  ]]
 end
 
 function M.curline_one_space()
@@ -3616,6 +3621,7 @@ function M.toggle_sides(val)
     vim.opt.cmdheight = 1
     M.toggle_sides_en = 0
     vim.g.statuslineen = 1
+    M.refresh()
   else
     vim.opt.showtabline = 0
     vim.opt.laststatus = 0
