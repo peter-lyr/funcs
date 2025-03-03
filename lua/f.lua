@@ -3093,6 +3093,7 @@ function M.get_cfile(depth)
     depth = 1
   end
   local file = M.expand_cfile()
+  file = string.gsub(file, '~', Home)
   if M.in_str('/', file) or M.in_str('\\', file) then
     if M.is_file_exists(file) then
       return file
