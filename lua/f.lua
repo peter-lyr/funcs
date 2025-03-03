@@ -1977,6 +1977,9 @@ function M.set_opt(opt, val, scope)
     scope = 'global'
   end
   vim.api.nvim_set_option_value(opt, val, { scope = scope, })
+  if M.is(val) then
+    M['g_' .. opt] = val
+  end
 end
 
 function M.get_opt(opt, scope)
@@ -2007,7 +2010,10 @@ end
 
 function M.toggle_winbar()
   M.hi_winbar()
-  M.toggle_opt('winbar', '', vim.g.winbar)
+  if not M.g_winbar then
+    M.g_winbar = vim.g.winbar
+  end
+  M.toggle_opt('winbar', '', M.g_winbar)
 end
 
 function M.toggle_diff()
@@ -3507,14 +3513,14 @@ function M.create_file(fname)
 end
 
 function M.get_markdowns_compare(a, b)
-  local numA = tonumber(a:match("^(%d+)-"))
-  local numB = tonumber(b:match("^(%d+)-"))
+  local numA = tonumber(a:match '^(%d+)-')
+  local numB = tonumber(b:match '^(%d+)-')
   if numA == numB then
-    numA = tonumber(a:match("^%d+-(%d+)"))
-    numB = tonumber(b:match("^%d+-(%d+)"))
+    numA = tonumber(a:match '^%d+-(%d+)')
+    numB = tonumber(b:match '^%d+-(%d+)')
     if numA == numB then
-      numA = tonumber(a:match("^%d+-%d+-(%d+)"))
-      numB = tonumber(b:match("^%d+-%d+-(%d+)"))
+      numA = tonumber(a:match '^%d+-%d+-(%d+)')
+      numB = tonumber(b:match '^%d+-%d+-(%d+)')
       return numA < numB
     end
     return numA < numB
