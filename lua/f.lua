@@ -3515,12 +3515,18 @@ end
 function M.get_markdowns_compare(a, b)
   local numA = tonumber(a:match '^(%d+)-')
   local numB = tonumber(b:match '^(%d+)-')
+  if not numA then numA = math.huge end
+  if not numB then numB = math.huge end
   if numA == numB then
     numA = tonumber(a:match '^%d+-(%d+)')
     numB = tonumber(b:match '^%d+-(%d+)')
+    if not numA then numA = math.huge end
+    if not numB then numB = math.huge end
     if numA == numB then
       numA = tonumber(a:match '^%d+-%d+-(%d+)')
       numB = tonumber(b:match '^%d+-%d+-(%d+)')
+      if not numA then numA = math.huge end
+      if not numB then numB = math.huge end
       return numA < numB
     end
     return numA < numB
