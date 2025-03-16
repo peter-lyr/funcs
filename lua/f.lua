@@ -1590,7 +1590,8 @@ function M.start_nvim_qt(file)
   if M.in_str('session', file) then
     local sessionoptions = vim.opt.sessionoptions
     if M.in_str('#', file) then
-      vim.opt.sessionoptions = 'tabpages,sesdir'
+      -- vim.opt.sessionoptions = 'tabpages,sesdir,options'
+      vim.opt.sessionoptions = 'blank,buffers,folds,globals,help,localoptions,options,skiprtp,resize,sesdir,tabpages,terminal,winpos,winsize'
     end
     if M.in_str('!', file) then
       vim.cmd 'SessionsSave!'
@@ -2940,7 +2941,11 @@ function M.save_sessions_at_cwd_do(project_root)
   -- M.run__silent(M.format('copy /y "%s" "%s"', SessionVim, M.get_file({ project_root, }, session_vim)))
   local session_vim_full = M.get_file({ project_root, }, session_vim)
   vim.fn.delete(session_vim_full)
+  local sessionoptions = vim.opt.sessionoptions:get()
+  -- vim.opt.sessionoptions = 'tabpages,sesdir,options'
+  vim.opt.sessionoptions = 'blank,buffers,folds,globals,help,localoptions,options,skiprtp,resize,sesdir,tabpages,terminal,winpos,winsize'
   M.cmd('mksession %s', session_vim_full)
+  vim.opt.sessionoptions = sessionoptions
   -- M.run__silent(M.format("sed -i -e '/winbar/d' %s", session_vim))
 end
 
