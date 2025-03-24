@@ -3136,6 +3136,7 @@ function M.go_cfile(force, fd_or_systemopen)
   if not cfile then
     cfile = M.get_cfile(64)
     if not cfile then
+      print('no ' .. cfile)
       return
     end
   end
