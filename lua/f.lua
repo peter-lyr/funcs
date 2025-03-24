@@ -2012,7 +2012,7 @@ end
 function M.toggle_winbar()
   M.hi_winbar()
   if not M.g_winbar then
-    M.g_winbar = vim.g.winbar
+    M.g_winbar = vim.g.winbar2
   end
   M.toggle_opt('winbar', '', M.g_winbar)
 end
@@ -3625,6 +3625,7 @@ function M.toggle_sides(val)
     M.toggle_sides_en = val
   end
   if M.toggle_sides_en == 1 then
+    vim.opt.winbar = M.g_winbar
     vim.opt.tabline = '%!v:lua.MyTabLine()'
     vim.opt.showtabline = 1
     vim.opt.laststatus = 3
@@ -3633,6 +3634,7 @@ function M.toggle_sides(val)
     vim.g.statuslineen = 1
     M.refresh()
   else
+    vim.opt.winbar = ''
     vim.opt.showtabline = 0
     vim.opt.laststatus = 0
     vim.opt.cmdheight = 0
