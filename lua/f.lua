@@ -3546,6 +3546,14 @@ function M.get_markdowns(dir)
   return markdowns
 end
 
+function M.create_under(dir)
+  if not dir then
+    return
+  end
+  vim.g.create_root_dir = M.rep(dir)
+  M.ui_input(M.format('create new file under %s', dir), '', M.create_file)
+end
+
 function M.create_index_file()
   local today = vim.fn.strftime '%Y%m%d'
   local parent = M.get_parent()
