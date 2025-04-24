@@ -35,7 +35,7 @@ Sta_234_cnts                 = {}
 vim.g.winbar                 = ' %#Comment#%{v:lua.WinBarProj()}\\%#WinBar#%{v:lua.WinBarName()} %#WinBarNC#'
 vim.g.winbar2                = ' %{v:lua.WinBarName()} %#WinBarNC#'
 --- vim.g.statusline = '%{v:lua.Statusline()} %h%m%r%=%<%{&ff}[%{&fenc}] %(%l,%c%V%) %P'
--- vim.opt.winbar               = vim.g.winbar2
+vim.opt.winbar               = vim.g.winbar2
 
 DIRS                         = {} -- 见下面
 
@@ -3654,7 +3654,7 @@ function M.toggle_sides(val)
   end
 end
 
-M.toggle_sides(0)
+-- M.toggle_sides(0)
 
 -- M.clone_if_not_exist 'org'
 -- M.clone_if_not_exist 'big'
