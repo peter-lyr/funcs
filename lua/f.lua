@@ -968,7 +968,7 @@ function M.get_file_parents(file)
 end
 
 function M.get_file_more_dirs(file)
-  return M.merge_tables(M.get_cur_proj_dirs(file), M.get_file_parents(file), DIRS)
+  return M.merge_tables(M.get_cur_proj_dirs(file) or {}, M.get_file_parents(file), DIRS)
 end
 
 function M.get_sub_dirs(dir)
