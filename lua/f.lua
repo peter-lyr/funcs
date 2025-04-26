@@ -2771,6 +2771,9 @@ function M.system_paste(dir)
   if not dir then
     return
   end
+  if M.is_file(dir) then
+    dir = M.get_parent(dir)
+  end
   M.run_silent {
     'powershell',
     M.format([[Get-Clipboard -Format FileDropList | ForEach-Object { Copy-Item -Path $_.FullName -Recurse -Destination "%s" }]], dir),
