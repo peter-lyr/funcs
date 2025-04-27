@@ -2718,6 +2718,12 @@ end
 
 function M.copy_to_desktop(files)
   if not files then
+    local file = M.get_cur_file()
+    if M.is_file(file) then
+      files = { file, }
+    end
+  end
+  if not files then
     return
   end
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
