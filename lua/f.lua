@@ -2004,6 +2004,11 @@ end
 
 function M.toggle_local(opt)
   M.toggle_opt(opt, true, false, 'local')
+  if M.get_opt(opt, 'local') == true then
+    M.alternate_line(15)
+  else
+    M.alternate_line()
+  end
 end
 
 function M.toggle_global(opt)
@@ -3489,6 +3494,11 @@ function M.rename_submodule_do(submodule_old_name, index)
   vim.g.submodule_old_name = submodule_old_name
   local roo_remote_url = M.just_get_git_remote_url(vim.g.submodules_root)
   vim.g.submodule_remote_url = M.just_get_git_remote_url(submodule_old_path)
+  -- if not M.is(vim.g.submodule_remote_url) then
+  --   print(submodule_old_path, '-------------')
+  --   M.notify(M.format('%s in %s', vim.g.submodule_remote_url, vim.g.submodules_root))
+  --   return
+  -- end
   if roo_remote_url == vim.g.submodule_remote_url then
     M.notify(M.format('same remote url: %s in %s', vim.g.submodule_remote_url, vim.g.submodules_root))
     return
@@ -3663,6 +3673,89 @@ function M.toggle_sides(val)
     -- vim.opt.statusline = M.repeat_str('─', 20)
     vim.opt.statusline = M.repeat_str('═', 20)
   end
+end
+
+function M.get_normal_bg_color()
+  local hl_group = 'Normal' -- 替换为实际的高亮组名
+  local hl = vim.api.nvim_get_hl_by_name(hl_group, true)
+  if hl.background then
+    -- print("Background color (RGB hex):", string.format("#%06x", hl.background))
+    return string.format('%06x', hl.background)
+  end
+  return nil
+end
+
+function M.get_normal_bg_plus_color(offset)
+  local color = M.get_normal_bg_color()
+  if not color then
+    return ''
+  end
+  local color_num = tonumber(color, 16)
+  local red = color_num / 65536
+  local green = (color_num % 65536) / 256
+  local blue = (color_num % 256)
+  if not offset then
+    offset = 39
+  end
+  red = red - offset
+  green = green - offset
+  blue = blue - offset
+  if red >= 256 then red = 255 end
+  if green >= 256 then green = 255 end
+  if blue >= 256 then blue = 255 end
+  if red <= 0 then red = 0 end
+  if green <= 0 then green = 0 end
+  if blue <= 0 then blue = 0 end
+  color = M.format('%02x%02x%02x', red, green, blue)
+  return color
+end
+
+function M.alternate_line(color)
+  if type(color) == 'number' then
+    color = M.get_normal_bg_plus_color(color)
+  end
+  if not color then
+    color = M.get_normal_bg_color()
+  end
+  if not color then
+    return
+  end
+  -- 定义交替行的高亮组
+  vim.api.nvim_command(string.format('highlight AlternateLine guibg=#%s', color))
+  -- 为当前缓冲区启用交替行背景色
+  local function enable_alternate_bg()
+    local bufnr = vim.api.nvim_get_current_buf()
+    -- 清除之前的高亮
+    vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
+    -- 只在普通缓冲区应用此效果
+    if vim.api.nvim_buf_get_option(bufnr, 'buftype') == '' then
+      local lines = vim.api.nvim_buf_line_count(bufnr)
+      for i = 1, lines, 2 do
+        vim.api.nvim_buf_add_highlight(bufnr, -1, 'AlternateLine', i - 1, 0, -1)
+      end
+    end
+  end
+  -- 创建自动命令，仅在当前缓冲区操作时执行
+  local group = vim.api.nvim_create_augroup('CurrentBufAlternateLineBg', { clear = true, })
+  -- 缓冲区载入时启用
+  vim.api.nvim_create_autocmd('BufEnter', {
+    group = group,
+    pattern = '<buffer>',
+    callback = enable_alternate_bg,
+  })
+  -- 文本更改时重新应用高亮
+  vim.api.nvim_create_autocmd('TextChanged', {
+    group = group,
+    pattern = '<buffer>',
+    callback = enable_alternate_bg,
+  })
+  -- 窗口大小改变时重新应用高亮
+  vim.api.nvim_create_autocmd('WinResized', {
+    group = group,
+    pattern = '<buffer>',
+    callback = enable_alternate_bg,
+  })
+  enable_alternate_bg()
 end
 
 -- M.toggle_sides(0)
