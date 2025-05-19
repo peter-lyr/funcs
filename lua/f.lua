@@ -3711,8 +3711,10 @@ function M.get_normal_bg_plus_color(offset)
 end
 
 function M.alternate_line(color)
+  local color2
   if type(color) == 'number' then
     color = M.get_normal_bg_plus_color(color)
+    color2 = M.get_normal_bg_plus_color(color/2)
   end
   if not color then
     color = M.get_normal_bg_color()
@@ -3722,6 +3724,7 @@ function M.alternate_line(color)
   end
   -- 定义交替行的高亮组
   vim.api.nvim_command(string.format('highlight AlternateLine guibg=#%s', color))
+  vim.api.nvim_command(string.format('highlight AlternateLine2 guibg=#%s', color2))
   -- 为当前缓冲区启用交替行背景色
   local function enable_alternate_bg()
     local bufnr = vim.api.nvim_get_current_buf()
@@ -3732,6 +3735,11 @@ function M.alternate_line(color)
       local lines = vim.api.nvim_buf_line_count(bufnr)
       for i = 1, lines, 2 do
         vim.api.nvim_buf_add_highlight(bufnr, -1, 'AlternateLine', i - 1, 0, -1)
+      end
+      if color2 then
+        for i = 2, lines, 2 do
+          vim.api.nvim_buf_add_highlight(bufnr, -1, 'AlternateLine2', i - 1, 0, -1)
+        end
       end
     end
   end
