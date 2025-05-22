@@ -909,7 +909,7 @@ function M.get_cur_tail()
   end
   local cur_proj = M.get_proj(cur_file)
   if #cur_proj == 0 then
-    return ''
+    return string.format('[%s]', vim.fn.fnamemodify(vim.fn.bufname(), ':t'))
   end
   return string.sub(cur_file, #cur_proj + 2, #cur_file)
 end
