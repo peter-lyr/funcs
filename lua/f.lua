@@ -935,12 +935,34 @@ end
 function M.get_proj(file)
   local proj = ''
   M.lazy_load 'vim-projectroot'
+  if file and M.in_str('diffview://', file) then
+    file = string.gsub(file, '^diffview://', '')
+  end
   if file then
     _, proj = pcall(vim.fn['ProjectRootGet'], file)
   else
     _, proj = pcall(vim.fn['ProjectRootGet'])
   end
   return M.rep(proj)
+end
+
+function M.get_proj_tail_2(file)
+  local proj = ''
+  M.lazy_load 'vim-projectroot'
+  local diffview = nil
+  if file and M.in_str('diffview://', file) then
+    file = string.gsub(file, '^diffview://', '')
+    diffview = 1
+  end
+  if file then
+    _, proj = pcall(vim.fn['ProjectRootGet'], file)
+  else
+    _, proj = pcall(vim.fn['ProjectRootGet'])
+  end
+  if diffview then
+    return 'ff:' .. M.get_tail(M.rep(proj))
+  end
+  return M.get_tail(M.rep(proj))
 end
 
 function M.get_cwd()
@@ -3225,8 +3247,7 @@ function MyTabLabel(n)
   local winnr = vim.fn.tabpagewinnr(n)
   local bufnr = buflist[winnr]
   local name = M.get_bnr_file(bufnr)
-  local proj = M.get_proj(name)
-  local proj_tail = M.get_tail(proj)
+  local proj_tail = M.get_proj_tail_2(name)
   return M.get_short(proj_tail, 28)
 end
 
