@@ -407,7 +407,8 @@ M.work_summary_week_py = M.get_py '18-work-summary-week.py'
 M.work_summary_week_all_py = M.get_py '22-work_summary_week_all.py'
 M.tts_py = M.get_py '19-tts.py'
 M.rename_submodule_py = M.get_py '20-rename-submodule.py'
-Week1Date = { 2024, 12, 16, } -- 第一周起始日
+-- Week1Date = { 2024, 12, 16, } -- 第一周起始日周一，25年上半年
+Week1Date = { 2025, 6, 16, } -- 第一周起始日周一，25年下半年
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
