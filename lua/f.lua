@@ -404,6 +404,7 @@ M.git_commits_py = M.get_py '15-git-commits.py'
 M.git_init_py = M.get_py '16-git-init.py'
 M.work_summary_day_py = M.get_py '17-work-summary-day.py'
 M.work_summary_week_py = M.get_py '18-work-summary-week.py'
+M.work_summary_week_all_py = M.get_py '22-work_summary_week_all.py'
 M.tts_py = M.get_py '19-tts.py'
 M.rename_submodule_py = M.get_py '20-rename-submodule.py'
 Week1Date = { 2024, 12, 16, } -- 第一周起始日
@@ -3079,6 +3080,10 @@ end
 
 function M.work_summary_week()
   M.ui(M.get_weeks(), 'work_summary_week', M.work_summary_week_do)
+end
+
+function M.work_summary_week_all()
+  M.run__silent(M.format('%s %s', M.work_summary_week_all_py, W .. '\\work_summary_week.md'))
 end
 
 function M.work_day_append_do(day)
