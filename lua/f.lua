@@ -405,6 +405,7 @@ M.git_init_py = M.get_py '16-git-init.py'
 M.work_summary_day_py = M.get_py '17-work-summary-day.py'
 M.work_summary_week_py = M.get_py '18-work-summary-week.py'
 M.work_summary_week_all_py = M.get_py '22-work_summary_week_all.py'
+M.work_summary_week_one_py = M.get_py '23-work_summary_week_one.py'
 M.tts_py = M.get_py '19-tts.py'
 M.rename_submodule_py = M.get_py '20-rename-submodule.py'
 -- Week1Date = { 2024, 12, 16, } -- 第一周起始日周一，25年上半年
@@ -3085,6 +3086,17 @@ end
 
 function M.work_summary_week_all()
   M.run__silent(M.format('%s %s', M.work_summary_week_all_py, W .. '\\work_summary_week.md'))
+end
+
+function M.work_summary_week_one_do(week)
+  if not week or #week == 0 then
+    return
+  end
+  M.run__silent(M.format('%s %s "%s"', M.work_summary_week_one_py, W .. '\\work_summary_week.md', week))
+end
+
+function M.work_summary_week_one()
+  M.ui(M.get_weeks(), 'work_summary_week_one', M.work_summary_week_one_do)
 end
 
 function M.work_day_append_do(day)
