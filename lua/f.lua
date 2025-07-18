@@ -3099,6 +3099,33 @@ function M.work_summary_week_one()
   M.ui(M.get_weeks(), 'work_summary_week_one', M.work_summary_week_one_do)
 end
 
+function M.work_summary_week_open_one_do(week)
+  if not week or #week == 0 then
+    return
+  end
+  vim.g.week = week
+  vim.g.W = W
+  vim.cmd [[
+  python << EOF
+import vim
+week_range = vim.eval('g:week')
+W = vim.eval('g:W')
+week_num = week_range.split(" ")[0]
+year_num = week_range.split(" ")[1].split("-")[0]
+dir = f"{W}\\work_summary_week\\{year_num}"
+one_name = week_range.replace("-", "").replace(" ", "-").replace("~", "-")
+cur = f'{dir}\\{one_name}-notdone.md'
+cur = cur.replace('\\', '\\\\')
+vim.command(f'''let g:cur = "{cur}"''')
+EOF
+  ]]
+  M.edit(vim.g.cur)
+end
+
+function M.work_summary_week_open_one()
+  M.ui(M.get_weeks(), 'work_summary_week_open_one', M.work_summary_week_open_one_do)
+end
+
 function M.work_day_append_do(day)
   vim.fn.append('.', M.format('## %s', day))
 end
