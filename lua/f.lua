@@ -2761,6 +2761,7 @@ function M.copy_to_desktop(files)
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
   for _, file in ipairs(files) do
     if M.is_file_exists(file) then
+      file = M.rep(file)
       M.run__silent(M.format('copy /y %s %s', file, desktop))
     end
   end
