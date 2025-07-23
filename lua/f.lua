@@ -2754,7 +2754,9 @@ function M.copy_to_desktop(files)
     end
   end
   if not files then
-    return
+    local file = [[C:\Windows\Temp\temp.txt]]
+    M.cmd("w! %s", file)
+    files = { file, }
   end
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
   for _, file in ipairs(files) do
