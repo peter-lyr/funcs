@@ -2806,6 +2806,27 @@ function M.delete_from_desktop(files)
   end
 end
 
+function M.delete_files(files)
+  if not files then
+    local file = M.get_cur_file()
+    if M.is_file(file) then
+      files = { file, }
+    end
+  end
+  if not files then
+    return
+  end
+  for _, file in ipairs(files) do
+    local bnr = vim.fn.bufnr(file)
+    if M.is_file_exists(file) then
+      if 0 ~= vim.fn.confirm(M.format('Delete %s?', file)) then
+        M.cmd('bw! %d', bnr)
+        M.run__silent(M.format('del /f /s %s', file))
+      end
+    end
+  end
+end
+
 function M.git_add_force(files)
   if not files then
     return
