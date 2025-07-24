@@ -863,6 +863,7 @@ function M.nvimtree_cd_sel(dirs)
 end
 
 function M.telescope_do(dir)
+  M.lazy_load 'telescope'
   if M.is_file_exists(dir) then
     M.cmd('Telescope %s cwd=%s', vim.g.telescope_cmd, dir)
     M.project_cd()
