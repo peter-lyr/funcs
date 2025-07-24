@@ -2492,8 +2492,8 @@ end
 function M.title_cur_line()
   local title = vim.fn.trim(vim.fn.getline '.')
   --- M.write_lines_to_file({}, title)
-  M.cmd('w %s', title)
-  M.cmd('e %s', title)
+  M.cmd('w! %s', title)
+  M.cmd('e! %s', title)
 end
 
 function M.mkdir_cur_tail()
