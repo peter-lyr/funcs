@@ -2490,6 +2490,26 @@ function M.todo_quickfix_sel(dirs, what)
 end
 
 function M.create_file_under_cur()
+  M.copy_multiple_filenames()
+  local title = vim.fn.input('create_file_under_cur: ', vim.fn.getline '.')
+  local parent = vim.fn.fnamemodify(M.get_cur_file(), ':p:h')
+  title = M.join_path(parent, title)
+  if not M.is_dir(title) then
+    M.cmd('w! %s', title)
+    M.cmd('e! %s', title)
+  end
+end
+
+function M.create_file_under_cwd()
+  M.copy_multiple_filenames()
+  local title = vim.fn.input('create_file_under_cwd: ', vim.fn.getline '.')
+  if not M.is_dir(title) then
+    M.cmd('w! %s', title)
+    M.cmd('e! %s', title)
+  end
+end
+
+function M.create_file_under_cur_with_line()
   local title = vim.fn.trim(vim.fn.getline '.')
   local parent = vim.fn.fnamemodify(M.get_cur_file(), ':p:h')
   title = M.join_path(parent, title)
@@ -2497,7 +2517,7 @@ function M.create_file_under_cur()
   M.cmd('e! %s', title)
 end
 
-function M.create_file_under_cwd()
+function M.create_file_under_cwd_with_line()
   local title = vim.fn.trim(vim.fn.getline '.')
   M.cmd('w! %s', title)
   M.cmd('e! %s', title)
@@ -2816,11 +2836,12 @@ function M.delete_files(files)
   if not files then
     return
   end
+  M.lazy_load 'bbye'
   for _, file in ipairs(files) do
     local bnr = vim.fn.bufnr(file)
     if M.is_file_exists(file) then
       if 0 ~= vim.fn.confirm(M.format('Delete %s?', file)) then
-        M.cmd('bw! %d', bnr)
+        M.cmd('Bwipeout! %d', bnr)
         M.run__silent(M.format('del /f /s %s', file))
       end
     end
