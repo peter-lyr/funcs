@@ -2723,10 +2723,13 @@ function M.bin_xxd_sel(file)
   }, 'bin_xxd_sel', M.xxd_g_c)
 end
 
+local temp_arg_txt = DpTemp .. '\\run_args.txt'
+
 function M.run_under_desktop_do(args)
   if not args then
     return
   end
+  M.write_lines_to_file({ args, }, temp_arg_txt)
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
   for _, file in ipairs(vim.g.files) do
     local tail = vim.fn.fnamemodify(file, ':t')
@@ -2743,7 +2746,12 @@ function M.run_under_desktop(files)
   end
   M.copy_to_desktop(files)
   vim.g.files = files
-  M.ui_input('run_under_desktop_do', '', M.run_under_desktop_do)
+  local lines = M.read_lines_from_file(temp_arg_txt)
+  local line = ''
+  if #lines > 0 then
+    line = lines[1]
+  end
+  M.ui_input('run_under_desktop_do', line, M.run_under_desktop_do)
 end
 
 function M.copy_to_desktop(files)
@@ -2754,8 +2762,8 @@ function M.copy_to_desktop(files)
     end
   end
   if not files then
-    local file = [[C:\Windows\Temp\temp.txt]]
-    M.cmd("w! %s", file)
+    local file = TempTxt
+    M.cmd('w! %s', file)
     files = { file, }
   end
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
@@ -2775,7 +2783,7 @@ function M.delete_from_desktop(files)
     end
   end
   if not files then
-    local file = [[C:\Windows\Temp\temp.txt]]
+    local file = TempTxt
     files = { file, }
   end
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
@@ -3169,9 +3177,9 @@ function M.work_summary_week_open_one_to_edit_do(week)
     return
   end
   local notdone = M.get_work_summary_week_one(week)
-  print("notdone:", notdone)
+  print('notdone:', notdone)
   local toedit = M.get_work_summary_week_one_to_edit(week)
-  print("toedit:", toedit)
+  print('toedit:', toedit)
   if not M.is_file_exists(toedit) then
     vim.fn.system(string.format('copy /y "%s" "%s"', notdone, toedit))
   end
@@ -3840,7 +3848,7 @@ function M.alternate_line(color)
   local color2
   if type(color) == 'number' then
     color = M.get_normal_bg_plus_color(color)
-    color2 = M.get_normal_bg_plus_color(color/2)
+    color2 = M.get_normal_bg_plus_color(color / 2)
   end
   if not color then
     color = M.get_normal_bg_color()
