@@ -2489,9 +2489,16 @@ function M.todo_quickfix_sel(dirs, what)
   M.ui(dirs, M.format('%s sel', what), M.todo_quickfix_do)
 end
 
-function M.title_cur_line()
+function M.create_file_under_cur()
   local title = vim.fn.trim(vim.fn.getline '.')
-  --- M.write_lines_to_file({}, title)
+  local parent = vim.fn.fnamemodify(M.get_cur_file(), ':p:h')
+  title = M.join_path(parent, title)
+  M.cmd('w! %s', title)
+  M.cmd('e! %s', title)
+end
+
+function M.create_file_under_cwd()
+  local title = vim.fn.trim(vim.fn.getline '.')
   M.cmd('w! %s', title)
   M.cmd('e! %s', title)
 end
