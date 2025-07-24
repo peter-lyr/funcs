@@ -2769,13 +2769,22 @@ end
 
 function M.delete_from_desktop(files)
   if not files then
-    return
+    local file = M.get_cur_file()
+    if M.is_file(file) then
+      files = { file, }
+    end
+  end
+  if not files then
+    local file = [[C:\Windows\Temp\temp.txt]]
+    files = { file, }
   end
   local desktop = M.get_sh_get_folder_path 'desktop'[1]
   for _, file in ipairs(files) do
+    local bnr = vim.fn.bufnr(file)
     local tail = vim.fn.fnamemodify(file, ':t')
     file = M.get_file({ desktop, }, tail)
     if M.is_file_exists(file) then
+      M.cmd('bw! %d', bnr)
       M.run__silent(M.format('del /f /s %s', file))
     end
   end
