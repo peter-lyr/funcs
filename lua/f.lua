@@ -410,6 +410,7 @@ M.tts_py = M.get_py '19-tts.py'
 M.rename_submodule_py = M.get_py '20-rename-submodule.py'
 -- Week1Date = { 2024, 12, 16, } -- 第一周起始日周一，25年上半年
 Week1Date = { 2025, 6, 16, } -- 第一周起始日周一，25年下半年
+M.count_down_py = M.get_py '26-倒计时-保存到微信收藏笔记.py'
 
 function M.start_do(cmd, opts)
   if opts.way == 'silent' then
@@ -3162,7 +3163,7 @@ function M.work_summary_week_one_do(week)
   if not week or #week == 0 then
     return
   end
-  M.run__silent(M.format('%s %s "%s"', M.work_summary_week_one_py, W .. '\\work_summary_week.md', week))
+  M.run__pause(M.format('%s %s "%s"', M.work_summary_week_one_py, W .. '\\work_summary_week.md', week))
 end
 
 function M.work_summary_week_one()
@@ -3699,6 +3700,26 @@ function M.rename_submodule(proj)
   vim.g.submodules = M.get_submodules()
   local submodules_tails = M.get_tails(vim.g.submodules)
   M.ui(submodules_tails, 'rename_submodule', M.rename_submodule_do)
+end
+
+function M.count_down_minutes(minutes)
+  if vim.v.count > 0 then
+    minutes = vim.v.count * 60
+  end
+  if not minutes then
+    minutes = 60 * 25
+  end
+  M.run_silent { M.count_down_py, minutes, }
+end
+
+function M.count_down_seconds(seconds)
+  if vim.v.count > 0 then
+    seconds = vim.v.count
+  end
+  if not seconds then
+    seconds = 3
+  end
+  M.run_silent { M.count_down_py, seconds, }
 end
 
 function M.get_files_deep_1(dir)
