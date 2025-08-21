@@ -3730,6 +3730,10 @@ function M.count_down_manual_end()
   M.write_lines_to_file({ 'manual done', }, DpTemp .. '\\countdown_monitor.txt')
 end
 
+function M.count_down_exit_ui()
+  M.write_lines_to_file({ 'exit ui', }, DpTemp .. '\\countdown_monitor.txt')
+end
+
 function M.get_files_deep_1(dir)
   if not dir then
     dir = M.get_cwd()
