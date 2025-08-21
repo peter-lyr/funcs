@@ -3726,16 +3726,8 @@ function M.count_down_seconds(save_wechat)
   end
 end
 
-function M.count_down_manual_end()
-  M.write_lines_to_file({ 'manual done', }, DpTemp .. '\\countdown_monitor.txt')
-end
-
-function M.count_down_exit_ui()
-  M.write_lines_to_file({ 'exit ui', }, DpTemp .. '\\countdown_monitor.txt')
-end
-
-function M.count_down_manual_end_and_exit_ui()
-  M.write_lines_to_file({ 'manual done and exit ui', }, DpTemp .. '\\countdown_monitor.txt')
+function M.count_down_step_forward()
+  M.write_lines_to_file({ 'step_forward', }, DpTemp .. '\\countdown_monitor.txt')
 end
 
 function M.get_files_deep_1(dir)
