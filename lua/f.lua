@@ -3709,7 +3709,7 @@ function M.count_down_minutes(minutes)
   if not minutes then
     minutes = 60 * 25
   end
-  M.run_silent { M.count_down_py, minutes, }
+  M.run__silent(M.format('%s %s', M.count_down_py, minutes))
 end
 
 function M.count_down_seconds(seconds)
@@ -3719,7 +3719,11 @@ function M.count_down_seconds(seconds)
   if not seconds then
     seconds = 3
   end
-  M.run_silent { M.count_down_py, seconds, }
+  M.run__silent(M.format('%s %s', M.count_down_py, seconds))
+end
+
+function M.count_down_manual_end()
+  M.write_lines_to_file({ 'manual done', }, DpTemp .. '\\countdown_monitor.txt')
 end
 
 function M.get_files_deep_1(dir)
