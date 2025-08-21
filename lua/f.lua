@@ -3726,6 +3726,14 @@ function M.count_down_seconds(save_wechat)
   end
 end
 
+function M.timer_start(save_wechat)
+  if save_wechat then
+    M.run__silent(M.format('%s 0 1', M.count_down_py))
+  else
+    M.run__silent(M.format('%s 0', M.count_down_py))
+  end
+end
+
 function M.count_down_step_forward()
   M.write_lines_to_file({ 'step_forward', }, DpTemp .. '\\countdown_monitor.txt')
 end
