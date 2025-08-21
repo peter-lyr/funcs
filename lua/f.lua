@@ -3730,6 +3730,10 @@ function M.count_down_step_forward()
   M.write_lines_to_file({ 'step_forward', }, DpTemp .. '\\countdown_monitor.txt')
 end
 
+function M.count_down_for_timer()
+  M.write_lines_to_file({ 'for_timer', }, DpTemp .. '\\countdown_monitor.txt')
+end
+
 function M.get_files_deep_1(dir)
   if not dir then
     dir = M.get_cwd()
