@@ -3702,24 +3702,28 @@ function M.rename_submodule(proj)
   M.ui(submodules_tails, 'rename_submodule', M.rename_submodule_do)
 end
 
-function M.count_down_minutes(minutes)
+function M.count_down_minutes(save_wechat)
+  local minutes = 60 * 25
   if vim.v.count > 0 then
     minutes = vim.v.count * 60
   end
-  if not minutes then
-    minutes = 60 * 25
+  if save_wechat then
+    M.run__silent(M.format('%s %s 1', M.count_down_py, minutes))
+  else
+    M.run__silent(M.format('%s %s', M.count_down_py, minutes))
   end
-  M.run__silent(M.format('%s %s', M.count_down_py, minutes))
 end
 
-function M.count_down_seconds(seconds)
+function M.count_down_seconds(save_wechat)
+  local seconds = 3
   if vim.v.count > 0 then
     seconds = vim.v.count
   end
-  if not seconds then
-    seconds = 3
+  if save_wechat then
+    M.run__silent(M.format('%s %s 1', M.count_down_py, seconds))
+  else
+    M.run__silent(M.format('%s %s', M.count_down_py, seconds))
   end
-  M.run__silent(M.format('%s %s', M.count_down_py, seconds))
 end
 
 function M.count_down_manual_end()
